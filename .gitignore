@@ -1,0 +1,12 @@
+*.pyc
+__pycache__/
+.env
+*.log
+*.sqlite3
+*.db
+Docker/.build
+Docker/.dockerignore
+Docker/db_data
+Docker/db_data/
+Docker/db_data/mysql
+Docker/db_data/mysql/
