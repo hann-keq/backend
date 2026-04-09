@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASSWORD: str
     DB_NAME: str
+    DB_ROOT_PASSWORD: str
+    PMA_HOST : str
+    DB_HOST_DEV : str
 
     class Config:
         env_file = ".env"

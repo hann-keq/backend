@@ -7,7 +7,7 @@ from typing import AsyncGenerator
 
 # Create the async engine
 engine = create_async_engine(
-    f"mysql+aiomysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}",
+    f"mysql+aiomysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST_DEV}:{settings.DB_PORT}/{settings.DB_NAME}",
     echo=False
 )
 
