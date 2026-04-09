@@ -1,41 +1,42 @@
-version: '3.8'
-services:
-  api:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=your_password
-      - DB_NAME=mydatabase
-    depends_on:
-      - db
-    healthcheck:
-      test: curl -f http://localhost:8000/health
-      interval: 5s
-      timeout: 5s
-      retries: 5
+version: "3.8"
 
+services:
   db:
-    image: mysql:8.0
-    container_name: mysql
-    ports:
-      - "3306:3306"
+    image: mariadb:lts-ubi9
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  php:
+    image: php:8.2.30-apache
+    container_name: php-app
+    restart: always
+    ports:
+      - "8081:80"
+    volumes:
+      - /home/keq/docker/portainer/html:/var/www/html
+    depends_on:
+      - db
+   
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
     environment:
-      - MYSQL_ROOT_PASSWORD=your_password
-      - MYSQL_DATABASE=mydatabase
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=your_password
-    healthcheck:
-      test: curl -f http://localhost:3306/
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: db
+    depends_on:
+      - db
 
 volumes:
   db_data:
-    driver: local
