@@ -18,3 +18,11 @@ Docker/db_data/
 
 # OS
 .DS_Store
+
+# Virtual env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
