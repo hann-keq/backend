@@ -14,6 +14,13 @@ async def create_new_user(db: AsyncSession, user_data: UserCreate):
 
     return await user_repository.create_user(db, user_dict)
 
+async def login_user(db: AsyncSession, user_login_data: dict):
+    user = await user_repository.get_user_by_email(db, user_login_data['email'])
 
+    if not user:
+        return None
 
+    if not verify_password(user_login_data['password'], user.password):
+        return None
 
+    return user

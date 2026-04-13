@@ -3,13 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.database import get_db
 from app.models.models import User, Task
-from app.schemas.schemas import UserCreate, UserResponse, TaskCreate, TaskResponse, TaskWithUserResponse
+from app.schemas.schemas import UserCreate, UserLogin, UserResponse, TaskCreate, TaskResponse, TaskWithUserResponse
 from sqlalchemy import select
-from sqlalchemy import select
+
 from sqlalchemy.orm import selectinload
 from app.models.models import Task
 from sqlalchemy.orm import selectinload
-from app.services.user_service import create_new_user
+from app.services.user_service import create_new_user, login_user
 
 router = APIRouter()
 
@@ -17,6 +17,14 @@ router = APIRouter()
 async def sign_up(new_user : UserCreate, db:AsyncSession = Depends(get_db)):
     return await create_new_user(db, new_user)
 
+@router.post('/login')
+async def login(user_login_data: UserLogin, db: AsyncSession = Depends(get_db)):
+    user = await login_user(db, user_login_data.model_dump())
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+
+    return {"message": "Login successful"}
 
 @router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
