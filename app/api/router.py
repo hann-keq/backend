@@ -9,20 +9,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.models.models import Task
 from sqlalchemy.orm import selectinload
+from app.services.user_service import create_new_user
 
 router = APIRouter()
 
-@router.post("/users/", response_model=UserResponse)
-async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
-    try:
-        db_user = User(name=user.name, email=user.email)
-        db.add(db_user)
-        await db.commit()
-        await db.refresh(db_user)
-        return db_user
-    except SQLAlchemyError as e:
-        await db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+@router.post("/register/", response_model=UserResponse)
+async def sign_up(new_user : UserCreate, db:AsyncSession = Depends(get_db)):
+    return await create_new_user(db, new_user)
+
 
 @router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
