@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.database import get_db
-from app.models.models import User, Task
-from app.schemas.schemas import UserCreate, UserLogin, UserResponse, TaskCreate, TaskResponse, TaskWithUserResponse
+from app.core.security import create_access_token
+from app.core.auth import get_current_user
+from app.models.models import User
+from app.schemas.pet_schema.pet_create import PetCreate, UserCreate, UserLogin, UserResponse
 from sqlalchemy import select
 
-from sqlalchemy.orm import selectinload
-from app.models.models import Task
-from sqlalchemy.orm import selectinload
-from app.services.user_service import create_new_user, login_user
+
+from app.services.user.user_service import add_pet, create_new_user, login_user
 
 router = APIRouter()
 
@@ -24,7 +24,16 @@ async def login(user_login_data: UserLogin, db: AsyncSession = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
 
-    return {"message": "Login successful"}
+    access_token = create_access_token(
+        data={"sub": str(user.id)
+              })
+    print(access_token)
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        
+    }
+
 
 @router.get("/users/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
@@ -40,30 +49,6 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
     except SQLAlchemyError as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@router.post("/tasks/", response_model=TaskResponse)
-async def create_task(task: TaskCreate, db: AsyncSession = Depends(get_db)):
-    try:
-        db_task = Task(**task.dict())
-        db.add(db_task)
-        await db.commit()
-        await db.refresh(db_task)
-        return db_task
-    except SQLAlchemyError as e:
-        await db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-
-@router.get("/tasks/{task_id}", response_model=TaskWithUserResponse)
-async def get_task(task_id: int, db: AsyncSession = Depends(get_db)):
-    try:
-        result = await db.execute(
-             select(Task)
-             .options(selectinload(Task.user))
-            .where(Task.id == task_id)
-        )
-
-        task = result.scalars().first()
-        if not task:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found")
-        return task
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+@router.post('/add_pet', response_model=UserResponse)
+async def add_user_pet(new_pet: PetCreate, db: AsyncSession = Depends(get_db), current_user:User =Depends(get_current_user)):
+    return await add_pet(db,current_user.id,new_pet)
