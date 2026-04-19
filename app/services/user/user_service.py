@@ -1,6 +1,6 @@
 from app.core.security import get_password_hash, verify_password
 from app.repositories import user_repository
-from app.schemas.pet_schema.pet_create import UserCreate
+from app.schemas.user_schema.user_create import UserCreate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 async def create_new_user(db: AsyncSession, user_data: UserCreate):

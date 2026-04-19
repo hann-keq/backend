@@ -5,7 +5,9 @@ from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.auth import get_current_user
 from app.models.models import User
-from app.schemas.pet_schema.pet_create import PetCreate, UserCreate, UserLogin, UserResponse
+from app.schemas.pet_schema.pet_create import PetCreate
+from app.schemas.user_schema.user_create import UserCreate, UserLogin
+from app.schemas.user_schema.user_response import UserResponse
 from sqlalchemy import select
 
 
