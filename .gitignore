@@ -9,6 +9,9 @@ __pycache__/
 # Logs
 *.log
 
+# postman
+.postman
+postman
 # Database (local)
 *.sqlite3
 *.db
