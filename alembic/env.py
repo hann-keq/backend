@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 load_dotenv()  # Load environment variables from .env file
-database_url = f"mysql+pymysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST_DEV}:{settings.DB_PORT}/{settings.DB_NAME}"
+database_url = f"mysql+pymysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+print (f"Database URL: {database_url}")  # Debugging line to check the database URL
 config = context.config
 config.set_main_option("sqlalchemy.url", database_url)
 # Interpret the config file for Python logging.

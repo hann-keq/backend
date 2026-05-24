@@ -1,11 +1,11 @@
-from app.core.security import get_password_hash, verify_password
+from app.core.security import hash_password, verify_password
 from app.repositories import user_repository
 from app.schemas.user_schema.user_create import UserCreate
 from sqlalchemy.ext.asyncio import AsyncSession
 
 async def create_new_user(db: AsyncSession, user_data: UserCreate):
     #hashing
-    hashed_password = get_password_hash(user_data.password)
+    hashed_password = hash_password(user_data.password)
 
     user_dict = user_data.model_dump()
     user_dict.pop("password")

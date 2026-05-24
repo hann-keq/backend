@@ -9,9 +9,10 @@ class Settings(BaseSettings):
     DB_NAME: str
     DB_ROOT_PASSWORD: str
     PMA_HOST : str
-    DB_HOST_DEV : str
+    # DB_HOST_DEV : str
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    REFRESH_TOKEN_EXPIRE: int
     ALGORITHM: str
 
     class Config:

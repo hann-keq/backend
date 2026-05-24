@@ -7,7 +7,9 @@ from typing import AsyncGenerator
 
 # Create the async engine
 engine = create_async_engine(
-    f"mysql+aiomysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST_DEV}:{settings.DB_PORT}/{settings.DB_NAME}",
+    f"mysql+aiomysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}",
+    pool_recycle=3600,
+    pool_pre_ping=True,
     echo=False
 )
 
@@ -15,7 +17,8 @@ engine = create_async_engine(
 AsyncSessionLocal = sessionmaker(
     bind=engine,
     class_=AsyncSession,
-    expire_on_commit=False
+    expire_on_commit=False,
+    
 )
 
 # Dependency to get the database session

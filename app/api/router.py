@@ -4,10 +4,12 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.auth import get_current_user
+from app.repositories import user_repository
 from app.models.models import User
 from app.schemas.pet_schema.pet_create import PetCreate
+from app.schemas.pet_schema.pet_response import PetResponse
 from app.schemas.user_schema.user_create import UserCreate, UserLogin
-from app.schemas.user_schema.user_response import UserResponse
+from app.schemas.user_schema.user_response import UserResponse, UserResponseOnlyId
 from sqlalchemy import select
 
 
@@ -37,11 +39,10 @@ async def login(user_login_data: UserLogin, db: AsyncSession = Depends(get_db)):
     }
 
 
-@router.get("/users/{user_id}", response_model=UserResponse)
+@router.get("/users/{user_id}", response_model=UserResponseOnlyId)
 async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
     try:
-        result = await db.execute(select(User).where(User.id == user_id))
-        user = result.scalars().first()
+        user = await user_repository.get_user_by_id(db, user_id)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -51,6 +52,6 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
     except SQLAlchemyError as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@router.post('/add_pet', response_model=UserResponse)
+@router.post('/add_pet', response_model=PetResponse)
 async def add_user_pet(new_pet: PetCreate, db: AsyncSession = Depends(get_db), current_user:User =Depends(get_current_user)):
     return await add_pet(db,current_user.id,new_pet)
