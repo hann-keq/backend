@@ -9,6 +9,8 @@ async def create_user(db: AsyncSession, user_data: dict) :
     await db.refresh(new_user)
     return new_user
 
+
+
 async def get_user_by_email(db: AsyncSession, email: str):
     result = await db.execute(select(User).where(User.email == email))
     return result.scalars().one_or_none()

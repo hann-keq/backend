@@ -51,3 +51,8 @@ async def login_admin(db:AsyncSession,admin_login_data:dict):
         return user_exceptions.handle_invalid_email_or_password()
     return admin
 
+async def get_user_by_id(db: AsyncSession, user_id: int):
+    user = await user_repository.get_user_by_id(db, user_id)
+    if not user:
+        raise user_exceptions.handle_user_not_found(detail_message=f'User with ID {user_id} not found')
+    return user

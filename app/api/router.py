@@ -15,7 +15,7 @@ from app.schemas.user_schema.user_response import UserResponse, UserResponseOnly
 from sqlalchemy import select
 
 
-from app.services.user.user_service import create_new_user, login_user, login_admin,create_new_admin
+from app.services.user.user_service import create_new_user, login_user, login_admin,create_new_admin,get_user_by_id
 
 router = APIRouter()
 
