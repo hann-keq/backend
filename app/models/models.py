@@ -144,7 +144,7 @@ class Produk(Base):
     __tablename__ = 'produk'
     id_produk : Mapped[int] = mapped_column(Integer,primary_key=True)
     nama_produk : Mapped[str] = mapped_column(String(255),nullable=False)
-    deskripsi : Mapped[str] = mapped_column(String(255),nullable=False)
+    # deskripsi : Mapped[str] = mapped_column(String(255),nullable=False)
     harga : Mapped[float] = mapped_column(Float,nullable=False)
     stok : Mapped[int] = mapped_column(Integer,nullable=False)
     gambar : Mapped[str] = mapped_column(String(255),nullable=True)
