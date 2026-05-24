@@ -7,7 +7,9 @@ from enum import Enum as pyEnum
 
 class Base(DeclarativeBase):
     pass
-
+class RoleUser(pyEnum):
+    USER = 'User'
+    ADMIN = 'Admin'
 class JenisHewan(pyEnum):
     KUCING = 'Kucing'
     ANJING = 'Anjing'
@@ -55,19 +57,20 @@ class User(Base):
     no_telepon : Mapped[str] = mapped_column(String(20),nullable=False)
     password : Mapped[str] = mapped_column(String(255),nullable=False)
     foto : Mapped[str] = mapped_column(String(255),nullable=True)
+    role : Mapped[RoleUser] = mapped_column(Enum(RoleUser),nullable=False,default=RoleUser.USER.value)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
 
-class Admin(Base):
-    __tablename__ = 'admins'
-    id_admin : Mapped[int] = mapped_column(Integer,primary_key=True)
-    nama : Mapped[str] = mapped_column(String(255),nullable=False)
-    email : Mapped[str] = mapped_column(String(255),nullable=False,unique=True)
-    no_telepon : Mapped[str] = mapped_column(String(20),nullable=False)
-    password : Mapped[str] = mapped_column(String(255),nullable=False)
-    foto : Mapped[str] = mapped_column(String(255),nullable=True)
-    created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
-    updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
+# class Admin(Base):
+#     __tablename__ = 'admins'
+#     id_admin : Mapped[int] = mapped_column(Integer,primary_key=True)
+#     nama : Mapped[str] = mapped_column(String(255),nullable=False)
+#     email : Mapped[str] = mapped_column(String(255),nullable=False,unique=True)
+#     no_telepon : Mapped[str] = mapped_column(String(20),nullable=False)
+#     password : Mapped[str] = mapped_column(String(255),nullable=False)
+#     foto : Mapped[str] = mapped_column(String(255),nullable=True)
+#     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+#     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
 
 class Pet(Base):
     __tablename__ = 'pets'

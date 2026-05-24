@@ -1,7 +1,9 @@
 from app.core.security import hash_password, verify_password
 from app.repositories import user_repository
-from app.schemas.user_schema.user_create import UserCreate
+from app.schemas.user_schema.user_create import UserCreate,AdminCreate
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.exceptions import user_exceptions, system_exceptions
+
 
 async def create_new_user(db: AsyncSession, user_data: UserCreate):
     #hashing
@@ -16,6 +18,7 @@ async def create_new_user(db: AsyncSession, user_data: UserCreate):
         raise ValueError("Email already registered")
     return await user_repository.create_user(db, user_dict)
 
+
 async def login_user(db: AsyncSession, user_login_data: dict):
     user = await user_repository.get_user_by_email(db, user_login_data['email'])
 
@@ -27,7 +30,24 @@ async def login_user(db: AsyncSession, user_login_data: dict):
 
     return user
 
-async def add_pet(db: AsyncSession, user_id: int, pet_data: dict):
-    pet_dict = pet_data.model_dump()
-    pet_dict['user_id'] = user_id
-    return await user_repository.create_pet(db, pet_dict)
+async def create_new_admin(db:AsyncSession, admin_data: AdminCreate):
+    hashed_password = hash_password(admin_data.password)
+
+    admin_dict = admin_data.model_dump()
+    admin_dict.pop("password")
+    admin_dict.pop("confirm_password")
+    admin_dict['password'] = hashed_password
+    admin = await user_repository.get_admin_by_email_and_role(db,admin_dict['email'],admin_dict['role'])
+    if admin:
+        raise user_exceptions.handle_user_already_exists()
+    return await user_repository.create_user(db, admin_dict)
+
+async def login_admin(db:AsyncSession,admin_login_data:dict):
+    admin_dump = admin_login_data.model_dump()
+    admin = await user_repository.get_admin_by_email_and_role(db,admin_dump['email'],admin_dump['role'])
+    if not admin:
+        return user_exceptions.handle_user_not_found(detail_message='Admin not found')
+    if not verify_password(admin_dump['password'], admin.password):
+        return user_exceptions.handle_invalid_email_or_password()
+    return admin
+

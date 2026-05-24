@@ -1,6 +1,6 @@
 from pydantic import BaseModel, model_validator
 
-from app.schemas.user_schema.user_base import UserBase
+from app.schemas.user_schema.user_base import UserBase,UserAsAdmin
 
 
 class UserCreate(UserBase):
@@ -14,3 +14,6 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     email: str
     password: str
+
+class AdminCreate(UserAsAdmin):
+    pass

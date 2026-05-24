@@ -4,17 +4,20 @@ from pydantic import BaseModel
 from typing import Optional
 
 class PetType(str,Enum):
-    dog = 'dog'
-    cat = 'cat'
+    ANJING = 'Anjing'
+    KUCING = 'Kucing'
 
-
+class GenderHewan(str,Enum):
+    JANTAN = 'Jantan'
+    BETINA = 'Betina'
 
 
 
 class PetBase(BaseModel):
-    name: str
-    type: PetType
-    breed: str
-    age: int
-    weight: int
+    id_user : int
+    nama_hewan: str
+    jenis_hewan: PetType
+    gender_hewan: GenderHewan
+    umur: int
+    berat: int
 

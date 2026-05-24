@@ -6,7 +6,7 @@ def handle_jwt_error(e: JWTError):
     raise HTTPException(status_code=401,detail='Invalid token or token expired')
 
 def handle_system_error(e: Exception):
-    print(f'Database error: {e}')
+    print(f'System error: {e}')
     raise HTTPException(status_code=500,detail='Internal server error')
 
 def handle_expire_token(e: ExpiredSignatureError):

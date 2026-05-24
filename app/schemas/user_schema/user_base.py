@@ -1,11 +1,27 @@
 from typing import Optional
+from enum import Enum
+from pydantic import BaseModel,ConfigDict
 
-from pydantic import BaseModel
-
+class AdminRole(str,Enum):
+    Admin = 'Admin'
 
 class UserBase(BaseModel):
-    name: str
-    email: str
-    password: str
-    confirm_password: str
-    phone_number: Optional[str] = None
+    nama : str
+    email : str
+    no_telepon : str
+    password : str
+    foto : Optional[str] = None
+    confirm_password : str
+
+    model_config = ConfigDict(from_attributes=True)
+
+class UserAsAdmin(BaseModel):
+    nama : str
+    email : str
+    no_telepon : str
+    password : str
+    foto : Optional[str] = None
+    confirm_password : str
+    role: AdminRole = AdminRole.Admin.value
+
+    model_config = ConfigDict(from_attributes=True)
