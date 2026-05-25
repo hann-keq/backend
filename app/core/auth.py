@@ -2,10 +2,11 @@ from jose import ExpiredSignatureError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends,HTTPException
 from app.core.security import decode_access_token
-from app.repositories.user_repository import get_user_by_id
+from app.repositories.user_repository import get_user_by_id,get_admin_by_email_and_role
 from app.core.database import get_db
 from app.exceptions import user_exceptions,system_exceptions
 from fastapi.security import HTTPBearer,HTTPAuthorizationCredentials
+
 
 
 
@@ -28,3 +29,5 @@ async def get_current_user(user_id:str = Depends(verify_token),db:AsyncSession =
         return user
     except Exception as e:
         user_exceptions.handle_user_not_found(detail_message='User not found')
+
+
