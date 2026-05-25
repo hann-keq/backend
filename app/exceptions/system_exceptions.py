@@ -12,3 +12,7 @@ def handle_system_error(e: Exception):
 def handle_expire_token(e: ExpiredSignatureError):
     print(f'Token expired: {e}')
     raise HTTPException(status_code=401,detail='Token expired, please login again')
+
+def handle_non_authorized_token(e:Exception):
+    print(f'Unauthorized token: {e}')
+    raise HTTPException(status_code=401,detail='Unauthorized token')

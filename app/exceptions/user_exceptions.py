@@ -11,3 +11,7 @@ def handle_password_mismatch():
 
 def handle_invalid_email_or_password():
     raise HTTPException(status_code=401,detail='Invalid email or password')
+
+def handle_admin_not_found(exception: Exception = None,detail_message = None):
+    print(f'Admin not found: {exception or 'No details'}')
+    raise HTTPException(status_code=404,detail=detail_message or 'Admin not found')

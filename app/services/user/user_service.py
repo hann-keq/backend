@@ -3,6 +3,9 @@ from app.repositories import user_repository
 from app.schemas.user_schema.user_create import UserCreate,AdminCreate
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions import user_exceptions, system_exceptions
+from fastapi import Depends
+from app.core.auth import verify_token
+from app.core.database import get_db
 
 
 async def create_new_user(db: AsyncSession, user_data: UserCreate):
@@ -56,3 +59,12 @@ async def get_user_by_id(db: AsyncSession, user_id: int):
     if not user:
         raise user_exceptions.handle_user_not_found(detail_message=f'User with ID {user_id} not found')
     return user
+
+async def get_current_admin_by_id(admin_id: int, db: AsyncSession = Depends(get_db)):
+    try:
+        admin = await user_repository.get_admin_by_id(db, admin_id.id_user)
+        if not admin:
+            system_exceptions.handle_non_authorized_token(Exception('Admin not found'))
+        return admin
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
