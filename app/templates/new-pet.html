@@ -1,0 +1,178 @@
+<!-- creating order page from figma design using bootstrap 5-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- My CSS-->
+    <link rel="stylesheet" href="css/style.css" />
+    <title>CV Saya</title>
+    <link rel="icon" type="img/png" href="/img/logo.png">
+    <style>
+      h1 {
+        text-align: center;
+        color: black;
+      }
+    </style>
+  </head>
+
+  <body style="background-color: #FFF8F0;">
+    <!-- Navbar -->
+      <header class="top-nav">
+        <div class="logo-area">
+          <i class="fas fa-paw logo-icon"></i>
+          <span class="logo-text">PetCare</span>
+        </div>
+        <nav class="main-nav">
+          <a href="petcaredashboard.html"><i class="bi bi-house"></i> Home</a>
+          <a href="petshop.html"><i class="bi bi-bag-dash"></i> Shop</a>
+          <a href="booking.html"><i class="bi bi-calendar"></i> Booking</a>
+          <a href="Profile.html"><i class="bi bi-person"></i> Profile</a>
+        </nav>
+        <div class="top-right-actions">
+          <i class="bi bi-search"></i>
+          <div class="notification-icon">
+            <i class="bi bi-bell"></i>
+            <span class="notification-dot"></span>
+          </div>
+          <div class="profile-avatar">SJ</div>
+        </div>
+      </header>
+<!-- end of navbar-->
+ <!-- content-->
+
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+    <div class="container">
+            <div class="d-flex align-items-center ms-4">
+        <div class="d-flex ">
+            <a href="petcaredashboard.html"><i class=" btn bi bi-arrow-left fs-2"></i></a>
+        </div>
+        <div class="ms-4">
+            <h3 style="color: #4B2E2B;">Add New Pet</h3>
+            <p style="color: #8C5A3C;font-size: 14px;">Enter your pets information</p>
+            
+      </div>
+    </div>
+    <div class="justify-content-center">
+    <div class="card w-75 mx-auto mt-4 border-10px">
+  <div class="card-body">
+    <h6 class="card-title">Pet photo</h6>
+        <div class="btn icon-circle-big d-flex align-items-center justify-content-center mx-auto flex-column text-dark-brown">
+            
+            <div><i class="bi bi-upload icon-size"></i></div>
+            <span style="font-size: 9px;">Upload photo</span>
+        </div>
+        
+        
+  </div>
+  </div>
+<!-- for additional information-->
+     <div class="card w-75 mx-auto mt-4 border-10px">
+  <div class="card-body">
+    <h6 class="card-title mb-3">Basic information</h6>
+    
+        <form>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Pet name *</label>
+    <input type="email" class="form-control rounded-pill background-light-brown placeholder-font-size " placeholder="e.g. Max" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+  </form>
+  <!-- row for species & breed -->
+  <div class="row">
+    <div class="col-sm-6">
+                <form>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Species *</label>
+    <input type="email" class="form-control rounded-pill background-light-brown" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+  </form>
+    </div>
+    <div class="col-sm-6">
+                <form>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Breed*</label>
+    <input type="email" class="form-control rounded-pill background-light-brown" placeholder="e.g., golden brown" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+  </form>
+    </div>
+  </div>
+ <!-- row for age weight & gender-->
+        <div class="row">
+            <div class="col-sm-4">
+                        <form>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Age</label>
+    <input type="email" class="form-control rounded-pill background-light-brown" placeholder="e.g., 3 years" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+  </form>
+            </div>
+            <div class="col-sm-4">
+                        <form>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">weight</label>
+    <input type="email" class="form-control rounded-pill background-light-brown" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+  </form>
+            </div>
+            <div class="col-sm-4">
+    <div class="mb-3">
+      <label for="Select" class="form-label ">Gender</label>
+      <select id="Select" class="form-select rounded-pill background-light-brown">
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+    </div>
+            </div>
+        </div>
+
+<!-- for color-->
+         <form>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Color</label>
+    <input type="email" class="form-control rounded-pill background-light-brown" placeholder="e.g., violet purple" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+  </form>
+  </div>
+  </div>
+<!-- end of basic information-->
+
+<!-- for additional information-->
+      <div class="card w-75 mx-auto mt-4 border-10px">
+  <div class="card-body">
+    <h6 class="card-title mb-3">additional information</h6>
+                <form>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Microchip ID</label>
+    <input type="email" class="form-control rounded-pill background-light-brown" id="exampleInputEmail1" aria-describedby="emailHelp">
+  </div>
+  </form>
+<div class="mb-3">
+    <label for="comments" class="form-label">Comments</label>
+    <textarea class="form-control border-10px background-light-brown" placeholder="keq" id="comments" rows="3"></textarea>
+</div>
+        
+        
+  </div>
+  </div>
+
+  <div class="row w-75 mx-auto mt-4 mb-5  gap-4 ">
+    <div class="col btn btn-danger rounded-pill"> cancel </div>
+    <div class="col  rounded-pill">  <button type="submit" class="btn text-white w-100 rounded-pill background-green">Add Pet</button></div>
+ 
+  </div>
+</div>
+</div>
+</main>
+ <!--end of content-->     
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>

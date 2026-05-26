@@ -1,0 +1,165 @@
+/* JANGAN pakai @import dashboard.css di sini */
+
+/* FILTER */
+.filter {
+  margin-bottom: 20px;
+}
+
+.filter button {
+  border: none;
+  padding: 8px 16px;
+  margin-right: 10px;
+  border-radius: 20px;
+  background: #eee;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter button:hover {
+  background: #dfeeee;
+}
+
+.filter button.active {
+  background: #6ba7a5;
+  color: white;
+}
+
+/* LIST */
+
+.notification-icon i {
+  color: #7fb7be; /* biru soft */
+  font-size: 1.2rem;
+}
+
+.notification-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* CARD */
+.notif-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  background: white;
+  padding: 15px;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+
+  transition: 0.25s;
+}
+
+.notif-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* ICON */
+.notif-card .icon {
+  background: #f3f6f6;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 18px;
+}
+
+/* CONTENT (INI FIX UTAMA) */
+.notif-card .content {
+  flex: 1;
+}
+
+/* TEXT */
+.notif-card .content h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.notif-card .content p {
+  margin: 5px 0 0;
+  color: #777;
+  font-size: 13px;
+}
+
+/* BADGE (FIX BUG BAR PANJANG) */
+.notif-badge {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+
+  background: #e0f2f1;
+  color: #3a8d8c;
+
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+
+  white-space: nowrap;
+}
+
+/* STATUS */
+.notif-urgent {
+  border-left: 5px solid #6ba7a5;
+  background: #f0f7f6;
+}
+.notif-unread {
+  border-left: 5px solid #ffb74d;
+  background: #fffaf3;
+}
+
+/* ===== ANTI BENTROK DASHBOARD ===== */
+
+.notification-list .notif-card {
+  background: #fff !important;
+  position: relative;
+}
+
+.notification-list .notif-card::before,
+.notification-list .notif-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-bottom: 15px;
+
+  padding: 6px 12px;
+  border-radius: 20px;
+
+  background: #ffffff;
+  border: 1px solid #eee;
+
+  font-size: 13px;
+  font-weight: 500;
+  color: #4a3f35;
+
+  cursor: pointer;
+  transition: 0.25s;
+
+  width: fit-content;
+}
+
+.back-btn:hover {
+  background: #6ba7a5;
+  color: white;
+  transform: translateX(-2px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main-column {
+    padding: 0 10px;
+  }
+}

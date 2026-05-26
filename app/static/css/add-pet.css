@@ -1,0 +1,20 @@
+.icon-circle-big{
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+    background-color: #fef1e3;
+}
+
+.icon-size {
+    font-size: 20px;
+    font-weight:200;
+}
+
+.form-control{
+    padding: 7px 15px;
+}
+
+.form-control::placeholder{
+    font-size: 12px;
+}
+

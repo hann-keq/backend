@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/editprofile.css" />
+
+    <title>Edit Profile</title>
+    <link rel="icon" type="img/png" href="/img/logo.png" />
+  </head>
+  <body>
+    <div class="main-container">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="header-text">Edit Profile</h2>
+        <a href="Profile.html" class="btn btn-cancel">Back</a>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="profile-card">
+        <div class="profile-header">
+          <!-- Profile Image + Upload -->
+          <div class="profile-img-container">
+            <img src="image/sarah.jpg" class="profile-edit-img" alt="Profile" />
+            <div class="upload-btn" title="Change Photo"><i class="bi bi-camera"></i></div>
+            <input type="file" id="profilePhoto" style="display: none" />
+          </div>
+
+          <!-- Profile Info -->
+          <div class="profile-info">
+            <h4>Sarah Johnson</h4>
+            <p>sarah.j@email.com</p>
+            <span class="badge badge-premium">⭐ Premium Member</span>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <form>
+          <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="name" value="Sarah Johnson" />
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" value="sarah.j@email.com" />
+          </div>
+
+          <div class="mb-3">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone" value="+62 812 3456 7890" />
+          </div>
+
+          <!-- Buttons -->
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-cancel" onclick="window.location.href = 'Profile.html'">Cancel</button>
+            <button type="submit" class="btn btn-save">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Upload photo preview
+      document.querySelector(".upload-btn").addEventListener("click", () => {
+        document.getElementById("profilePhoto").click();
+      });
+
+      document.getElementById("profilePhoto").addEventListener("change", function () {
+        if (this.files && this.files[0]) {
+          let reader = new FileReader();
+          reader.onload = function (e) {
+            document.querySelector(".profile-edit-img").src = e.target.result;
+          };
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

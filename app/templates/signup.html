@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/signup.css" />
+
+    <title>Signup</title>
+  </head>
+
+  <body>
+    <section class="signup-section">
+      <div class="container">
+        <div class="row align-items-center vh-100">
+          <!-- LEFT -->
+          <!-- LEFT -->
+          <div class="col-md-6 text-center mb-5 mb-md-0">
+            <!-- LOGO -->
+            <div class="logo-box mb-3">
+              <i class="fa fa-paw"></i>
+            </div>
+
+            <h1 class="fw-bold text-brown">Join PetCare</h1>
+            <p class="text-soft">Where every paw finds the perfect care</p>
+
+            <img src="image/pexels-photo-35624900.jpeg" class="img-fluid main-img shadow-lg my-4" />
+
+            <div class="trusted-box d-inline-flex align-items-center gap-3 mt-3">
+              <div class="trusted-icon">
+                <i class="bi bi-stars"></i>
+              </div>
+              <div class="text-start">
+                <div class="fw-semibold text-info">Trusted by 50,000+</div>
+                <div class="text-soft small">pet parents worldwide</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="col-md-6 d-flex justify-content-center">
+            <div class="form-card p-4">
+              <h3 class="fw-bold text-center text-brown">Create Your Account</h3>
+              <p class="text-center text-soft mb-4">Join thousands of pet parents today</p>
+
+              <form action="login.html">
+                <div class="mb-3 input-group-custom">
+                  <i class="bi bi-person input-icon"></i>
+                  <input type="text" class="form-control custom-input" placeholder="Full Name" />
+                </div>
+
+                <div class="mb-3 input-group-custom">
+                  <i class="bi bi-envelope input-icon"></i>
+                  <input type="email" class="form-control custom-input" placeholder="Email" />
+                </div>
+
+                <div class="mb-3 input-group-custom">
+                  <i class="bi bi-lock input-icon"></i>
+                  <input type="password" id="password" class="form-control custom-input" placeholder="Password" />
+                  <i class="bi bi-eye toggle-password" onclick="togglePassword('password', this)"></i>
+                </div>
+
+                <div class="mb-3 input-group-custom">
+                  <i class="bi bi-lock input-icon"></i>
+                  <input type="password" id="confirm" class="form-control custom-input" placeholder="Confirm Password" />
+                  <i class="bi bi-eye toggle-password" onclick="togglePassword('confirm', this)"></i>
+                </div>
+
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" />
+                  <label class="form-check-label text-soft">
+                    I agree to <span class="text-info">Terms</span> and
+                    <span class="text-info">Privacy Policy</span>
+                  </label>
+                </div>
+
+                <button class="btn btn-custom w-100">Get Started Free</button>
+              </form>
+
+              <div class="divider my-4 text-center">or</div>
+
+              <button class="btn btn-outline-custom w-100 mb-2"><i class="bi bi-google"></i> Sign up with Google</button>
+
+              <button class="btn btn-outline-custom w-100"><i class="bi bi-instagram"></i> Sign up with Instagram</button>
+
+              <p class="text-center mt-3 text-soft">
+                Already have an account?
+                <a href="login.html" class="text-info fw-semibold">Sign in</a>
+              </p>
+              <div class="text-center mt-2">
+                <a href="petcarehome.html" class="back-home"> <i class="bi bi-arrow-left"></i> Back Home </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      function togglePassword(id, el) {
+        const input = document.getElementById(id);
+        if (input.type === "password") {
+          input.type = "text";
+          el.classList.replace("bi-eye", "bi-eye-slash");
+        } else {
+          input.type = "password";
+          el.classList.replace("bi-eye-slash", "bi-eye");
+        }
+      }
+    </script>
+  </body>
+</html>

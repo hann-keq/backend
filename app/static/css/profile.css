@@ -1,0 +1,434 @@
+@import "font.css";
+@import "card.css";
+@import "component.css";
+@import "background.css";
+@import "orders.css";
+@import "add-pet.css";
+@import "payment.css";
+@import "sidebar.css";
+
+body {
+  font-size: 14px;
+}
+.navbar {
+  transition: 0.3s;
+}
+
+.menu-active {
+  background-color: #e6f4f1;
+  border-radius: 10px;
+}
+
+.main-content {
+  margin-top: 100px;
+}
+
+/* ================= PROFILE PAGE ================= */
+
+.profile-wrapper {
+  margin-top: 18px;
+}
+
+.profile-card {
+  background: linear-gradient(135deg, #c98a54, #b97a46);
+  border-radius: 20px;
+  padding: 22px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  margin-bottom: 18px;
+}
+
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.profile-card h3 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.profile-card p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.profile-card .badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.edit-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.edit-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.stat-box {
+  background: white;
+  border: 1px solid #f0e2d6;
+  border-radius: 18px;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(62, 47, 34, 0.04);
+}
+
+.stat-box h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #8c5a3c;
+}
+
+.stat-box:nth-child(2) h2 {
+  color: #7fb7be;
+}
+
+.stat-box p {
+  margin: 0;
+  font-size: 14px;
+  color: #a1795d;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 0 12px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #4b2e2b;
+}
+
+.add-link {
+  color: #7fb7be;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ================= CUSTOM TOP NAV ================= */
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: #ffffff;
+  border-bottom: 1px solid #f0e8e0;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+/* LOGO */
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 1.6rem;
+  color: #c08552;
+}
+
+.logo-text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #3e2f22;
+}
+
+.main-nav {
+  display: flex;
+  gap: 40px;
+}
+
+/* DEFAULT (cokelat) */
+.main-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  color: #8c5a3c;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-bottom: 3px solid transparent;
+  transition: 0.3s;
+  text-decoration: none; /* 🔥 HAPUS GARIS BIRU */
+}
+
+/* HOVER */
+.main-nav a:hover {
+  color: #8c5a3c;
+  transform: translateY(-2px);
+}
+
+/* ACTIVE (biru) */
+.main-nav a.active {
+  color: #7fb7be; /* biru */
+  border-bottom: 3px solid #7fb7be;
+}
+
+/* ICON DEFAULT */
+.main-nav a i {
+  color: #8c5a3c;
+  font-size: 1.1rem;
+  transition: 0.3s;
+}
+
+/* ICON ACTIVE */
+.main-nav a.active i {
+  color: #7fb7be;
+}
+
+/* RIGHT SIDE */
+.top-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.top-right-actions i {
+  font-size: 18px;
+  cursor: pointer;
+  color: #3e2f22;
+}
+
+/* NOTIF */
+.notification-icon {
+  position: relative;
+}
+
+.notification-dot {
+  width: 8px;
+  height: 8px;
+  background: #82b1b4;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  right: -2px;
+}
+
+/* AVATAR */
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  background-image: linear-gradient(135deg, #82b1b4 0%, #ba8558 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 4px 10px rgba(62, 47, 34, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+.pets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.pet-card {
+  background: white;
+  border: 1px solid #f0e2d6;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(62, 47, 34, 0.04);
+}
+
+.pet-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pet-img {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pet-card h4 {
+  margin: 0 0 3px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #4b2e2b;
+}
+
+.pet-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #a1795d;
+}
+
+.pet-card span {
+  font-size: 12px;
+  color: #a1795d;
+}
+
+.pet-card i {
+  color: #c08552;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.account-box {
+  background: white;
+  border: 1px solid #f0e2d6;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(62, 47, 34, 0.04);
+}
+
+.account-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 16px;
+}
+
+.account-row + .account-row {
+  border-top: 1px solid #f2e6db;
+}
+
+.account-row h4 {
+  margin: 0 0 3px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #4b2e2b;
+}
+
+.account-row p {
+  margin: 0;
+  font-size: 13px;
+  color: #a1795d;
+}
+
+.account-row span,
+.account-row i {
+  color: #c08552;
+  font-size: 14px;
+}
+
+.logout-btn {
+  width: 100%;
+  margin-top: 16px;
+  background: transparent;
+  border: 1.5px solid #d4183d;
+  color: #d4183d;
+  border-radius: 14px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(212, 24, 61, 0.05);
+}
+
+/* TRANSITION HALAMAN */
+body {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  will-change: opacity, transform;
+}
+
+/* keluar */
+body.fade-out {
+  opacity: 0;
+  transform: translate3d(-10px, 0, 0);
+}
+
+/* masuk */
+body.fade-in {
+  opacity: 0;
+  transform: translate3d(10px, 0, 0);
+}
+
+/* overlay modal fullscreen lebih gelap */
+.modal-backdrop.show {
+  background-color: #000 !important; /* hitam pekat */
+  opacity: 0.8 !important; /* bisa diubah 0.7-0.9 sesuai selera */
+  width: 100vw !important; /* full viewport width */
+  height: 400vh !important; /* full viewport height */
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 992px) {
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .edit-btn {
+    align-self: flex-start;
+  }
+}

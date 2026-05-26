@@ -1,0 +1,30 @@
+.text-brown{
+    color: #C08552;
+
+}
+
+.text-brown-with-opacity{
+    color: #C08552;
+    opacity: 0.5;
+}
+
+.text-dark-brown{
+    color: #4B2E2B;
+}
+
+.text-red{
+    color :#D4183D
+}
+
+.sidebar-text-color{
+    color: #4B2E2B;
+}
+
+.sidebar-text-color:hover, .sidebar-text-color:focus{
+    color:#7FB7BE;
+}
+
+.text-orange {
+    color:orange;
+}
+

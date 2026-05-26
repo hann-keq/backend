@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status,Request,Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from app.core.database import get_db
@@ -15,55 +15,53 @@ from app.schemas.user_schema.user_response import UserResponse, UserResponseOnly
 from app.schemas.product_schema.schema import ProductCreate,ProductResponse
 from sqlalchemy import select
 from app.services.product import product_service
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse,RedirectResponse
 
 
 from app.services.user.user_service import create_new_user, login_user, login_admin,create_new_admin,get_user_by_id
 from app.services.user import user_service
+templates = Jinja2Templates(directory="app/templates")
 router = APIRouter()
 
 
-@router.get('/test-decode-token')
-async def test_decode_from_input(data :str):
-    try:
-        payload = decode_access_token(data)
-        return payload
-    except Exception as e:
-        system_exceptions.handle_expire_token(e)
+
 
 @router.post("/register/", response_model=UserResponse)
 async def sign_up(new_user : UserCreate, db:AsyncSession = Depends(get_db)):
     return await create_new_user(db, new_user)
 
-@router.post('/login')
-async def login(user_login_data: UserLogin, db: AsyncSession = Depends(get_db)):
-    user = await login_user(db, user_login_data.model_dump())
+
+
+
+
+@router.post('/login', response_class=HTMLResponse)
+async def login(
+    request: Request,
+    email: str = Form(...),
+    password: str = Form(...),
+    db: AsyncSession = Depends(get_db)
+):
+    form_data = {"email": email, "password": password}
+    user = await login_user(db, form_data)
 
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid email or password"})
 
-    access_token = create_access_token(
-        data={"sub": str(user.id_user)
-              })
-    print(access_token)
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        
-    }
+    # 1. BUAT ACCESS TOKEN KAMU SEPERTI BIASA
+    access_token = create_access_token(data={"sub": str(user.id_user)})
+
+    # 2. BIKIN RESPONS REDIRECT
+    response = RedirectResponse(url="/petcaredashboard.html", status_code=status.HTTP_303_SEE_OTHER)
+    
+    # 3. TITIPKAN TOKEN KE COOKIE BROWSER (Mirip $_SESSION di PHP)
+    # httponly=True bikin token aman dari serangan XSS Javascript jahat
+    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
+    
+    return response
 
 
-@router.get("/users/get-users", response_model=UserResponseOnlyId)
-async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
-    try:
-        user = await get_user_by_id(db, user_id)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User with ID {user_id} not found"
-    )
-        return user
-    except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
 
 @router.post('/users/pets/add', response_model=PetResponse)
 async def add_user_new_pet(pet_data: PetCreate, db:AsyncSession = Depends(get_db), user_id: int = Depends(get_current_user)):

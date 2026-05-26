@@ -1,0 +1,32 @@
+@import "font.css";
+@import "card.css";
+@import "component.css";
+@import "background.css";
+@import "orders.css";
+@import "add-pet.css";
+@import "payment.css";
+@import "sidebar.css";
+@import"favorites.css";
+@import "booking.css";
+body{
+    font-size: 14px;
+}
+.navbar {
+  transition: 0.3s;
+}
+
+
+.menu-active{
+     background-color: #E6F4F1;
+      border-radius: 10px;
+}
+
+.main-content{
+    margin-top: 100px;
+
+}
+
+
+
+
+

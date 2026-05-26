@@ -1,0 +1,12 @@
+.item-transition {
+  transition: all 0.2s ease;
+
+}
+
+.item-transition:hover {
+    transform: translateX(5px);
+}
+
+.item-focused{
+    margin-left: 5px;
+}

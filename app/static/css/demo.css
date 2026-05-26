@@ -1,0 +1,163 @@
+/* ===================== Scoped CSS untuk PetCare ===================== */
+.petcare-page {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  padding-top: 70px;
+  background: linear-gradient(135deg, #f3e9dc, #e6f0ea);
+}
+
+/* ================= HERO SECTION ================= */
+.petcare-page section {
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+/* HERO BACKGROUND BIAR SOFT */
+.petcare-page .hero-demo {
+  background: transparent;
+  padding-top: 120px; /* biar ga ketutup navbar */
+}
+
+/* HERO WRAPPER & IMAGE */
+.petcare-page .hero-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.petcare-page .hero-img {
+  max-width: 100% !important;
+  position: relative;
+}
+
+.petcare-page .hero-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* FIX biar tombol play bener-bener tengah */
+.petcare-page .hero-img .position-absolute {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ================= FEATURE CARD ================= */
+.petcare-page .feature-card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+}
+
+.petcare-page .feature-card:hover {
+  transform: translateY(-5px);
+}
+
+/* ICON BOX */
+.petcare-page .icon-box {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  background: #f3e5dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+/* ================= WHY BOX ================= */
+.petcare-page .why-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 40px;
+  max-width: 1216px;
+  margin: 0 auto;
+}
+
+.petcare-page .why-box .row {
+  width: 100%;
+  justify-content: center;
+}
+
+.petcare-page .why-item {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  border: 1px solid #eee;
+  transition: all 0.25s ease;
+}
+
+.petcare-page .why-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+/* ICON BULAT */
+.petcare-page .icon-circle {
+  width: 40px;
+  height: 40px;
+  background: #eaf4f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.petcare-page .icon-circle i {
+  color: #7fb7be;
+  font-size: 18px;
+}
+
+/* TEXT */
+.petcare-page .why-item p {
+  color: #4b2e2b;
+  font-size: 15px;
+  line-height: 22px;
+  margin: 0;
+}
+
+/* ================= CTA ================= */
+.petcare-page .cta {
+  margin-top: 30px;
+  padding: 40px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #79c2b4, #c58a5a);
+  color: white;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ================= TESTIMONIAL ================= */
+.petcare-page .testi-card {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* ================= TEXT FIX ================= */
+.petcare-page h2 {
+  font-size: 28px;
+}
+
+.petcare-page p {
+  font-size: 14px;
+}
+
+/* ================= FEATURES WRAPPER ================= */
+.petcare-page .features-wrapper {
+  background: transparent !important;
+}

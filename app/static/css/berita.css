@@ -1,0 +1,313 @@
+/* ================= NAVBAR SYNC (AMBIL STYLE DARI PETHOME) ================= */
+.navbar-custom {
+  background: #ffffff;
+}
+
+.navbar .nav-link {
+  color: #8c5a3c;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.navbar .nav-link:hover {
+  color: #7fb7be;
+}
+
+.overlay h2 {
+  color: #ffffff;
+}
+
+/* LOGO */
+.logo-icon {
+  color: #c08552;
+}
+
+/* BIAR GAK KETUTUP NAVBAR */
+body {
+  padding-top: 80px;
+}
+
+/* ================= FEATURED ================= */
+.featured-news {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+
+.featured-news img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  transition: 0.4s ease;
+}
+
+.featured-news:hover img {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  color: white;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+}
+
+/* BUTTON */
+.read-btn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  background: #7fb7be;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.read-btn:hover {
+  background: #6aa5ac;
+  transform: scale(1.05);
+}
+
+/* ================= FILTER ================= */
+.news-filter {
+  margin-bottom: 20px;
+}
+
+.news-filter button {
+  border: none;
+  padding: 7px 15px;
+  margin-right: 8px;
+  border-radius: 20px;
+  background: #eee;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.news-filter button:hover {
+  background: #dfeeee;
+}
+
+.news-filter .active {
+  background: #7fb7be;
+  color: white;
+}
+
+/* ================= GRID ================= */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* ================= CARD ================= */
+.news-card {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #f0e8e0;
+  box-shadow: 0 8px 25px rgba(62, 47, 34, 0.05);
+  transition: all 0.3s ease;
+}
+
+.news-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(62, 47, 34, 0.1);
+}
+
+/* IMAGE */
+.news-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* CONTENT */
+.news-card .content {
+  padding: 14px;
+}
+
+/* SPECIAL CARD */
+.news-card.highlight {
+  background: linear-gradient(135deg, #7fb7be, #ba8558);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ================= TAG (UPDATED THEME) ================= */
+.tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* HEALTH */
+.tag.health {
+  background: #7fb7be;
+  color: #fff;
+}
+
+/* TIPS */
+.tag.tips {
+  background: #6aa5ac;
+  color: #fff;
+}
+
+/* UPDATE */
+.tag.update {
+  background: #9fd0d6;
+  color: #4a3b36;
+}
+
+/* ================= TEXT ================= */
+.news-card h3 {
+  margin: 6px 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.news-card p {
+  font-size: 13px;
+  color: #777;
+}
+
+.time {
+  font-size: 11px;
+  color: #aaa;
+}
+
+/* ================= TRENDING ================= */
+.trending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.trend-card {
+  background: white;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid #f0e8e0;
+  box-shadow: 0 8px 25px rgba(62, 47, 34, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.trend-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(62, 47, 34, 0.1);
+}
+
+/* HOT */
+.trend-card.hot {
+  background: linear-gradient(135deg, #7fb7be, #a3ccca);
+  color: white;
+}
+
+.trend-card.hot p,
+.trend-card.hot .trend-meta {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* TITLE */
+.trend-card h4 {
+  font-size: 15px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+/* DESC */
+.trend-card p {
+  font-size: 13px;
+  color: #7b6f63;
+  margin-bottom: 8px;
+}
+
+/* META */
+.trend-meta {
+  font-size: 12px;
+  color: #9a9187;
+}
+
+/* TAG */
+.trend-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ff7043;
+  color: white;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.trend-tag.new {
+  background: #7fb7be;
+}
+
+/* ================= BACK BUTTON ================= */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  border-radius: 30px;
+  background: #ffffff;
+  border: 1px solid #eee;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a3f35;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.back-btn:hover {
+  transform: translateX(-3px);
+  background: #7fb7be;
+  color: white;
+  border-color: #7fb7be;
+}
+
+/* ================= LAYOUT MAIN ================= */
+.main-content {
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+  max-width: 1300px;
+  margin: auto;
+}
+
+/* KONTEN KIRI */
+.main-column {
+  flex: 2;
+}
+
+/* SIDEBAR KANAN */
+.sidebar-column {
+  flex: 1;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .news-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-column {
+    margin-top: 20px;
+  }
+}
