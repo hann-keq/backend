@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PetCare</title>
+
+    {% block prefetch %} {% endblock %}
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    {% block style %} {% endblock %}
+  </head>
+  <body style="background-color: #fff8f0">
+    <header class="top-nav">
+      <div class="logo-area">
+        <i class="fas fa-paw logo-icon"></i>
+        <span class="logo-text">PetCare</span>
+      </div>
+      <nav class="main-nav">
+        <a
+          href="{{ url_for('petcaredashboard') }}"
+          class="{% if request.url.path == '/petcaredashboard.html' %}active{% endif %}"
+          ><i class="bi bi-house"></i><span>Home</span></a
+        >
+        <a
+          href="{{ url_for('petshop') }}"
+          class="{% if request.url.path == '/petshop.html' %} active {% endif %}"
+          ><i class="bi bi-bag-dash"></i><span>Shop</span></a
+        >
+        <a
+          href="{{ url_for('booking') }}"
+          class="{% if request.url.path == '/booking.html' %}active{% endif %}"
+          ><i class="bi bi-calendar"></i><span>Booking</span></a
+        >
+        <a
+          href="{{ url_for('profile') }}"
+          class="{% if request.url.path == '/profile.html' %}active{% endif %}"
+          ><i class="bi bi-person"></i><span>Profile</span></a
+        >
+      </nav>
+      <div class="top-right-actions">
+        <i class="bi bi-search"></i>
+        <a href="{{ url_for('notification') }}" class="notification-icon">
+          <i class="bi bi-bell"></i><span class="notification-dot"></span>
+        </a>
+        <div class="profile-avatar">SJ</div>
+      </div>
+    </header>
+
+    {% block content %} {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

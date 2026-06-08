@@ -1,0 +1,49 @@
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #C08552;
+}
+
+
+
+
+
+
+.squircle{
+    width:64px;
+       height:64px;
+       border-radius:16px;
+}
+
+.icon-box {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(127, 183, 190, 0.2); /* warna soft */
+  color: #7FB7BE;
+
+  border-radius: 12px; /* squircle feel */
+}
+
+.icon-box-red{
+width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(212, 24, 61, 0.1); /* warna soft */
+  color: #D4183D;
+
+  border-radius: 12px; /* squircle feel */
+}
+.material-icons{
+    color: white;
+    font-size: 25px;
+}

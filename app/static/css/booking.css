@@ -1,0 +1,695 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #fffbf7;
+  color: #3e2f22;
+  -webkit-font-smoothing: antialiased;
+  font-size: 16px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* --- DASHBOARD CONTAINER --- */
+.dashboard-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* --- TOP NAV BAR --- */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  /* FULL WIDTH TRICK */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+
+  padding: 15px 40px;
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0e8e0;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  color: #ba8558;
+  font-size: 1.6rem;
+}
+
+.logo-text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #3e2f22;
+}
+
+.main-nav {
+  display: flex;
+  gap: 40px;
+}
+
+/* DEFAULT (cokelat) */
+.main-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  color: #8c5a3c; /* cokelat */
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-bottom: 3px solid transparent;
+  transition: 0.3s;
+}
+
+/* HOVER */
+.main-nav a:hover {
+  color: #8c5a3c;
+  transform: translateY(-2px);
+}
+
+/* ACTIVE (biru) */
+.main-nav a.active {
+  color: #7fb7be; /* biru */
+  border-bottom: 3px solid #7fb7be;
+}
+
+/* ICON DEFAULT */
+.main-nav a i {
+  color: #8c5a3c;
+  font-size: 1.1rem;
+  transition: 0.3s;
+}
+
+/* ICON ACTIVE */
+.main-nav a.active i {
+  color: #7fb7be;
+}
+
+.top-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.action-icon {
+  font-size: 1.25rem;
+  color: #7b6f63;
+  cursor: pointer;
+}
+
+.notification-icon {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 9px;
+  height: 9px;
+  background-color: #82b1b4;
+  border-radius: 50%;
+  border: 2px solid #fffbf7;
+}
+
+.profile-avatar {
+  width: 42px;
+  height: 42px;
+  background-image: linear-gradient(135deg, #82b1b4 0%, #ba8558 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 4px 10px rgba(62, 47, 34, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+}
+
+/* --- MAIN CONTENT AREA (Hapus Grid 2 Kolom) --- */
+.main-content.full-width-layout {
+  display: block;
+  padding: 40px 0;
+}
+
+/* --- LEFT COLUMN STYLE --- */
+.booking-header {
+  margin-bottom: 45px;
+}
+
+.booking-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #3e2f22;
+}
+
+.booking-header p {
+  color: #ba8558;
+  font-weight: 500;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+.section-container {
+  margin-bottom: 45px;
+}
+
+.sub-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #3e2f22;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.view-all {
+  color: #82b1b4;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* --- SERVICE CARDS (Grooming & Vet) --- */
+.service-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.service-card {
+  background: white;
+  padding: 35px;
+  border-radius: 20px;
+  border: 1.5px solid #f0e8e0;
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(62, 47, 34, 0.05);
+}
+
+.service-icon-box {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+}
+
+.grooming-bg {
+  background-color: #8b5e3c;
+  color: white;
+}
+.vet-bg {
+  background: linear-gradient(135deg, #82b1b4 0%, #ba8558 100%);
+  color: white;
+}
+
+.service-card h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #3e2f22;
+}
+
+.service-card p {
+  color: #9a9187;
+  font-size: 0.9rem;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+/* Button Book Now */
+.btn-book-now {
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  background-color: #82b1b4;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-book-now:hover {
+  background-color: #6da1a4;
+}
+
+/* --- APPOINTMENT CARDS (Upcoming) --- */
+.appointments-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.appt-card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  border: 1.5px solid #f0e8e0;
+}
+
+.appt-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.appt-top h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #3e2f22;
+}
+.pet-owner-sub {
+  font-size: 0.85rem;
+  color: #ba8558;
+  margin-top: 3px;
+}
+
+/* Badges */
+.badge {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.confirmed-badge {
+  background-color: #8b5e3c;
+  color: white;
+}
+.upcoming-badge {
+  background-color: #82b1b4;
+  color: white;
+}
+
+/* Details Text */
+.appt-details {
+  margin-bottom: 28px;
+}
+.appt-details p {
+  font-size: 0.9rem;
+  color: #7b6f63;
+  margin-bottom: 11px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.appt-details i {
+  color: #ba8558;
+  width: 15px;
+  text-align: center;
+}
+
+/* Action Buttons (Details & Cancel) */
+.appt-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.btn-action-details {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background-color: #f7f3ef;
+  color: #ba8558;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-action-cancel {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background-color: #fcebeb;
+  color: #d85c5c;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Hover Action Buttons */
+.btn-action-details:hover {
+  background-color: #f0e8e0;
+}
+.btn-action-cancel:hover {
+  background-color: #f9dede;
+}
+
+/* --- MODAL SYSTEM (POPUP) --- */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(62, 47, 34, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fffbf7;
+  width: 90%;
+  max-width: 500px;
+  padding: 40px;
+  border-radius: 30px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(62, 47, 34, 0.15);
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #9a9187;
+  cursor: pointer;
+}
+
+.modal-step {
+  display: none;
+}
+
+.modal-step.active {
+  display: block;
+}
+
+.step-indicator {
+  color: #ba8558;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin: 10px 0;
+}
+
+/* Kartu Pilihan di dalam Modal */
+.selection-card {
+  background: white;
+  border: 2px solid #f0e8e0;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.selection-card:hover {
+  border-color: #ba8558;
+}
+
+.selection-card.selected {
+  border-color: #82b1b4;
+  background: #f0f7f7;
+}
+
+/* Footer & Navigasi Modal */
+.modal-footer {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-back {
+  flex: 1;
+  padding: 15px;
+  border-radius: 30px;
+  border: 1px solid #ba8558;
+  color: #ba8558;
+  background: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-continue {
+  flex: 2;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  background: #82b1b4;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Grid Waktu & Input */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.time-btn {
+  padding: 10px;
+  border: 1px solid #f0e8e0;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+}
+
+.date-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #f0e8e0;
+  margin-top: 10px;
+  font-family: inherit;
+}
+/* Penata letak isi kartu (Gambar di kiri, teks di kanan) */
+.card-content-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+/* Ukuran seragam untuk semua thumbnail gambar (Pet & Provider) */
+.card-img-thumb {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #eee;
+}
+
+/* Lingkaran Ikon untuk Paket */
+.package-icon-circle {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.standard-grad {
+  background: linear-gradient(135deg, #82b1b4 0%, #ba8558 100%);
+}
+
+.badge-pop {
+  background-color: #82b1b4;
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.card-info strong {
+  font-size: 1rem;
+  color: #3e2f22;
+}
+
+.card-info small {
+  color: #9a9187;
+}
+
+/* State terpilih */
+.selection-card.selected {
+  border: 2px solid #82b1b4;
+  background-color: #f0f7f7;
+}
+
+/* Sesuaikan dengan class di HTML: <span class="tag confirmed"> */
+.tag {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.tag.confirmed {
+  background-color: #8b5e3c;
+  color: white;
+}
+
+.tag.upcoming {
+  background-color: #82b1b4;
+  color: white;
+}
+.appointment-card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  border: 1.5px solid #f0e8e0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pet-info strong {
+  display: block;
+  font-size: 1.1rem;
+  color: #3e2f22;
+}
+
+.pet-info span {
+  font-size: 0.85rem;
+  color: #ba8558;
+}
+
+.card-body p {
+  font-size: 0.9rem;
+  color: #7b6f63;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-body i {
+  color: #ba8558; /* Warna ikon cokelat sesuai desain */
+  width: 16px;
+  text-align: center;
+}
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-details {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background-color: #f7f3ef;
+  color: #ba8558;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-cancel {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background-color: #fcebeb;
+  color: #d85c5c;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-details:hover {
+  background-color: #ede7e1;
+}
+.btn-cancel:hover {
+  background-color: #f9dede;
+}
+
+/* TRANSITION HALAMAN */
+body {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  will-change: opacity, transform;
+}
+
+/* keluar */
+body.fade-out {
+  opacity: 0;
+  transform: translate3d(-10px, 0, 0);
+}
+
+/* masuk */
+body.fade-in {
+  opacity: 0;
+  transform: translate3d(10px, 0, 0);
+}

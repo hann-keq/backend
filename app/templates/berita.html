@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News - PetCare</title>
+
+    <!-- ICON -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/petcarehome.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/berita.css" />
+  </head>
+
+  <body>
+    <div class="dashboard-container">
+      <!-- NAVBAR -->
+      <!-- NAVBAR -->
+      <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+          <a class="navbar-brand d-flex align-items-center" href="#">
+            <div class="fas fa-paw logo-icon me-2"></div>
+            <span class="fw-semibold">PetCare</span>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+              <!-- Pengaturan Tombol -->
+              <li class="nav-item"><a class="nav-link" href="login.html">Sign In</a></li>
+              <li class="nav-item ms-3">
+                <a class="btn btn-get-started" href="signup.html">Get Started</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- Akhir Navbar -->
+
+      <!-- MAIN -->
+      <main class="main-content">
+        <div class="main-column">
+          <div class="back-btn" onclick="goBack()">
+            <i class="bi bi-arrow-left"></i>
+            <span>Back</span>
+          </div>
+          <h2>PetCare News 🐾</h2>
+
+          <!-- FEATURED -->
+          <div class="featured-news">
+            <img src="image/dog.jpg" alt="Dog Health" />
+            <div class="overlay">
+              <span class="tag health">Health</span>
+              <h2>Keep Your Dog Healthy Every Day</h2>
+              <p>Simple habits that improve your pet’s life.</p>
+              <button type="button" class="read-btn">Read More</button>
+            </div>
+          </div>
+
+          <!-- FILTER -->
+          <div class="news-filter">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="health">Health</button>
+            <button class="filter-btn" data-filter="tips">Tips</button>
+            <button class="filter-btn" data-filter="update">Update</button>
+          </div>
+
+          <!-- GRID -->
+          <div class="news-grid">
+            <div class="news-card" data-category="tips">
+              <img src="image/cat.jpg" alt="Cat Grooming" />
+              <div class="content">
+                <span class="tag tips">Tips</span>
+                <h3>Cat Grooming Basics</h3>
+                <p>Keep your cat clean and stress-free.</p>
+                <span class="time">5 hours ago</span>
+              </div>
+            </div>
+
+            <div class="news-card" data-category="health">
+              <img src="image/dog.jpg" alt="App Update" />
+              <div class="content">
+                <span class="tag update">Update</span>
+                <h3>New App Features</h3>
+                <p>Smart reminders now live.</p>
+                <span class="time">Yesterday</span>
+              </div>
+            </div>
+
+            <div class="news-card highlight" data-category="all">
+              <div class="content">
+                <h3>🐾 Daily Pet Tip</h3>
+                <p>Give your pet fresh water every day to keep them healthy!</p>
+              </div>
+            </div>
+
+            <div class="news-card">
+              <img src="image/cat.jpg" alt="Vaccination" />
+              <div class="content">
+                <span class="tag health">Health</span>
+                <h3>Vaccination Guide</h3>
+                <p>Important schedule for pets.</p>
+                <span class="time">2 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar-column">
+          <section class="sidebar-section">
+            <h2>🔥 Trending Now</h2>
+
+            <div class="trending-list">
+              <div class="trend-card hot">
+                <span class="trend-tag">HOT</span>
+                <h4>5 Tips Grooming Biar Bulu Anabul Lebih Sehat</h4>
+                <p>Perawatan bulu yang benar bikin hewan lebih nyaman & sehat.</p>
+                <span class="trend-meta">👁 2.1k views • 3 min read</span>
+              </div>
+
+              <div class="trend-card">
+                <span class="trend-tag new">NEW</span>
+                <h4>Makanan Terbaik untuk Kucing Indoor</h4>
+                <p>Pilih nutrisi yang tepat untuk kucing yang jarang keluar rumah.</p>
+                <span class="trend-meta">👁 1.3k views • 4 min read</span>
+              </div>
+
+              <div class="trend-card">
+                <h4>Cara Mengatasi Anjing Stres Saat Ditinggal</h4>
+                <p>Tips sederhana agar anjing tetap tenang saat kamu pergi.</p>
+                <span class="trend-meta">👁 980 views • 2 min read</span>
+              </div>
+
+              <div class="trend-card">
+                <h4>Checklist Vaksinasi Hewan Peliharaan</h4>
+                <p>Jangan sampai telat! Ini jadwal penting yang harus kamu tahu.</p>
+                <span class="trend-meta">👁 870 views • 5 min read</span>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <!-- SCRIPT BACK -->
+    <script>
+      // BACK BUTTON
+      function goBack() {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = "petcaredashboard.html";
+        }
+      }
+
+      // FILTER NEWS
+      const filterButtons = document.querySelectorAll(".filter-btn");
+      const cards = document.querySelectorAll(".news-card");
+
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          // ubah tombol active
+          filterButtons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+
+          const filter = button.getAttribute("data-filter");
+
+          cards.forEach((card) => {
+            const category = card.getAttribute("data-category");
+
+            if (filter === "all" || category === filter) {
+              card.style.display = "block";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, model_validator
-
+from fastapi import Form
+from app.schemas.user_schema.user_base import AdminRole
 from app.schemas.user_schema.user_base import UserBase,UserAsAdmin
 
 
@@ -14,6 +15,16 @@ class UserCreate(UserBase):
 class UserLogin(BaseModel):
     email: str
     password: str
+
+class AdminLogin(BaseModel):
+    email: str
+    password: str
+    role : str = AdminRole.Admin.value
+
+    @classmethod
+    def as_form(cls, email: str = Form(...), password: str = Form(...), role: str = Form(AdminRole.Admin.value)):
+        return cls(email=email, password=password, role=role)
+
 
 class AdminCreate(UserAsAdmin):
     pass

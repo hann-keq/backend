@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% block prefetch %}{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+{% endblock %}
+{% block content %}
+  
+  <div class="dashboard-container">
+      <main class="main-content full-width-layout">
+        <header class="booking-header">
+          <h1>Booking</h1>
+          <p>Book services or manage your appointments</p>
+        </header>
+
+        <section class="section-container">
+          <h2 class="sub-title">New Appointment</h2>
+          <div class="service-grid">
+            <div class="service-card">
+              <div class="service-icon-box grooming-bg">
+                <i class="fas fa-cut"></i>
+              </div>
+              <h3>Grooming</h3>
+              <p>Professional pet grooming services</p>
+              <button class="btn-book-now" onclick="openModal('Grooming')">
+                Book Now
+              </button>
+            </div>
+            <div class="service-card">
+              <div class="service-icon-box vet-bg">
+                <i class="fas fa-stethoscope"></i>
+              </div>
+              <h3>Veterinary</h3>
+              <p>Health checkups and consultations</p>
+              <button class="btn-book-now" onclick="openModal('Veterinary')">
+                Book Now
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-container">
+          <div class="section-header">
+            <h2 class="sub-title">Upcoming Appointments</h2>
+            <a href="#" class="view-all"
+              >View All <i class="fas fa-chevron-right"></i
+            ></a>
+          </div>
+          <div class="appointments-grid">
+            <div class="appointment-card">
+              <div class="card-header">
+                <div class="pet-info">
+                  <strong>Grooming</strong>
+                  <span>for Max</span>
+                </div>
+                <span class="tag confirmed">confirmed</span>
+              </div>
+              <div class="card-body">
+                <p><i class="far fa-calendar"></i> Mar 20, 2026</p>
+                <p><i class="far fa-clock"></i> 10:00 AM</p>
+                <p>
+                  <i class="fas fa-map-marker-alt"></i> 123 Pet Street, Downtown
+                </p>
+                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+              </div>
+              <div class="card-actions">
+                <button class="btn-details">Details</button>
+                <button class="btn-cancel">Cancel</button>
+              </div>
+            </div>
+
+            <div class="appointment-card">
+              <div class="card-header">
+                <div class="pet-info">
+                  <strong>Vet Checkup</strong>
+                  <span>for Luna</span>
+                </div>
+                <span class="tag upcoming">upcoming</span>
+              </div>
+              <div class="card-body">
+                <p><i class="far fa-calendar"></i> Tomorrow</p>
+                <p><i class="far fa-clock"></i> 02:00 PM</p>
+                <p>
+                  <i class="fas fa-map-marker-alt"></i> 789 Care Lane, Central
+                </p>
+                <p><i class="fas fa-phone"></i> +1 (555) 345-6789</p>
+              </div>
+              <div class="card-actions">
+                <button class="btn-details">Details</button>
+                <button class="btn-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="bookingModal" class="modal-overlay">
+      <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+
+        <div class="modal-step" id="step1">
+          <h2 class="modal-title">Grooming Booking</h2>
+          <p class="step-indicator">Step 1 of 4</p>
+          <h3 class="step-subtitle">Select Your Pet</h3>
+          <div class="selection-list">
+            <div class="selection-card" onclick="selectOption(this)">
+              <div class="card-content-wrapper">
+                <img src="image/dog.jpg" alt="Max" class="card-img-thumb" />
+                <div class="card-info">
+                  <strong>Max</strong>
+                  <small>Dog</small>
+                </div>
+              </div>
+            </div>
+            <div class="selection-card" onclick="selectOption(this)">
+              <div class="card-content-wrapper">
+                <img src="image/cat.jpg" alt="Luna" class="card-img-thumb" />
+                <div class="card-info">
+                  <strong>Luna</strong>
+                  <small>Cat</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-continue" onclick="nextStep(2)">Continue</button>
+          </div>
+        </div>
+
+        <div class="modal-step active" id="step2">
+          <h2 class="modal-title">Grooming Booking</h2>
+          <p class="step-indicator">Step 2 of 4</p>
+          <h3 class="step-subtitle">Choose Package</h3>
+          <div class="package-list">
+            <div class="selection-card" onclick="selectOption(this)">
+              <div class="card-content-wrapper align-start">
+                <div class="package-icon-circle grooming-bg">
+                  <i class="fas fa-scissors"></i>
+                </div>
+                <div class="card-info">
+                  <span class="package-name">Basic</span>
+                  <span class="package-price">$40</span>
+                  <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> Bath & Dry</li>
+                    <li><i class="fas fa-check"></i> Brush & Comb</li>
+                    <li><i class="fas fa-check"></i> Nail Trim</li>
+                    <li><i class="fas fa-check"></i> Ear Cleaning</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="selection-card" onclick="selectOption(this)">
+              <span class="badge-pop">Popular</span>
+              <div class="card-content-wrapper align-start">
+                <div
+                  class="package-icon-circle standard-grad"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #82b1b4 0%,
+                      #ba8558 100%
+                    );
+                    color: white;
+                  "
+                >
+                  <i class="fas fa-star"></i>
+                </div>
+                <div class="card-info">
+                  <span class="package-name">Standard</span>
+                  <span class="package-price">$65</span>
+                  <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> Everything in Basic</li>
+                    <li><i class="fas fa-check"></i> Hair Cut & Styling</li>
+                    <li><i class="fas fa-check"></i> Teeth Brushing</li>
+                    <li><i class="fas fa-check"></i> Paw Pad Treatment</li>
+                    <li><i class="fas fa-check"></i> Cologne Spray</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="selection-card" onclick="selectOption(this)">
+              <div class="card-content-wrapper align-start">
+                <div
+                  class="package-icon-circle premium-grad"
+                  style="background: #3e2f22; color: #ffd700"
+                >
+                  <i class="fas fa-crown"></i>
+                </div>
+                <div class="card-info">
+                  <span class="package-name">Premium</span>
+                  <span class="package-price">$120</span>
+                  <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> Everything in Standard</li>
+                    <li>
+                      <i class="fas fa-check"></i> Premium Shampoo & Conditioner
+                    </li>
+                    <li><i class="fas fa-check"></i> Luxury Spa Treatment</li>
+                    <li>
+                      <i class="fas fa-check"></i> Professional Photo Session
+                    </li>
+                    <li><i class="fas fa-check"></i> Pet Hotel for 3 Days</li>
+                    <li><i class="fas fa-check"></i> Home Pickup & Delivery</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-back" onclick="nextStep(1)">Back</button>
+            <button class="btn-continue" onclick="nextStep(3)">Continue</button>
+          </div>
+        </div>
+
+        <div class="modal-step" id="step3">
+          <h2>Grooming Booking</h2>
+          <p class="step-indicator">Step 3 of 4</p>
+          <h3>Choose Provider</h3>
+          <div class="provider-list">
+            <div class="selection-card" onclick="selectOption(this)">
+              <div class="card-content-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=100"
+                  alt="Spa"
+                  class="card-img-thumb"
+                />
+                <div class="card-info">
+                  <strong>Paws & Claws Spa</strong><br />
+                  <small
+                    ><i class="fas fa-star" style="color: #ffb800"></i> 4.9
+                    (234) • 1.2 km</small
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="selection-card" onclick="selectOption(this)">
+              <div class="card-content-wrapper">
+                <img
+                  src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=100"
+                  alt="Grooming"
+                  class="card-img-thumb"
+                />
+                <div class="card-info">
+                  <strong>Happy Tails Grooming</strong><br />
+                  <small
+                    ><i class="fas fa-star" style="color: #ffb800"></i> 4.7
+                    (189) • 2.5 km</small
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-back" onclick="nextStep(2)">Back</button>
+            <button class="btn-continue" onclick="nextStep(4)">Continue</button>
+          </div>
+        </div>
+
+        <div class="modal-step" id="step4">
+          <h2 class="modal-title">Grooming Booking</h2>
+          <p class="step-indicator">Step 4 of 4</p>
+          <h3 class="step-subtitle">Select Date & Time</h3>
+          <div class="input-group">
+            <label><i class="far fa-calendar-alt"></i> Select Date</label>
+            <input type="date" class="date-input" />
+          </div>
+          <div class="input-group" style="margin-top: 20px">
+            <label><i class="far fa-clock"></i> Select Time</label>
+            <div class="time-grid">
+              <button class="time-btn" onclick="selectOption(this)">
+                09:00 AM
+              </button>
+              <button class="time-btn" onclick="selectOption(this)">
+                11:00 AM
+              </button>
+              <button class="time-btn" onclick="selectOption(this)">
+                02:00 PM
+              </button>
+              <button class="time-btn" onclick="selectOption(this)">
+                04:00 PM
+              </button>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-back" onclick="nextStep(3)">Back</button>
+            <button class="btn-continue" onclick="finishBooking()">
+              Confirm Booking
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', path='js/booking.js') }}"></script>
+  </body>
+</html>
+{% endblock %}

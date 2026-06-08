@@ -1,0 +1,12 @@
+.filter-menu-active {
+
+    background-color: #7FB7BE;
+    border-radius: 10px;
+}
+
+.filter-item {
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: #4B2E2B;
+  cursor: pointer;
+}

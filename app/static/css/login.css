@@ -1,0 +1,234 @@
+/* BODY */
+body {
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #fff8f0, #fff8f0, rgba(127, 183, 190, 0.1));
+  overflow: hidden; /* biar tidak scroll */
+}
+
+/* SECTION */
+.signup-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+/* TEXT */
+.text-brown {
+  color: #4b2e2b;
+}
+
+.text-soft {
+  color: #8c5a3c;
+}
+
+/* IMAGE */
+.main-img {
+  width: 100%;
+  max-width: 380px;
+  height: 420px; /* lebih proporsional */
+  object-fit: cover;
+  border-radius: 24px;
+}
+
+/* CARD */
+.form-card {
+  border-radius: 24px;
+  border: 1px solid rgba(140, 90, 60, 0.15);
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  margin-top: -20px;
+}
+
+.back-home {
+  font-size: 14px;
+  color: #8c5a3c;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.3s;
+  opacity: 0.8;
+}
+
+.back-home i {
+  font-size: 13px;
+  opacity: 1;
+}
+
+.back-home:hover {
+  color: #7fb7be;
+  transform: translateX(-3px);
+}
+
+/* INPUT WRAPPER */
+.input-group-custom {
+  position: relative;
+}
+
+/* ICON LEFT */
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8c5a3c;
+  font-size: 16px;
+}
+
+/* ICON RIGHT */
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #8c5a3c;
+}
+
+/* INPUT */
+.custom-input {
+  background-color: #fff8f0;
+  border-radius: 18px;
+  border: 1px solid rgba(140, 90, 60, 0.15);
+  padding-left: 45px;
+  padding-right: 45px;
+  height: 50px;
+}
+
+.custom-input:focus {
+  border-color: #7fb7be;
+  box-shadow: 0 0 0 0.2rem rgba(127, 183, 190, 0.2);
+}
+
+/* BUTTON PRIMARY */
+.btn-custom {
+  background: linear-gradient(90deg, #7fb7be, #c08552);
+  color: white;
+  border-radius: 18px;
+  font-weight: 600;
+  height: 50px;
+  border: none;
+}
+
+.btn-custom:hover {
+  opacity: 0.9;
+}
+
+/* BUTTON OUTLINE */
+.btn-outline-custom {
+  border: 1px solid rgba(140, 90, 60, 0.2);
+  border-radius: 18px;
+  height: 50px;
+  color: #4b2e2b;
+}
+
+.btn-outline-custom:hover {
+  background: #fff8f0;
+}
+
+/* DIVIDER */
+.divider {
+  position: relative;
+  font-size: 14px;
+  color: #8c5a3c;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: rgba(140, 90, 60, 0.2);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+/* TRUSTED BOX */
+.trusted-box {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius: 18px;
+  padding: 12px 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.1);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ICON TRUSTED */
+.trusted-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(127, 183, 190, 0.2);
+  color: #7fb7be;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  font-size: 16px;
+}
+
+/* LOGO */
+.logo-box {
+  width: 55px;
+  height: 55px;
+  margin: 0 auto;
+
+  background: linear-gradient(135deg, #7fb7be, #c08552);
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 16px;
+  font-size: 22px;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.signup-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+
+  background: radial-gradient(circle at bottom right, rgba(127, 183, 190, 0.2), transparent 55%), radial-gradient(circle at top left, rgba(192, 133, 82, 0.15), transparent 60%);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  body {
+    overflow: auto; /* mobile boleh scroll */
+  }
+
+  .signup-section {
+    height: auto;
+    padding: 40px 0;
+  }
+
+  .form-card {
+    margin-top: 20px;
+  }
+
+  .main-img {
+    height: 300px;
+  }
+}

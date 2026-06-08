@@ -1,0 +1,62 @@
+.card-visa{
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 480/250;
+  height: auto;
+  border-radius: 20px;
+    background: linear-gradient(to bottom right , #2B7FFF,#155DFC);
+}
+
+.card-mastercard{
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 480/250;
+  height: auto;
+  border-radius: 20px;
+    background: linear-gradient(to bottom right , #FF6900,#FB2C36);
+}
+
+.squircle-card{
+    width: 100%;
+    max-width:64px;
+    aspect-ratio: 64/55;
+       height:auto;
+       border-radius:16px;
+       background-color: rgba(255,240,133,0.3);
+       margin-top: 25px;
+       margin-left: 25px;
+}
+
+
+.visa-font {
+    margin-top: 2rem; 
+    margin-right: 2rem;
+    font-size: 23px;
+}
+
+.card-number {
+    letter-spacing: 0.5rem;
+    font-size: 18px;
+}
+
+.card-bullet{
+    opacity: 0.7;
+    font-size: 12px;
+    letter-spacing: 0.5rem;
+}
+.experied-date {
+    margin-right:2rem ;
+}
+
+.ml-25 {
+    
+    margin-left: 25px;
+}
+
+.mb-25{
+    margin-bottom: 25px;
+}
+
+.mr-2{
+    margin-right: 2rem;
+}
