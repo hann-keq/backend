@@ -6,7 +6,8 @@
 @import "add-pet.css";
 @import "payment.css";
 @import "sidebar.css";
-
+@import "avatar.css";
+@import "navbar.css";
 body {
   font-size: 14px;
 }
@@ -250,27 +251,6 @@ body {
 }
 
 /* AVATAR */
-.profile-avatar {
-  width: 32px;
-  height: 32px;
-  background-image: linear-gradient(135deg, #82b1b4 0%, #ba8558 100%);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-
-  box-shadow: 0 4px 10px rgba(62, 47, 34, 0.1);
-  transition: all 0.3s ease;
-}
-
-.profile-avatar:hover {
-  transform: scale(1.05);
-}
 
 .pets-grid {
   display: grid;

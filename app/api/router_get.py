@@ -38,6 +38,35 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
+@router.get('notification.html', response_class=HTMLResponse,name='notification')
+async def tampilin_notification(request: Request):
+    return templates.TemplateResponse(request,'notification.html')
+
+@router.get('helpcenter.html', response_class=HTMLResponse,name='help')
+async def tampilin_helpcenter(request: Request):
+    return templates.TemplateResponse(request,'helpcenter.html')
+
+@router.get('/settings.html', response_class=HTMLResponse,name='settings')
+async def tampilin_settings(request: Request):
+    return templates.TemplateResponse(request,'settings.html')
+
+@router.get('/payment.html', response_class=HTMLResponse,name='payment')
+async def tampilin_payment(request: Request):
+    return templates.TemplateResponse(request,'payment.html')
+
+@router.get('/address.html', response_class=HTMLResponse,name='address')
+async def tampilin_address(request: Request):
+    return templates.TemplateResponse(request,'address.html')
+
+@router.get('/favorites.html', response_class=HTMLResponse,name='favorites')
+async def tampilin_favorites(request: Request):
+    return templates.TemplateResponse(request,'favorites.html')
+
+@router.get('/orders.html', response_class=HTMLResponse,name='orders')
+async def tampilin_orders(request: Request):
+    return templates.TemplateResponse(request,'orders.html')
+
+
 @router.get('/booking.html', response_class=HTMLResponse,name='booking')
 async def tampilin_booking(request: Request):
     return templates.TemplateResponse(request,'booking.html')
@@ -49,9 +78,13 @@ async def tampilin_profile(request: Request):
 @router.get('/notification.html', response_class=HTMLResponse,name='notification')
 async def tampilin_notification(request: Request):
     return templates.TemplateResponse(request,'notification.html')
+
+
 @router.get('/appointments.html', response_class=HTMLResponse,name='appointments')
 async def tampilin_appointments(request: Request):
     return templates.TemplateResponse(request,'appointments.html')
+
+
 @router.get('/favorites.html', response_class=HTMLResponse,name='favorites')
 async def tampilin_favorites(request: Request):
     return templates.TemplateResponse(request,'favorites.html')
@@ -59,6 +92,8 @@ async def tampilin_favorites(request: Request):
 @router.get('/new-pet.html', response_class=HTMLResponse,name='new-pet')
 async def tampilin_new_pet(request: Request):
     return templates.TemplateResponse(request,'new-pet.html')
+
+
 #not a test code
 @router.get('/petcaredashboard.html', response_class=HTMLResponse,name='petcaredashboard')
 async def tampilin_dashboard(request: Request):

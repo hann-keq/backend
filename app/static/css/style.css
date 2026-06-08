@@ -6,27 +6,21 @@
 @import "add-pet.css";
 @import "payment.css";
 @import "sidebar.css";
-@import"favorites.css";
+@import "favorites.css";
 @import "booking.css";
-body{
-    font-size: 14px;
+@import "profile.css";
+body {
+  font-size: 14px;
 }
 .navbar {
   transition: 0.3s;
 }
 
-
-.menu-active{
-     background-color: #E6F4F1;
-      border-radius: 10px;
+.menu-active {
+  background-color: #e6f4f1;
+  border-radius: 10px;
 }
 
-.main-content{
-    margin-top: 100px;
-
+.main-content {
+  margin-top: 100px;
 }
-
-
-
-
-

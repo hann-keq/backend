@@ -829,7 +829,11 @@ h3,
 }
 
 .offer.blue {
-  background: linear-gradient(135deg, #7fb7be 0%, rgba(127, 183, 190, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    #7fb7be 0%,
+    rgba(127, 183, 190, 0.8) 100%
+  );
 }
 
 /* TEXT */
