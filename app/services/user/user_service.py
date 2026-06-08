@@ -62,7 +62,7 @@ async def get_user_by_id(db: AsyncSession, user_id: int):
 
 async def get_current_admin_by_id(admin_id: int, db: AsyncSession = Depends(get_db)):
     try:
-        admin = await user_repository.get_admin_by_id(db, admin_id.id_user)
+        admin = await user_repository.get_admin_by_id(db, admin_id)
         if not admin:
             system_exceptions.handle_non_authorized_token(Exception('Admin not found'))
         return admin

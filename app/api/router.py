@@ -10,7 +10,7 @@ from app.services.pet.pet_service import add_pet
 from app.exceptions import user_exceptions, system_exceptions
 from app.schemas.pet_schema.pet_create import PetCreate
 from app.schemas.pet_schema.pet_response import PetResponse
-from app.schemas.user_schema.user_create import UserCreate, UserLogin,AdminCreate
+from app.schemas.user_schema.user_create import UserCreate
 from app.schemas.user_schema.user_response import UserResponse, UserResponseOnlyId
 from app.schemas.product_schema.schema import ProductCreate,ProductResponse
 from sqlalchemy import select
@@ -63,7 +63,7 @@ async def login(
 
 
 
-@router.post('/users/pets/add', response_model=PetResponse)
+@router.post('/users/pets/add', response_class=HTMLResponse)
 async def add_user_new_pet(pet_data: PetCreate, db:AsyncSession = Depends(get_db), user_id: int = Depends(get_current_user)):
     try: 
         print(f'User id = {user_id.id_user}')
@@ -73,42 +73,8 @@ async def add_user_new_pet(pet_data: PetCreate, db:AsyncSession = Depends(get_db
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
-@router.post('/admin/login')
-async def admin_login(admin_login_data: AdminCreate,db:AsyncSession = Depends(get_db) ):
-    try:
-        admin = await login_admin(db,admin_login_data)
-        if not admin:
-            return user_exceptions.handle_user_not_found(detail_message='Admin not found')
-        access_token = create_access_token(data={"sub": str(admin.id_user)})
-        return {
-            'access_token': access_token,
-            'type':'bearer'
-        }
-    except Exception as e:
-        system_exceptions.handle_system_error(e)
 
-@router.post('/admin/register', response_model=UserResponse)
-async def register_admin(admin_data: AdminCreate, db:AsyncSession = Depends(get_db)):
-    try:
-        admin = await create_new_admin(db, admin_data)
-        return admin
-    except Exception as e:
-        system_exceptions.handle_system_error(e)
-    
-@router.post('/admin/add-product', response_model=ProductResponse)
-async def add_product(product_data: ProductCreate, db: AsyncSession = Depends(get_db), admin_data: dict = Depends(get_current_user)):
-    try:
-        # Implement logic to add product using product_data and admin_data
-        print('bersiap verisikasi admin')
-       
-        verify_admin = await user_service.get_current_admin_by_id(admin_data, db)
-        if not verify_admin:
-            return user_exceptions.handle_admin_not_found(detail_message='Admin tidak ditemukan')
-        print('lolos verifikasi')
-        add_product = await product_service.add_product(db, product_data)
-        print('lolos add product')
-        return add_product
-    except Exception as e:
-        system_exceptions.handle_system_error(e)
+
+
 
     

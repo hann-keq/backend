@@ -87,6 +87,7 @@ class Pet(Base):
 class Partner(Base):
     __tablename__ = 'partners'
     id_partner : Mapped[int] = mapped_column(Integer,primary_key=True)
+    email : Mapped[str] = mapped_column(String(255),nullable=True,unique=True)
     nama_partner : Mapped[str] = mapped_column(String(255),nullable=False)
     jenis_partner : Mapped[JenisPartner] = mapped_column(Enum(JenisPartner),nullable=False,default=JenisPartner.ALL.value)
     alamat : Mapped[str] = mapped_column(String(255),nullable=False)
@@ -110,8 +111,16 @@ class PaketGrooming(Base):
     id_paket_grooming : Mapped[int] = mapped_column(Integer,primary_key=True)
     id_partner : Mapped[int] = mapped_column(Integer,ForeignKey('partners.id_partner'),nullable=False)
     nama_paket_grooming : Mapped[str] = mapped_column(String(255),nullable=False)
-    deskripsi : Mapped[str] = mapped_column(String(255),nullable=False)
+    # deskripsi : Mapped[str] = mapped_column(String(255),nullable=False)
     harga : Mapped[float] = mapped_column(Float,nullable=False)
+    created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
+
+class DetailPaketGrooming(Base):
+    __tablename__ = 'detail_paket_grooming'
+    id_detail_paket : Mapped[int] = mapped_column(Integer,primary_key=True)
+    id_paket_grooming : Mapped[int] = mapped_column(Integer,ForeignKey('paket_grooming.id_paket_grooming'),nullable=False)
+    fitur : Mapped[str] = mapped_column(String(255),nullable=False)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
 

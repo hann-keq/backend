@@ -6,10 +6,22 @@
     <title>PetCare Booking System</title>
     <link rel="prefetch" href="petcaredashboard.html" />
     <link rel="prefetch" href="petshop.html" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link rel="stylesheet" href="css/booking.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/booking.css') }}"
+    />
   </head>
   <body>
     <div class="dashboard-container">
@@ -49,7 +61,9 @@
               </div>
               <h3>Grooming</h3>
               <p>Professional pet grooming services</p>
-              <button class="btn-book-now" onclick="openModal('Grooming')">Book Now</button>
+              <button class="btn-book-now" onclick="openModal('Grooming')">
+                Book Now
+              </button>
             </div>
             <div class="service-card">
               <div class="service-icon-box vet-bg">
@@ -57,7 +71,9 @@
               </div>
               <h3>Veterinary</h3>
               <p>Health checkups and consultations</p>
-              <button class="btn-book-now" onclick="openModal('Veterinary')">Book Now</button>
+              <button class="btn-book-now" onclick="openModal('Veterinary')">
+                Book Now
+              </button>
             </div>
           </div>
         </section>
@@ -65,7 +81,9 @@
         <section class="section-container">
           <div class="section-header">
             <h2 class="sub-title">Upcoming Appointments</h2>
-            <a href="#" class="view-all">View All <i class="fas fa-chevron-right"></i></a>
+            <a href="#" class="view-all"
+              >View All <i class="fas fa-chevron-right"></i
+            ></a>
           </div>
           <div class="appointments-grid">
             <div class="appointment-card">
@@ -79,7 +97,9 @@
               <div class="card-body">
                 <p><i class="far fa-calendar"></i> Mar 20, 2026</p>
                 <p><i class="far fa-clock"></i> 10:00 AM</p>
-                <p><i class="fas fa-map-marker-alt"></i> 123 Pet Street, Downtown</p>
+                <p>
+                  <i class="fas fa-map-marker-alt"></i> 123 Pet Street, Downtown
+                </p>
                 <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
               </div>
               <div class="card-actions">
@@ -99,7 +119,9 @@
               <div class="card-body">
                 <p><i class="far fa-calendar"></i> Tomorrow</p>
                 <p><i class="far fa-clock"></i> 02:00 PM</p>
-                <p><i class="fas fa-map-marker-alt"></i> 789 Care Lane, Central</p>
+                <p>
+                  <i class="fas fa-map-marker-alt"></i> 789 Care Lane, Central
+                </p>
                 <p><i class="fas fa-phone"></i> +1 (555) 345-6789</p>
               </div>
               <div class="card-actions">
@@ -171,7 +193,17 @@
             <div class="selection-card" onclick="selectOption(this)">
               <span class="badge-pop">Popular</span>
               <div class="card-content-wrapper align-start">
-                <div class="package-icon-circle standard-grad" style="background: linear-gradient(135deg, #82b1b4 0%, #ba8558 100%); color: white">
+                <div
+                  class="package-icon-circle standard-grad"
+                  style="
+                    background: linear-gradient(
+                      135deg,
+                      #82b1b4 0%,
+                      #ba8558 100%
+                    );
+                    color: white;
+                  "
+                >
                   <i class="fas fa-star"></i>
                 </div>
                 <div class="card-info">
@@ -190,7 +222,10 @@
 
             <div class="selection-card" onclick="selectOption(this)">
               <div class="card-content-wrapper align-start">
-                <div class="package-icon-circle premium-grad" style="background: #3e2f22; color: #ffd700">
+                <div
+                  class="package-icon-circle premium-grad"
+                  style="background: #3e2f22; color: #ffd700"
+                >
                   <i class="fas fa-crown"></i>
                 </div>
                 <div class="card-info">
@@ -198,9 +233,13 @@
                   <span class="package-price">$120</span>
                   <ul class="feature-list">
                     <li><i class="fas fa-check"></i> Everything in Standard</li>
-                    <li><i class="fas fa-check"></i> Premium Shampoo & Conditioner</li>
+                    <li>
+                      <i class="fas fa-check"></i> Premium Shampoo & Conditioner
+                    </li>
                     <li><i class="fas fa-check"></i> Luxury Spa Treatment</li>
-                    <li><i class="fas fa-check"></i> Professional Photo Session</li>
+                    <li>
+                      <i class="fas fa-check"></i> Professional Photo Session
+                    </li>
                     <li><i class="fas fa-check"></i> Pet Hotel for 3 Days</li>
                     <li><i class="fas fa-check"></i> Home Pickup & Delivery</li>
                   </ul>
@@ -221,19 +260,33 @@
           <div class="provider-list">
             <div class="selection-card" onclick="selectOption(this)">
               <div class="card-content-wrapper">
-                <img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=100" alt="Spa" class="card-img-thumb" />
+                <img
+                  src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=100"
+                  alt="Spa"
+                  class="card-img-thumb"
+                />
                 <div class="card-info">
                   <strong>Paws & Claws Spa</strong><br />
-                  <small><i class="fas fa-star" style="color: #ffb800"></i> 4.9 (234) • 1.2 km</small>
+                  <small
+                    ><i class="fas fa-star" style="color: #ffb800"></i> 4.9
+                    (234) • 1.2 km</small
+                  >
                 </div>
               </div>
             </div>
             <div class="selection-card" onclick="selectOption(this)">
               <div class="card-content-wrapper">
-                <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=100" alt="Grooming" class="card-img-thumb" />
+                <img
+                  src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=100"
+                  alt="Grooming"
+                  class="card-img-thumb"
+                />
                 <div class="card-info">
                   <strong>Happy Tails Grooming</strong><br />
-                  <small><i class="fas fa-star" style="color: #ffb800"></i> 4.7 (189) • 2.5 km</small>
+                  <small
+                    ><i class="fas fa-star" style="color: #ffb800"></i> 4.7
+                    (189) • 2.5 km</small
+                  >
                 </div>
               </div>
             </div>
@@ -255,20 +308,30 @@
           <div class="input-group" style="margin-top: 20px">
             <label><i class="far fa-clock"></i> Select Time</label>
             <div class="time-grid">
-              <button class="time-btn" onclick="selectOption(this)">09:00 AM</button>
-              <button class="time-btn" onclick="selectOption(this)">11:00 AM</button>
-              <button class="time-btn" onclick="selectOption(this)">02:00 PM</button>
-              <button class="time-btn" onclick="selectOption(this)">04:00 PM</button>
+              <button class="time-btn" onclick="selectOption(this)">
+                09:00 AM
+              </button>
+              <button class="time-btn" onclick="selectOption(this)">
+                11:00 AM
+              </button>
+              <button class="time-btn" onclick="selectOption(this)">
+                02:00 PM
+              </button>
+              <button class="time-btn" onclick="selectOption(this)">
+                04:00 PM
+              </button>
             </div>
           </div>
           <div class="modal-footer">
             <button class="btn-back" onclick="nextStep(3)">Back</button>
-            <button class="btn-continue" onclick="finishBooking()">Confirm Booking</button>
+            <button class="btn-continue" onclick="finishBooking()">
+              Confirm Booking
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-    <script src="booking.js"></script>
+    <script src="{{ url_for('static', path='js/booking.js') }}"></script>
   </body>
 </html>

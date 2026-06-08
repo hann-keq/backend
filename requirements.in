@@ -1,0 +1,16 @@
+fastapi
+pydantic
+pydantic_settings
+python-dotenv
+python_bcrypt
+python_jose
+pytz
+SQLAlchemy
+starlette
+jinja2
+passlib
+bcrypt
+alembic
+aiomysql
+pytest
+pytest-asyncio
