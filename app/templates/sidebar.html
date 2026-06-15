@@ -1,0 +1,95 @@
+<!-- SIDEBAR -->
+<div
+  class="bg-white border-end position-sticky"
+  style="width: 250px; top: 56px; height: calc(100vh - 56px)"
+>
+  <!---->
+  <div class="p-3 mt-3">
+    <i class="fa-solid fa-angle-left me-2"> </i>
+    <small class="text-muted" style="font-size: small"
+      ><strong>ACCOUNT</strong></small
+    >
+    <ul class="nav flex-column mt-2 text-dark-brown" style="font-size: 14px">
+      <li
+        class="nav-item d-flex align-items-center {% if current_page != 'orders' %} item-transition {% endif %} {%- if current_page == 'orders' %} menu-active item-focused {% endif %}"
+      >
+        <i class="bi bi-box-seam ms-2"></i>
+        <a
+          class="nav-link sidebar-text-color"
+          aria-current="page"
+          href="orders.html"
+          >My Orders</a
+        >
+      </li>
+      <li
+        class="nav-item d-flex align-items-center {% if current_page != 'favorites' %} item-transition {% endif %} {%- if current_page == 'favorites' %} menu-active {% endif %}"
+      >
+        <i class="bi bi-heart ms-2"></i>
+        <a
+          class="nav-link {%- if current_page == 'favorites' %} item-focused menu-active {% endif %} sidebar-text-color"
+          href="favorites.html"
+          >Favorites</a
+        >
+      </li>
+      <li
+        class="nav-item d-flex align-items-center {% if current_page != 'address' %} item-transition {% endif %} {%- if current_page == 'address' %} menu-active item-focused {% endif %}"
+      >
+        <i class="bi bi-geo-alt ms-2"></i>
+        <a class="nav-link sidebar-text-color" href="{{ url_for('address') }}"
+          >Addresses</a
+        >
+      </li>
+      <li
+        class="nav-item d-flex align-items-center {% if current_page != 'payment' %} item-transition {% endif %} {%- if current_page == 'payment' %} menu-active item-focused {% endif %}"
+      >
+        <i class="bi bi-credit-card ms-2"></i>
+        <a
+          class="nav-link sidebar-text-color"
+          href="payment.html"
+          tabindex="-1"
+          aria-disabled="true"
+          >Payment Methods</a
+        >
+      </li>
+      <li
+        class="nav-item d-flex align-items-center {% if current_page != 'settings' %} item-transition {% endif %} {%- if current_page == 'settings' %} menu-active item-focused {% endif %}"
+      >
+        <i class="bi bi-gear ms-2"></i>
+        <a class="nav-link sidebar-text-color" href="{{ url_for('settings') }}"
+          >Settings</a
+        >
+      </li>
+    </ul>
+
+    <hr />
+
+    <small class="text-muted" style="font-size: small"
+      ><strong>SUPPORT</strong></small
+    >
+
+    <ul class="nav flex-column mt-2 text-dark-brown">
+      <li
+        class="nav-item d-flex align-items-center {% if current_page != 'helpcenter' %} item-transition {% endif %} {%- if current_page == 'helpcenter' %} menu-active item-focused {% endif %}"
+      >
+        <i class="bi bi-question-circle"></i>
+        <a
+          class="nav-link sidebar-text-color"
+          style="font-size: 14px"
+          href="{{ url_for('helpcenter') }}"
+          >Help Center</a
+        >
+      </li>
+      <li
+        class="nav-item d-flex align-items-center {% if current_page != 'notification' %} item-transition {% endif %} {%- if current_page == 'notification' %} menu-active item-focused {% endif %}"
+      >
+        <i class="bi bi-bell"></i>
+        <a
+          class="nav-link sidebar-text-color"
+          style="font-size: 14px"
+          href="{{ url_for('notification') }}"
+          >Notifications</a
+        >
+      </li>
+    </ul>
+  </div>
+</div>

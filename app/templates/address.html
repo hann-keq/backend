@@ -1,264 +1,203 @@
-<!-- creating order page from figma design using bootstrap 5-->
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
+{% extends "base.html" %} {% block prefetch %} {%endblock %} {% block style %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- My CSS-->
-    <link rel="stylesheet" href="css/style.css" />
-    <title>Address</title>
-    <link rel="icon" type="img/png" href="/img/logo.png">
-    <style>
-      h1 {
-        text-align: center;
-        color: black;
-      }
-    </style>
-  </head>
-
-  <body style="background-color: #FFF8F0;">
-    <!-- Navbar -->
-      <header class="top-nav">
-        <div class="logo-area">
-          <i class="fas fa-paw logo-icon"></i>
-          <span class="logo-text">PetCare</span>
-        </div>
-        <nav class="main-nav">
-          <a href="petcaredashboard.html"><i class="bi bi-house"></i> Home</a>
-          <a href="petshop.html"><i class="bi bi-bag-dash"></i> Shop</a>
-          <a href="booking.html"><i class="bi bi-calendar"></i> Booking</a>
-          <a href="Profile.html"><i class="bi bi-person"></i> Profile</a>
-        </nav>
-        <div class="top-right-actions">
-          <i class="bi bi-search"></i>
-          <a href="notification.html" class="notification-icon">
-            <i class="bi bi-bell"></i>
-            <span class="notification-dot"></span>
-          </a>
-          <div class="profile-avatar">SJ</div>
-        </div>
-      </header>
+{% endblock %} {% block content %}
 <!-- end of navbar-->
- <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <div class="d-flex min-vh-100">
-<div class="bg-white border-end position-sticky"
-     style="width:250px; top:56px; height:calc(100vh - 56px);">
-  
- <!----> <div class="p-3 mt-3">
-    <i class="fa-solid fa-angle-left me-2"> </i>
-    <small class="text-muted " style="font-size: small;"><strong>ACCOUNT</strong></small>
-    <ul class="nav flex-column mt-2 text-dark-brown" style="font-size: 14px;">
-      <li class="nav-item d-flex align-items-center item-transition">
-        <i class="bi bi-box-seam ms-2"></i>
-          <a class="nav-link sidebar-text-color" aria-current="page" href="orders.html" >My Orders</a>
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-heart ms-2"></i>
-          <a class="nav-link sidebar-text-color" href="favorites.html">Favorites</a>
-        </li>
-        <li class="nav-item d-flex align-items-center menu-active item-focused">
-          <i class="bi bi-geo-alt ms-2"></i>
-          <a class="nav-link sidebar-text-color " href="#">Addresses</a>
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-credit-card ms-2"></i>
-          <a class="nav-link sidebar-text-color" href="payment.html" tabindex="-1" aria-disabled="true">Payment Methods</a>
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-gear ms-2"></i>
-          <a class="nav-link sidebar-text-color" href="Setting.html">Settings</a>
-        </li>
-        </ul>
+  {% include 'sidebar.html' %}
 
-        <hr>
+  <!-- content-->
 
-        <small class ="text-muted" style="font-size: small;"><strong>SUPPORT</strong></small>
+  <!-- MAIN CONTENT -->
+  <main class="main-content flex-grow-1 px-3">
+    <div class="container">
+      <div class="d-flex align-items-start justify-content-between">
+        <div>
+          <h2 style="color: #4b2e2b">My Address</h2>
+          <p style="color: #8c5a3c; font-size: 14px">
+            View and manage your address
+          </p>
+        </div>
 
-        <ul class ="nav flex-column mt-2 text-dark-brown">
-          <li class = "nav-item d-flex align-items-center item-transition">
-            <i class="bi bi-question-circle"></i>
-            <a class ="nav-link sidebar-text-color" style="font-size: 14px;" href="helpcenter.html">Help Center</a>
-          </li>
-          <li class="nav-item d-flex align-items-center item-transition">
-            <i class="bi bi-bell"></i>
-            <a class ="nav-link sidebar-text-color" style = "font-size: 14px;"href="notification.html">Notifications</a>
-          </li>
-        </ul>
-  </div>
-
-</div>
-
- <!-- content-->
-
-
-<!-- MAIN CONTENT -->
-<main class = "main-content flex-grow-1 px-3">
-    <div class="container ">
-          <div class="d-flex align-items-start justify-content-between">
-            <div>
-        <h2 style="color: #4B2E2B;">My Address</h2>
-      <p style="color: #8C5A3C;font-size: 14px;">View and manage your address</p>
+        <div class="btn background-green text-white rounded-pill p-2 ms-3 a">
+          <i class="bi bi-plus-lg me-2"></i>Add Address
+        </div>
       </div>
-      
-        <div class="btn background-green text-white rounded-pill p-2 ms-3 a"> 
-          <i class="bi bi-plus-lg me-2"></i>Add Address</div>
-    </div>
 
       <!--card -->
       <div class="row">
-  <div class="col-sm-6 pb-4">
-    <div class="card background-brown-with-green-border" style="border-radius: 10px;">
-      <div class="card-body">
-      
+        <div class="col-sm-6 pb-4">
+          <div
+            class="card background-brown-with-green-border"
+            style="border-radius: 10px"
+          >
+            <div class="card-body">
+              <div
+                class="d-flex gap-3 justify-content-between align-items-center"
+              >
+                <div class="d-flex gap-3 align-items-center">
+                  <div class="icon-box">
+                    <i class="bi bi-house fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="mb-0 fw-bold">Home</h6>
+                    <small
+                      class="text-white background-green rounded-pill px-2"
+                      style="
+                        font-size: 12px;
+                        padding-bottom: 2px;
+                        padding-top: 2px;
+                      "
+                      >default</small
+                    >
+                  </div>
+                </div>
+                <div class="icon-box-red btn">
+                  <i class="bi bi-trash3 px-2 text-red"></i>
+                </div>
+              </div>
 
-    <div class="d-flex gap-3 justify-content-between align-items-center">
-      <div class="d-flex gap-3 align-items-center ">
-      <div class="icon-box">
-      <i class="bi bi-house fs-5 "></i>
-        </div>
-      <div>
-        <h6 class="mb-0 fw-bold">Home</h6>
-        <small class="text-white background-green rounded-pill px-2 " style="font-size: 12px; padding-bottom: 2px; padding-top: 2px;">default</small>
-      </div>
-      </div>
-      <div class="icon-box-red btn">
-      <i class="bi bi-trash3 px-2 text-red"></i>
-    </div>  
-    </div>
-     
-      <div>
-      <ul class="list-unstyled text-brown mb-4 mt-3" style="font-size: small;">
-        <li class="text-dark-brown mb-2 mt-2">Keq Qixing</li>
-        <li class="mb-2">123 Main Street,APT A1</li>
-        <li class="mb-2">Liyue ,CN 100001</li>
-        <li >+6289603518234</li>
-      </ul>
-     </div>
-      
-  
-  <hr class="w-100 text-brown" style="opacity: 0.2;">
-  <div class="btn w-100 rounded-pill border-brown background-light-brown"> 
-    <i class="bi bi-pencil-square text-dark-brown"></i>
-    <span class="text-dark-brown">edit</span>
-  </div>
-      </div>
-    </div>
-  </div>
-   <div class="col-sm-6 pb-4">
-    <div class="card background-little-bit-light-brown" style="border-radius: 10px;">
-      <div class="card-body">
-   
-    
-    <div class="d-flex gap-3 justify-content-between align-items-center">
-      <div class="d-flex gap-3 align-items-center mb-1">
-      <div class="icon-box">
-      <i class="bi bi-buildings fs-5"></i>
-        </div>
-      <div>
-        <h6 class=" fw-bold">Office</h6>
-      </div>
-      </div>
-      <div class="icon-box-red btn  ">
-      <i class="bi bi-trash3 px-2 text-red "></i>
-      </div>
-      </div>
-    
-      <div>
-        <ul class="list-unstyled text-brown mb-4 mt-3" style="font-size: small;">
-        <li class="text-dark-brown mb-2 mt-2">Keq Qixing</li>
-        <li class="mb-2">123 Main Street,APT A1</li>
-        <li class="mb-2">Liyue ,CN 100001</li>
-        <li >+6289603518234</li>
-      </ul>
-     </div>
-      
-  
-  <hr class=" text-brown" style="opacity: 0.2;">
-  <div class="row ">
-    <div class="col-sm-6">
-  <div class="btn w-100 rounded-pill border-brown background-light-brown"> 
-    <i class="bi bi-pencil-square text-dark-brown"></i>
-    <span class="text-dark-brown">edit</span>
-    </div>
-  </div>
-      <div class="col-sm-6">
-  <div class="btn w-100 rounded-pill button-green font-green "> 
-    <i class="bi bi-pencil-square "></i>
-    Set default
-    </div>
-  </div>
+              <div>
+                <ul
+                  class="list-unstyled text-brown mb-4 mt-3"
+                  style="font-size: small"
+                >
+                  <li class="text-dark-brown mb-2 mt-2">Keq Qixing</li>
+                  <li class="mb-2">123 Main Street,APT A1</li>
+                  <li class="mb-2">Liyue ,CN 100001</li>
+                  <li>+6289603518234</li>
+                </ul>
+              </div>
 
-  </div>
-  
-  
-      </div>
-    </div>
-  </div>
-     <div class="col-sm-6">
-    <div class="card background-little-bit-light-brown" style="border-radius: 10px;">
-      <div class="card-body">
-   
-    
-    <div class="d-flex gap-3 justify-content-between align-items-center">
-      <div class="d-flex gap-3 align-items-center mb-1">
-      <div class="icon-box">
-      <i class="bi bi-buildings fs-5"></i>
+              <hr class="w-100 text-brown" style="opacity: 0.2" />
+              <div
+                class="btn w-100 rounded-pill border-brown background-light-brown"
+              >
+                <i class="bi bi-pencil-square text-dark-brown"></i>
+                <span class="text-dark-brown">edit</span>
+              </div>
+            </div>
+          </div>
         </div>
-      <div>
-        <h6 class=" fw-bold">Office</h6>
-      </div>
-      </div>
-      <div class="icon-box-red btn  ">
-      <i class="bi bi-trash3 px-2 text-red "></i>
-      </div>
-      </div>
-    
-      <div>
-        <ul class="list-unstyled text-brown mb-4 mt-3" style="font-size: small;">
-        <li class="text-dark-brown mb-2 mt-2">Keq Qixing</li>
-        <li class="mb-2">123 Main Street,APT A1</li>
-        <li class="mb-2">Liyue ,CN 100001</li>
-        <li >+6289603518234</li>
-      </ul>
-     </div>
-      
-  
-  <hr class=" text-brown" style="opacity: 0.2;">
-  <div class="row ">
-    <div class="col-sm-6">
-  <div class="btn w-100 rounded-pill border-brown background-light-brown"> 
-    <i class="bi bi-pencil-square text-dark-brown"></i>
-    <span class="text-dark-brown">edit</span>
-    </div>
-  </div>
-      <div class="col-sm-6">
-  <div class="btn w-100 rounded-pill button-green font-green "> 
-    <i class="bi bi-pencil-square "></i>
-    Set default
-    </div>
-  </div>
+        <div class="col-sm-6 pb-4">
+          <div
+            class="card background-little-bit-light-brown"
+            style="border-radius: 10px"
+          >
+            <div class="card-body">
+              <div
+                class="d-flex gap-3 justify-content-between align-items-center"
+              >
+                <div class="d-flex gap-3 align-items-center mb-1">
+                  <div class="icon-box">
+                    <i class="bi bi-buildings fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold">Office</h6>
+                  </div>
+                </div>
+                <div class="icon-box-red btn">
+                  <i class="bi bi-trash3 px-2 text-red"></i>
+                </div>
+              </div>
 
-  </div>
-  
-  
+              <div>
+                <ul
+                  class="list-unstyled text-brown mb-4 mt-3"
+                  style="font-size: small"
+                >
+                  <li class="text-dark-brown mb-2 mt-2">Keq Qixing</li>
+                  <li class="mb-2">123 Main Street,APT A1</li>
+                  <li class="mb-2">Liyue ,CN 100001</li>
+                  <li>+6289603518234</li>
+                </ul>
+              </div>
+
+              <hr class="text-brown" style="opacity: 0.2" />
+              <div class="row">
+                <div class="col-sm-6">
+                  <div
+                    class="btn w-100 rounded-pill border-brown background-light-brown"
+                  >
+                    <i class="bi bi-pencil-square text-dark-brown"></i>
+                    <span class="text-dark-brown">edit</span>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="btn w-100 rounded-pill button-green font-green">
+                    <i class="bi bi-pencil-square"></i>
+                    Set default
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div
+            class="card background-little-bit-light-brown"
+            style="border-radius: 10px"
+          >
+            <div class="card-body">
+              <div
+                class="d-flex gap-3 justify-content-between align-items-center"
+              >
+                <div class="d-flex gap-3 align-items-center mb-1">
+                  <div class="icon-box">
+                    <i class="bi bi-buildings fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold">Office</h6>
+                  </div>
+                </div>
+                <div class="icon-box-red btn">
+                  <i class="bi bi-trash3 px-2 text-red"></i>
+                </div>
+              </div>
+
+              <div>
+                <ul
+                  class="list-unstyled text-brown mb-4 mt-3"
+                  style="font-size: small"
+                >
+                  <li class="text-dark-brown mb-2 mt-2">Keq Qixing</li>
+                  <li class="mb-2">123 Main Street,APT A1</li>
+                  <li class="mb-2">Liyue ,CN 100001</li>
+                  <li>+6289603518234</li>
+                </ul>
+              </div>
+
+              <hr class="text-brown" style="opacity: 0.2" />
+              <div class="row">
+                <div class="col-sm-6">
+                  <div
+                    class="btn w-100 rounded-pill border-brown background-light-brown"
+                  >
+                    <i class="bi bi-pencil-square text-dark-brown"></i>
+                    <span class="text-dark-brown">edit</span>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="btn w-100 rounded-pill button-green font-green">
+                    <i class="bi bi-pencil-square"></i>
+                    Set default
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  
+  </main>
+  <!--end of content-->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"
+  ></script>
+
+  {% endblock %}
 </div>
-    </div>
-    
-
-</main>
- <!--end of content-->     
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-  </body>
