@@ -6,14 +6,26 @@
     <title>Notifications - PetCare</title>
 
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
 
     <!-- Font Awesome (buat logo paw) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/dashboard.css" />
-    <link rel="stylesheet" href="css/notification.css" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/dashboard.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/notification.css') }}"
+    />
   </head>
 
   <body>
@@ -79,7 +91,10 @@
 
           <!-- LIST -->
           <div class="notification-list">
-            <div class="notif-card notif-urgent notif-unread" data-type="reminder">
+            <div
+              class="notif-card notif-urgent notif-unread"
+              data-type="reminder"
+            >
               <div class="icon">💉</div>
               <div class="content">
                 <h4>Luna's vaccination</h4>
@@ -126,7 +141,9 @@
         <aside class="sidebar-column">
           <section class="sidebar-section">
             <h2>Tips</h2>
-            <p style="font-size: 14px; color: #777">Keep your pet healthy by checking notifications regularly 🐾</p>
+            <p style="font-size: 14px; color: #777">
+              Keep your pet healthy by checking notifications regularly 🐾
+            </p>
           </section>
         </aside>
       </main>

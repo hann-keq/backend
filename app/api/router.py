@@ -46,13 +46,13 @@ async def login(
     user = await login_user(db, form_data)
 
     if not user:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid email or password"})
+        return templates.TemplateResponse(request = request,name='login.html', context={"error":"Invalid email or password"})
 
     # 1. BUAT ACCESS TOKEN KAMU SEPERTI BIASA
     access_token = create_access_token(data={"sub": str(user.id_user)})
 
     # 2. BIKIN RESPONS REDIRECT
-    response = RedirectResponse(url="/petcaredashboard.html", status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(url="/petcaredashboard", status_code=status.HTTP_303_SEE_OTHER)
     
     # 3. TITIPKAN TOKEN KE COOKIE BROWSER (Mirip $_SESSION di PHP)
     # httponly=True bikin token aman dari serangan XSS Javascript jahat

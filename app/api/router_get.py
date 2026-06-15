@@ -38,34 +38,33 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
-@router.get('notification.html', response_class=HTMLResponse,name='notification')
+@router.get('/notification', response_class=HTMLResponse,name='notification')
 async def tampilin_notification(request: Request):
-    return templates.TemplateResponse(request,'notification.html')
+    return templates.TemplateResponse(request,'notification.html',context={"current_page":"notification"})
 
-@router.get('helpcenter.html', response_class=HTMLResponse,name='help')
+@router.get('/helpcenter', response_class=HTMLResponse,name='helpcenter')
 async def tampilin_helpcenter(request: Request):
-    return templates.TemplateResponse(request,'helpcenter.html')
+    return templates.TemplateResponse(request,'helpcenter.html',context={"current_page":"helpcenter"})
 
-@router.get('/settings.html', response_class=HTMLResponse,name='settings')
+@router.get('/settings', response_class=HTMLResponse,name='settings')
 async def tampilin_settings(request: Request):
-    return templates.TemplateResponse(request,'settings.html')
+    return templates.TemplateResponse(request,'settings.html',context={"current_page":"settings"})
 
 @router.get('/payment.html', response_class=HTMLResponse,name='payment')
 async def tampilin_payment(request: Request):
-    return templates.TemplateResponse(request,'payment.html')
+    return templates.TemplateResponse(request,'payment.html',context={"current_page":"payment"})
 
 @router.get('/address.html', response_class=HTMLResponse,name='address')
 async def tampilin_address(request: Request):
-    return templates.TemplateResponse(request,'address.html')
+    return templates.TemplateResponse(request,'address.html',context={"current_page":"address"})
 
 @router.get('/favorites.html', response_class=HTMLResponse,name='favorites')
 async def tampilin_favorites(request: Request):
-    return templates.TemplateResponse(request,'favorites.html')
+    return templates.TemplateResponse(request,'favorites.html',context={"current_page":"favorites"})
 
 @router.get('/orders.html', response_class=HTMLResponse,name='orders')
 async def tampilin_orders(request: Request):
-    return templates.TemplateResponse(request,'orders.html')
-
+    return templates.TemplateResponse(request,'orders.html',context={"current_page":"orders"})
 
 @router.get('/booking.html', response_class=HTMLResponse,name='booking')
 async def tampilin_booking(request: Request):
@@ -73,17 +72,20 @@ async def tampilin_booking(request: Request):
 
 @router.get('/profile.html', response_class=HTMLResponse,name='profile')
 async def tampilin_profile(request: Request):
-    return templates.TemplateResponse(request,'profile.html')
+    return templates.TemplateResponse(request,'profile.html',context={"current_page":"profile"})
 
-@router.get('/notification.html', response_class=HTMLResponse,name='notification')
+@router.get('/notification', response_class=HTMLResponse,name='notification')
 async def tampilin_notification(request: Request):
-    return templates.TemplateResponse(request,'notification.html')
+    return templates.TemplateResponse(request,'notification.html',context={"current_page":"notification"})
 
 
 @router.get('/appointments.html', response_class=HTMLResponse,name='appointments')
 async def tampilin_appointments(request: Request):
     return templates.TemplateResponse(request,'appointments.html')
 
+@router.get('/signup',response_class=HTMLResponse,name='signup')
+async def tampilin_signup(request: Request):
+    return templates.TemplateResponse(request,'signup.html')
 
 @router.get('/favorites.html', response_class=HTMLResponse,name='favorites')
 async def tampilin_favorites(request: Request):
@@ -95,12 +97,19 @@ async def tampilin_new_pet(request: Request):
 
 
 #not a test code
-@router.get('/petcaredashboard.html', response_class=HTMLResponse,name='petcaredashboard')
+
+@router.get('/demo', response_class=HTMLResponse,name='demo')
+async def tampilin_demo(request: Request):
+    return templates.TemplateResponse(request,'demo.html')
+@router.get('/petcaredashboard', response_class=HTMLResponse,name='petcaredashboard')
 async def tampilin_dashboard(request: Request):
     return templates.TemplateResponse(request,'petcaredashboard.html')
 
+@router.get('/landing',response_class=HTMLResponse,name='petcarehome')
+async def tampilin_landing(request: Request):
+    return templates.TemplateResponse(request,'petcarehome.html')
 
-@router.get('/login', response_class=HTMLResponse,name='login.html')
+@router.get('/login', response_class=HTMLResponse,name='login')
 async def tampilin_halaman_login(request: Request):
     return templates.TemplateResponse(request,'login.html')
 
