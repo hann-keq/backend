@@ -78,28 +78,40 @@
                 Join thousands of pet parents today
               </p>
 
-              <form action="login.html">
+              <form action="/register" method="post">
                 <div class="mb-3 input-group-custom">
                   <i class="bi bi-person input-icon"></i>
                   <input
                     type="text"
                     class="form-control custom-input"
                     placeholder="Full Name"
+                    name="nama"
                   />
                 </div>
 
                 <div class="mb-3 input-group-custom">
                   <i class="bi bi-envelope input-icon"></i>
                   <input
+                    name="email"
                     type="email"
                     class="form-control custom-input"
                     placeholder="Email"
+                  />
+                </div>
+                <div class="mb-3 input-group-custom">
+                  <i class="bi bi-envelope input-icon"></i>
+                  <input
+                    name="no_telepon"
+                    type="text"
+                    class="form-control custom-input"
+                    placeholder="Phone Number"
                   />
                 </div>
 
                 <div class="mb-3 input-group-custom">
                   <i class="bi bi-lock input-icon"></i>
                   <input
+                    name="password"
                     type="password"
                     id="password"
                     class="form-control custom-input"
@@ -116,6 +128,7 @@
                   <input
                     type="password"
                     id="confirm"
+                    name="confirm_password"
                     class="form-control custom-input"
                     placeholder="Confirm Password"
                   />
@@ -126,7 +139,11 @@
                 </div>
 
                 <div class="form-check mb-3">
-                  <input class="form-check-input" type="checkbox" />
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="terms"
+                  />
                   <label class="form-check-label text-soft">
                     I agree to <span class="text-info">Terms</span> and
                     <span class="text-info">Privacy Policy</span>
@@ -140,10 +157,6 @@
 
               <button class="btn btn-outline-custom w-100 mb-2">
                 <i class="bi bi-google"></i> Sign up with Google
-              </button>
-
-              <button class="btn btn-outline-custom w-100">
-                <i class="bi bi-instagram"></i> Sign up with Instagram
               </button>
 
               <p class="text-center mt-3 text-soft">

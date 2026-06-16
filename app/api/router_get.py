@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.templating import Jinja2Templates
 from starlette.responses import HTMLResponse
+from app.core.auth import get_current_user
 from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.exceptions import system_exceptions
@@ -36,7 +37,9 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
         return user
     except SQLAlchemyError as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-
+@router.get('/register', response_class=HTMLResponse)
+async def tampilin_register(request: Request):
+    return templates.TemplateResponse(request,'signup.html',context={"current_page":"signup"})
 
 @router.get('/notification', response_class=HTMLResponse,name='notification')
 async def tampilin_notification(request: Request):
@@ -70,7 +73,7 @@ async def tampilin_orders(request: Request):
 async def tampilin_booking(request: Request):
     return templates.TemplateResponse(request,'booking.html')
 
-@router.get('/profile.html', response_class=HTMLResponse,name='profile')
+@router.get('/profile', response_class=HTMLResponse,name='profile')
 async def tampilin_profile(request: Request):
     return templates.TemplateResponse(request,'profile.html',context={"current_page":"profile"})
 
@@ -101,8 +104,19 @@ async def tampilin_new_pet(request: Request):
 @router.get('/demo', response_class=HTMLResponse,name='demo')
 async def tampilin_demo(request: Request):
     return templates.TemplateResponse(request,'demo.html')
+
 @router.get('/petcaredashboard', response_class=HTMLResponse,name='petcaredashboard')
-async def tampilin_dashboard(request: Request):
+async def tampilin_dashboard(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user)
+    ):
+
+    try:
+        current_user = user_id.id_user
+        print(f'Current user ID: {current_user}')
+    except Exception as e:
+        system_exceptions.handle_system_error(str(e))
     return templates.TemplateResponse(request,'petcaredashboard.html')
 
 @router.get('/landing',response_class=HTMLResponse,name='petcarehome')

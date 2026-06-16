@@ -4,8 +4,9 @@ from app.schemas.user_schema.user_create import UserCreate,AdminCreate
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions import user_exceptions, system_exceptions
 from fastapi import Depends
-from app.core.auth import verify_token
+
 from app.core.database import get_db
+from app.exceptions import system_exceptions,user_exceptions
 
 
 async def create_new_user(db: AsyncSession, user_data: UserCreate):
@@ -18,7 +19,8 @@ async def create_new_user(db: AsyncSession, user_data: UserCreate):
     user_dict['password'] = hashed_password
     user = await user_repository.get_user_by_email(db, user_dict['email'])
     if user:
-        raise ValueError("Email already registered")
+        print(f"User with email {user_dict['email']} already exists")
+        raise user_exceptions.handle_email_already_registered()
     return await user_repository.create_user(db, user_dict)
 
 

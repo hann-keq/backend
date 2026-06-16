@@ -5,82 +5,7 @@
 
 <!-- SIDEBAR -->
 <div class="d-flex min-vh-100">
-  <div
-    class="bg-white border-end position-sticky"
-    style="width: 250px; top: 56px; height: calc(100vh - 56px)"
-  >
-    <!---->
-    <div class="p-3 mt-3">
-      <i class="fa-solid fa-angle-left me-2"> </i>
-      <small class="text-muted" style="font-size: small"
-        ><strong>ACCOUNT</strong></small
-      >
-      <ul class="nav flex-column mt-2 text-dark-brown" style="font-size: 14px">
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-box-seam ms-2"></i>
-          <a
-            class="nav-link sidebar-text-color"
-            aria-current="page"
-            href="{{ url_for('orders') }}"
-            >My Orders</a
-          >
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-heart ms-2"></i>
-          <a
-            class="nav-link sidebar-text-color"
-            href="{{url_for('favorites') }}"
-            >Favorites</a
-          >
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-geo-alt ms-2"></i>
-          <a class="nav-link sidebar-text-color" href="{{url_for('address') }}"
-            >Addresses</a
-          >
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-credit-card ms-2"></i>
-          <a class="nav-link sidebar-text-color" href="{{url_for('payment') }}"
-            >Payment Methods</a
-          >
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-gear ms-2"></i>
-          <a class="nav-link sidebar-text-color" href="{{url_for('settings') }}"
-            >Settings</a
-          >
-        </li>
-      </ul>
-
-      <hr />
-
-      <small class="text-muted" style="font-size: small"
-        ><strong>SUPPORT</strong></small
-      >
-
-      <ul class="nav flex-column mt-2 text-dark-brown">
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-question-circle"></i>
-          <a
-            class="nav-link sidebar-text-color"
-            style="font-size: 14px"
-            href="{{url_for('help')}}"
-            >Help Center</a
-          >
-        </li>
-        <li class="nav-item d-flex align-items-center item-transition">
-          <i class="bi bi-bell"></i>
-          <a
-            class="nav-link sidebar-text-color"
-            style="font-size: 14px"
-            href="{{url_for('notification') }}"
-            >Notifications</a
-          >
-        </li>
-      </ul>
-    </div>
-  </div>
+  {% include "sidebar.html" %}
 
   <!-- content-->
 
@@ -137,7 +62,7 @@
         >
           <h3>My Pets</h3>
           <a
-            href="{{url_for('new-pet') }}"
+            href="{{url_for('new-pet') }}?next=/profile"
             class="add-link text-decoration-none"
             style="color: #8c5a3c; font-weight: 500"
             >+ Add Pet</a
