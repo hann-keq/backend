@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status,Request,Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,7 +19,8 @@ from sqlalchemy import select
 from app.services.product import product_service
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse,RedirectResponse
-
+from app.services.alamat import service as alamat_service
+from app.schemas.alamat_schema import schema as alamat_schema
 
 from app.services.user.user_service import create_new_user, login_user, login_admin,create_new_admin,get_user_by_id
 from app.services.user import user_service
@@ -27,10 +30,41 @@ router = APIRouter()
 
 
 
-@router.post("/register/", response_model=UserResponse)
-async def sign_up(new_user : UserCreate, db:AsyncSession = Depends(get_db)):
-    return await create_new_user(db, new_user)
-
+@router.post("/register", response_class=HTMLResponse)
+async def sign_up(
+    request: Request,
+    nama: str = Form(...),
+    email: str = Form(...),
+    no_telepon: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...),
+    
+    db:AsyncSession = Depends(get_db)):
+    try:
+        new_user = UserCreate(
+            nama=nama,
+            email=email,
+            no_telepon=no_telepon,
+            password=password,
+            confirm_password=confirm_password
+        )
+        user = await create_new_user(db, new_user)
+        if user:
+            return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+    except:
+            return templates.TemplateResponse(
+                request=request, 
+                name='signup.html', 
+                context={
+                    "request": request, 
+                    "error": "Email already registered", # Kirim pesan ke Jinja
+                    "nama": nama,                         # Data input dikembalikan biar ga ngetik ulang
+                    "email": email,
+                    "no_telepon": no_telepon
+                },
+                status_code=400 # Browser tetap membaca ini sebagai error 400 Bad Request
+            )
+    
 
 
 
@@ -63,17 +97,53 @@ async def login(
 
 
 
-@router.post('/users/pets/add', response_class=HTMLResponse)
-async def add_user_new_pet(pet_data: PetCreate, db:AsyncSession = Depends(get_db), user_id: int = Depends(get_current_user)):
+@router.post('/pets/add', response_class=HTMLResponse)
+async def add_user_new_pet(
+      request: Request,
+      
+      pet_name: str = Form(...),
+      jenis_hewan:str = Form(...),
+      umur:int = Form(...),
+      berat:int = Form(...),
+      gender:str = Form(...),
+      db:AsyncSession = Depends(get_db), 
+      user_id: int = Depends(get_current_user)):
     try: 
+        pet_data = PetCreate(
+            nama_hewan=pet_name,
+            jenis_hewan=jenis_hewan,
+            umur=umur,
+            berat=berat,
+            gender_hewan=gender,
+
+
+        )
+        referer = request.headers.get("Referer")
+        print(f'Referer: {referer}')
+        
         print(f'User id = {user_id.id_user}')
         pet = await add_pet(db,user_id.id_user,pet_data)
         print(f'Pet added: {pet}')
-        return pet
+        if "profile" in referer:
+            origin_page = "/profile"
+        elif "petcaredashboard" in referer:
+            origin_page = "/petcaredashboard"
+        print (f'Origin page: {origin_page}')
+        return RedirectResponse(url=origin_page, status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
-
+@router.post('/address/add', response_class=HTMLResponse)
+async def add_user_new_address(
+    alamat : alamat_schema.AlamatCreate = Depends(),
+    user = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+  try:
+       await alamat_service.create_new_alamat(db, alamat, user.id_user)
+       return RedirectResponse(url="/profile", status_code=status.HTTP_303_SEE_OTHER)
+  except Exception as e:
+        system_exceptions.handle_system_error(e)
 
 
 

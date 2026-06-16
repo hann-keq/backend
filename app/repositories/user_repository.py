@@ -7,11 +7,16 @@ from fastapi import Depends
 from app.core.database import get_db
 
 async def create_user(db: AsyncSession, user_data: dict) :
-    new_user = User(**user_data)
-    db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
-    return new_user
+    try:
+        new_user = User(**user_data)
+        db.add(new_user)
+        await db.commit()
+        await db.refresh(new_user)
+        print(f"User created with ID: {new_user.id_user}")
+        return new_user
+    except Exception as e:
+        await db.rollback()
+        raise system_exceptions.DatabaseError(str(e))
 
 
 

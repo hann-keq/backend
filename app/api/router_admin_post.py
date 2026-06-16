@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status,Request,Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.templating import Jinja2Templates
 from starlette.responses import HTMLResponse
-from app.core.auth import get_current_user,get_current_user_from_cookie
+from app.core.auth import get_current_user
 from app.core.security import create_access_token
 from app.exceptions import system_exceptions, user_exceptions
 from app.schemas.product_schema.schema import ProductCreate
@@ -17,7 +17,7 @@ templates = Jinja2Templates(directory="app/templates")
 @router.post('/admin/add-product', response_class=HTMLResponse)
 async def add_product(request: Request, product_data: ProductCreate = Depends(ProductCreate.as_form),
                     db: AsyncSession = Depends(get_db),
-                    admin_data = Depends(get_current_user_from_cookie)):
+                    admin_data = Depends(get_current_user)):
     try:
         # Implement logic to add product using product_data and admin_data
         print('bersiap verisikasi admin')

@@ -14,7 +14,7 @@ class GenderHewan(str,Enum):
 
 
 class PetBase(BaseModel):
-    id_user : int
+    
     nama_hewan: str
     jenis_hewan: PetType
     gender_hewan: GenderHewan

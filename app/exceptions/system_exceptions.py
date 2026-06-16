@@ -16,3 +16,7 @@ def handle_expire_token(e: ExpiredSignatureError):
 def handle_non_authorized_token(e:Exception):
     print(f'Unauthorized token: {e}')
     raise HTTPException(status_code=401,detail='Unauthorized token')
+
+def DatabaseError(e: Exception):
+    print(f'Database error: {e}')
+    raise HTTPException(status_code=500,detail='Database error occurred')

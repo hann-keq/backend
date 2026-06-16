@@ -34,7 +34,11 @@
       <section class="section-container">
         <div class="section-header">
           <h2>Your Pets</h2>
-          <a href="{{ url_for('new-pet') }}" class="add-pet-link">+ Add Pet</a>
+          <a
+            href="{{ url_for('new-pet') }}?next=/petcaredashboard"
+            class="add-pet-link"
+            >+ Add Pet</a
+          >
         </div>
         <div class="pets-grid">
           <div class="pet-card">
