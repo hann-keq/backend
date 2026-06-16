@@ -1,4 +1,7 @@
 
+from typing import Optional
+
+
 from sqlalchemy import Column, Float, Integer, String, ForeignKey, MetaData,Enum,Date,DateTime,Time
 from sqlalchemy.orm import DeclarativeBase,mapped_column,Mapped
 from datetime import datetime,time,date
@@ -212,7 +215,38 @@ class Alamat(Base):
 
 class Pembayaran(Base):
     __tablename__ = 'pembayaran'
-    id_pembayaran : Mapped[int] = mapped_column(Integer,primary_key=True)
-    id_order_produk : Mapped[int] = mapped_column(Integer,ForeignKey('order_produk.id_order_produk'),nullable=False)
-    metode_pembayaran : Mapped[MetodePembayaran] = mapped_column(Enum(MetodePembayaran),nullable=False,default=MetodePembayaran.QRIS.value)
-    status_pembayaran : Mapped[StatusPembayaran] = mapped_column(Enum(StatusPembayaran),nullable=False,default=StatusPembayaran.MENUNGGU.value)
+    id_pembayaran : Mapped[int] = mapped_column(Integer, primary_key=True)
+    id_user : Mapped[int] = mapped_column(Integer, ForeignKey('users.id_user'), nullable=False)
+    id_order_produk : Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('order_produk.id_order_produk'), nullable=True)
+    id_booking_grooming : Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('booking_grooming.id_booking_grooming'), nullable=True)
+    id_janji_temu : Mapped[Optional[int]] = mapped_column(Integer, ForeignKey('janji_temu.id_janji_temu'), nullable=True)
+    jumlah_bayar : Mapped[float] = mapped_column(Float, nullable=False)
+    metode_pembayaran : Mapped[MetodePembayaran] = mapped_column(Enum(MetodePembayaran), nullable=False, default=MetodePembayaran.QRIS.value)
+    status_pembayaran : Mapped[StatusPembayaran] = mapped_column(Enum(StatusPembayaran), nullable=False, default=StatusPembayaran.MENUNGGU.value)
+    created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
+
+class Cart(Base):
+    __tablename__ = 'cart'
+    id_cart : Mapped[int] = mapped_column(Integer, primary_key=True)
+    id_user : Mapped[int] = mapped_column(Integer, ForeignKey('users.id_user'), nullable=False)
+    created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
+
+class CartItem(Base):
+    __tablename__ = 'cart_item'
+    id_cart_item : Mapped[int] = mapped_column(Integer, primary_key=True)
+    id_cart : Mapped[int] = mapped_column(Integer, ForeignKey('cart.id_cart'), nullable=False)
+    id_produk : Mapped[int] = mapped_column(Integer, ForeignKey('produk.id_produk'), nullable=False)
+    jumlah : Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
+
+class Receipt(Base):
+    __tablename__ = 'receipt'
+    id_receipt : Mapped[int] = mapped_column(Integer, primary_key=True)
+    id_pembayaran : Mapped[int] = mapped_column(Integer, ForeignKey('pembayaran.id_pembayaran'), nullable=False)
+    nomor_receipt : Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    tanggal_bayar : Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
+    updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
