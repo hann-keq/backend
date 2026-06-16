@@ -2,12 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from fastapi.templating import Jinja2Templates
+
 from app.core.database import engine, Base
 from app.api.router import router
 from app.api.router_get import router as get_router
-from app.api.router_admin_get import router as admin_get_router
-from app.api.router_admin_post import router as admin_post_router
+# from app.api.router_admin_get import router as admin_get_router
+# from app.api.router_admin_post import router as admin_post_router
 from fastapi.staticfiles import StaticFiles
+from app.admin import  init_admin
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,5 +36,7 @@ app.add_middleware(
 # router
 app.include_router(router)
 app.include_router(get_router)
-app.include_router(admin_get_router)
-app.include_router(admin_post_router)
+# app.include_router(admin_get_router)
+# app.include_router(admin_post_router)
+
+init_admin(app)

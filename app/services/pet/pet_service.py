@@ -28,4 +28,7 @@ async def delete_pet(db: AsyncSession, user_id: int, pet_id: int):
         raise HTTPException(status_code=500, detail=str(e))
     
 async def get_all_user_pets(db: AsyncSession, user_id: int):
-    return await pet_repository.get_all_user_pets(db, user_id)
+    pet = await pet_repository.get_all_user_pets(db, user_id)
+    if pet is None:
+        raise HTTPException(status_code=404, detail='No pets found for this user')
+    return pet

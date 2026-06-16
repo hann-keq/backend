@@ -9,6 +9,8 @@ from app.core.security import decode_access_token
 from app.exceptions import system_exceptions
 from app.schemas.user_schema.user_response import UserResponseOnlyId
 from app.services.user.user_service import get_user_by_id
+from app.services.pet import pet_service as pet
+from app.services.janji_temu import service as janji
 
 
 templates = Jinja2Templates(directory="app/templates")
@@ -114,6 +116,11 @@ async def tampilin_dashboard(
 
     try:
         current_user = user_id.id_user
+        all_pet = await pet.get_all_user_pets(db, current_user)
+        all_janji = await janji.get_all_janji_temu_by_user(db, current_user)
+
+        print (f'All pet for user {current_user}: {all_pet}')
+        print (f'All janji temu for user {current_user}: {all_janji}')
         print(f'Current user ID: {current_user}')
     except Exception as e:
         system_exceptions.handle_system_error(str(e))

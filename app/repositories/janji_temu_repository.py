@@ -13,7 +13,7 @@ async def get_janji_temu_by_id(db: AsyncSession, janji_temu_id: int):
     result = await db.execute(select(JanjiTemu).where(JanjiTemu.id_janji_temu == janji_temu_id))
     return result.scalars().one_or_none()
 
-async def get_janji_temus_by_user(db: AsyncSession, user_id: int):
+async def get_all_janji_temu_by_user(db: AsyncSession, user_id: int):
     result = await db.execute(select(JanjiTemu).where(JanjiTemu.id_user == user_id))
     return result.scalars().all()
 
