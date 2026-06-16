@@ -16,10 +16,10 @@ async def get_janji_temu_by_id(db: AsyncSession, janji_temu_id: int):
         raise user_exceptions.handle_janji_temu_not_found(f"Janji Temu dengan ID {janji_temu_id} tidak ditemukan")
     return janji_temu
 
-async def get_janji_temus_by_user(db: AsyncSession, user_id: int):
-    janji_temus = await janji.get_janji_temus_by_user(db, user_id)
+async def get_all_janji_temu_by_user(db: AsyncSession, user_id: int):
+    janji_temus = await janji.get_all_janji_temu_by_user(db, user_id)
     if not janji_temus:
-        raise user_exceptions.handle_janji_temu_not_found(f"Janji Temu untuk User ID {user_id} tidak ditemukan")
+        janji_temus = []  # Return an empty list instead of raising an exception
     return janji_temus
 
 async def update_status_janji_temu(db: AsyncSession, janji_temu_id: int, status: str):

@@ -10,6 +10,7 @@ class Base(DeclarativeBase):
 class RoleUser(pyEnum):
     USER = 'User'
     ADMIN = 'Admin'
+    PARTNER = 'Partner'
 class JenisHewan(pyEnum):
     KUCING = 'Kucing'
     ANJING = 'Anjing'
@@ -88,6 +89,7 @@ class Partner(Base):
     __tablename__ = 'partners'
     id_partner : Mapped[int] = mapped_column(Integer,primary_key=True)
     email : Mapped[str] = mapped_column(String(255),nullable=True,unique=True)
+    password : Mapped[str] = mapped_column(String(255),nullable=False)
     nama_partner : Mapped[str] = mapped_column(String(255),nullable=False)
     jenis_partner : Mapped[JenisPartner] = mapped_column(Enum(JenisPartner),nullable=False,default=JenisPartner.ALL.value)
     alamat : Mapped[str] = mapped_column(String(255),nullable=False)
