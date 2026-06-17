@@ -29,3 +29,5 @@ venv/
 # IDE
 .vscode/
 .idea/
+
+dokter/*
