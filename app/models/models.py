@@ -3,7 +3,7 @@ from typing import Optional
 
 
 from sqlalchemy import Column, Float, Integer, String, ForeignKey, MetaData,Enum,Date,DateTime,Time
-from sqlalchemy.orm import DeclarativeBase,mapped_column,Mapped
+from sqlalchemy.orm import DeclarativeBase,mapped_column,Mapped, relationship
 from datetime import datetime,time,date
 import pytz
 from enum import Enum as pyEnum
@@ -101,6 +101,8 @@ class Partner(Base):
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
 
+    def __str__(self):
+        return self.nama_partner
 class Dokter(Base):
     __tablename__ = 'dokter'
     id_dokter : Mapped[int] = mapped_column(Integer,primary_key=True)
@@ -111,6 +113,7 @@ class Dokter(Base):
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
 
+    partner: Mapped["Partner"] = relationship("Partner")
 class PaketGrooming(Base):
     __tablename__ = 'paket_grooming'
     id_paket_grooming : Mapped[int] = mapped_column(Integer,primary_key=True)
@@ -154,6 +157,7 @@ class JanjiTemu(Base):
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
 
+    Dokter: Mapped["Dokter"] = relationship("Dokter", foreign_keys=[id_dokter])
 class Produk(Base):
     __tablename__ = 'produk'
     id_produk : Mapped[int] = mapped_column(Integer,primary_key=True)
@@ -226,6 +230,8 @@ class Pembayaran(Base):
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
 
+    user: Mapped["User"] = relationship("User", foreign_keys=[id_user])
+    
 class Cart(Base):
     __tablename__ = 'cart'
     id_cart : Mapped[int] = mapped_column(Integer, primary_key=True)

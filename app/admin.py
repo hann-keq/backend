@@ -1,13 +1,16 @@
+import os
+
 from fastapi import Request
 from fastapi.responses import RedirectResponse
 from sqladmin import Admin, ModelView,action
 from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy import select,func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker
-
+from sqlalchemy.orm import sessionmaker,joinedload
+from wtforms import FileField
+from markupsafe import Markup
 from app.core.database import engine
-from app.models.models import Pembayaran, Pet, JanjiTemu, User, Partner, RoleUser,Produk
+from app.models.models import Dokter, Pembayaran, Pet, JanjiTemu, User, Partner, RoleUser,Produk
 # --- SUDAH DISESUAIKAN DENGAN NAMA FUNGSI ASLI KAMU ---
 from app.core.security import hash_password, verify_password  
 
@@ -56,7 +59,31 @@ class PembayaranProdukAdmin(ModelView, model=PembayaranProdukModel):
     def is_accessible(self, request: Request) -> bool:
         return request.session.get("user_role") == "admin"
 
+    @action(
+        name="mark_as_completed",
+        label="Tandai Dibayar",
+        confirmation_message="Yakin ingin mengubah status menjadi DIBAYAR?",
+        add_in_list=True,
+        add_in_detail=True
+    )
+    async def mark_as_completed(self, request: Request):
+        pks = request.query_params.getlist("pks")
 
+        async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            for pk in pks:
+                result = await session.execute(
+                    select(PembayaranProdukModel).where(
+                        PembayaranProdukModel.id_pembayaran == int(pk)
+                    )
+                )
+                pembayaran = result.scalar_one_or_none()
+                if pembayaran:
+                    pembayaran.status_pembayaran = "DIBAYAR"
+            await session.commit()
+
+        referer = request.headers.get("referer", "/admin/pembayaran-produk-model/list")
+        return RedirectResponse(referer, status_code=303)
 # --- SUB-MENU 2: PEMBAYARAN GROOMING ---
 class PembayaranGroomingAdmin(ModelView, model=PembayaranGroomingModel):
     name = "Pembayaran Grooming"
@@ -67,23 +94,76 @@ class PembayaranGroomingAdmin(ModelView, model=PembayaranGroomingModel):
 
     column_list = [
         PembayaranGroomingModel.id_pembayaran,
-        PembayaranGroomingModel.id_user,
+        "user.nama",
         PembayaranGroomingModel.id_booking_grooming,
         PembayaranGroomingModel.jumlah_bayar,
         PembayaranGroomingModel.metode_pembayaran,
         PembayaranGroomingModel.status_pembayaran,
         PembayaranGroomingModel.created_at
     ]
-
+    column_labels = {
+        "user.nama": "Nama User",
+    }
     def list_query(self,request: Request):
         print("Mendapatkan query untuk Pembayaran Grooming")
-        return select(PembayaranGroomingModel).where(
+        return select(PembayaranGroomingModel).options(joinedload(PembayaranGroomingModel.user)).where(
             PembayaranGroomingModel.id_booking_grooming.isnot(None)
         )
 
     def is_accessible(self, request: Request) -> bool:
         return request.session.get("user_role") == "admin"
 
+    @action(
+        name="mark_as_completed",
+        label="Tandai Dibayar",
+        confirmation_message="Yakin ingin mengubah status menjadi DIBAYAR?",
+        add_in_list=True,
+        add_in_detail=True
+    )
+    async def mark_as_completed(self, request: Request):
+        pks = request.query_params.getlist("pks")
+
+        async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            for pk in pks:
+                result = await session.execute(
+                    select(PembayaranGroomingModel).where(
+                        PembayaranGroomingModel.id_pembayaran == int(pk)
+                    )
+                )
+                pembayaran = result.scalar_one_or_none()
+                if pembayaran:
+                    pembayaran.status_pembayaran = "DIBAYAR"
+            await session.commit()
+
+        referer = request.headers.get("referer", "/admin/pembayaran-grooming-model/list")
+        return RedirectResponse(referer, status_code=303)
+    
+    @action(
+        name="mark_as_menunggu",
+        label="Tandai Menunggu",
+        confirmation_message="Yakin ingin mengubah status menjadi MENUNGGU?",
+        add_in_list=True,
+        add_in_detail=True
+    )
+    async def mark_as_menunggu(self, request: Request):
+        pks = request.query_params.getlist("pks")
+
+        async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+        async with async_session() as session:
+            for pk in pks:
+                result = await session.execute(
+                    select(PembayaranGroomingModel).where(
+                        PembayaranGroomingModel.id_pembayaran == int(pk)
+                    )
+                )
+                pembayaran = result.scalar_one_or_none()
+                if pembayaran:
+                    pembayaran.status_pembayaran = "MENUNGGU"
+            await session.commit()
+
+        referer = request.headers.get("referer", "/admin/pembayaran-grooming-model/list")
+        return RedirectResponse(referer, status_code=303)
 
 # --- SUB-MENU 3: PEMBAYARAN JANJI TEMU ---
 class PembayaranJanjiTemuAdmin(ModelView, model=PembayaranJanjiTemuModel):
@@ -119,6 +199,7 @@ class PembayaranJanjiTemuAdmin(ModelView, model=PembayaranJanjiTemuModel):
     label="Tandai Dibayar",
     confirmation_message="Yakin ingin mengubah status menjadi DIBAYAR?",
     add_in_list=True,
+    add_in_detail=True
 )
     async def mark_as_completed(self, request: Request):
         pks = request.query_params.getlist("pks")
@@ -185,13 +266,100 @@ class ProductAdmin(ModelView, model=Produk):
     def is_accessible(self, request: Request) -> bool:
         return request.session.get("user_role") == "admin"
 # =========================================================
-# 2. VIEW DASHBOARD KHUSUS PARTNER (HANYA JANJI TEMU)
+# 2. VIEW DASHBOARD KHUSUS PARTNER (HANYA JANJI TEMU) dipisahkan berdasarkan akun partner yang login
 # =========================================================
 class JanjiTemuAdmin(ModelView, model=JanjiTemu):
     name = "Data Janji Temu"
     name_plural = "Janji Temu"
     icon = "fa-solid fa-calendar"
-    column_list = [JanjiTemu.id_user, JanjiTemu.jam_janji, JanjiTemu.tanggal_janji, JanjiTemu.status_janji]
+    column_list = [JanjiTemu.id_user, 
+                   "partner.partner.nama_partner",
+                   JanjiTemu.jam_janji, 
+                   JanjiTemu.tanggal_janji, 
+                   JanjiTemu.status_janji]
+
+    column_labels = {
+        "partner.partner.nama_partner": "Nama Partner",
+    }
+    def list_query(self, request: Request):
+        partner_id = request.session.get("partner_id")
+        if not partner_id:
+            return select(JanjiTemu).where(False)  # Kunci pengaman
+
+        # Cara filter melompati tabel Dokter ke Partner:
+        return (
+            select(JanjiTemu)
+            .join(JanjiTemu.Dokter)  # Hubungkan ke tabel Dokter untuk keperluan WHERE filter
+            .options(
+                joinedload(JanjiTemu.Dokter).joinedload(Dokter.partner)  # Eager load berantai biar ga error async
+            )
+            .where(Dokter.id_partner == partner_id)  # <-- Filter berdasarkan Dokter milik Partner yang login!
+        )
+    
+    def is_accessible(self, request: Request) -> bool:
+        return request.session.get("user_role") in ["partner"]
+    
+class DokterPartnerAdmin(ModelView, model=Dokter):
+    name = "Data Dokter"
+    name_plural = "Daftar Dokter"
+    icon = "fa-solid fa-user-md"
+    column_list = ['foto', Dokter.id_dokter, Dokter.nama_dokter, Dokter.spesialis, "partner.partner.nama_partner"]
+
+    column_labels = {
+        'foto': 'foto profil',
+        "partner.partner.nama_partner": "Nama Partner",
+    }
+    form_columns = ['nama_dokter','spesialis','foto']
+
+    form_overrides = {'foto': FileField}
+
+    column_formatters = {
+        'foto': lambda model,attribute:Markup(
+            f'<img src="{model.foto}" class="img-thumbnail" style="max-height: 50px; max-width: 50px; border-radius: 50%; object-fit: cover;">'
+        )if model.foto else Markup('<i class="fa-solid fa-user-doctor fa-2x text-secondary"></i>')
+    }
+
+    def list_query(self, request: Request):
+        partner_id = request.session.get("partner_id")
+        if not partner_id:
+            return select(Dokter).where(False)  # Kunci pengaman
+
+        return (
+            select(Dokter)
+            .options(joinedload(Dokter.partner))  # Eager load Partner biar ga error async
+            .where(Dokter.id_partner == partner_id)  # <-- Filter berdasarkan Partner yang login!
+        )
+    
+    async def on_model_change(self, data: dict, model, is_created: bool, request: Request) -> None:
+        partner_id = request.session.get("partner_id")
+        if partner_id:
+            data["id_partner"] = partner_id
+
+        if "foto" in data and data["foto"]:
+            file_data = data["foto"]
+            
+            if hasattr(file_data, 'filename') and file_data.filename:
+                # 1. Gunakan folder tujuan yang kata kamu terbukti berhasil masuk:
+                upload_dir = "app/static/uploads/dokter"
+                os.makedirs(upload_dir, exist_ok=True)
+                
+                # Buat nama file unik berdasarkan nama dokter agar tidak bentrok
+                clean_nama = data.get("nama_dokter", "dokter").replace(" ", "_")
+                filename = f"{clean_nama}_{file_data.filename}"
+                file_path = os.path.join(upload_dir, filename)
+                
+                # 2. Proses tulis file fisik (tetap seperti yang kamu buat)
+                with open(file_path, "wb") as buffer:
+                    buffer.write(await file_data.read())
+                
+                # 3. KUNCI SELAMAT: Pakai data["foto"], JANGAN model.foto = filename
+                # Jalur URL ini disesuaikan dengan app.mount("/static") milik FastAPI
+                data["foto"] = f"/static/uploads/dokter/{filename}"
+            else:
+                if not is_created:
+                    data.pop("foto", None)
+                else:
+                    data["foto"] = None
 
     def is_accessible(self, request: Request) -> bool:
         return request.session.get("user_role") in ["partner"]
@@ -262,3 +430,4 @@ def init_admin(app):
     admin.add_view(PembayaranProdukAdmin)
     admin.add_view(PembayaranGroomingAdmin)
     admin.add_view(PembayaranJanjiTemuAdmin)
+    admin.add_view(DokterPartnerAdmin)
