@@ -30,4 +30,4 @@ venv/
 .vscode/
 .idea/
 
-dokter/*
+static/uploads/dokter/
