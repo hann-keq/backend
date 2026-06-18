@@ -209,7 +209,7 @@
       document.body.classList.add("fade-out");
 
       setTimeout(() => {
-        window.location.href = "petcarehome.html";
+        window.location.href = "/landing";
       }, 200);
     });
 
@@ -217,7 +217,7 @@
 
   editBtn.addEventListener("click", function () {
     // pindah ke halaman edit profile
-    window.location.href = "editprofile.html";
+    window.location.href = "{{ url_for('editprofile') }}";
   });
 </script>
 {% endblock %}

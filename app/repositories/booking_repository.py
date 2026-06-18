@@ -10,7 +10,7 @@ async def create_booking_grooming(db: AsyncSession, booking_data: dict):
     return new_booking
 
 async def get_booking_grooming_by_id(db: AsyncSession, booking_id: int):
-    result = await db.execute(select(BookingGrooming).where(BookingGrooming.id == booking_id))
+    result = await db.execute(select(BookingGrooming).where(BookingGrooming.id_booking_grooming == booking_id))
     return result.scalars().one_or_none()
 
 async def get_booking_groomings_by_user(db: AsyncSession, user_id: int):
@@ -19,7 +19,7 @@ async def get_booking_groomings_by_user(db: AsyncSession, user_id: int):
 
 
 async def update_booking_grooming(db: AsyncSession, booking_id: int, status: str):
-    result = await db.execute(select(BookingGrooming).where(BookingGrooming.id == booking_id))
+    result = await db.execute(select(BookingGrooming).where(BookingGrooming.id_booking_grooming == booking_id))
     booking = result.scalars().one_or_none()
     if not booking:
         return None
@@ -29,7 +29,7 @@ async def update_booking_grooming(db: AsyncSession, booking_id: int, status: str
     return booking
 
 async def delete_booking_grooming(db: AsyncSession, booking_id: int):
-    result = await db.execute(select(BookingGrooming).where(BookingGrooming.id == booking_id))
+    result = await db.execute(select(BookingGrooming).where(BookingGrooming.id_booking_grooming == booking_id))
     booking = result.scalars().one_or_none()
     if not booking:
         return None

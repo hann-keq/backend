@@ -17,12 +17,14 @@ async def get_membership_by_user(db: AsyncSession, user_id: int):
     result = await db.execute(select(Membership).where(Membership.id_user == user_id))
     return result.scalars().one_or_none()
 
-async def update_membership(db: AsyncSession, membership_id: int, status: str):
+async def update_membership_dates(db: AsyncSession, membership_id: int, data: dict):
+    """Update membership fields — used by both select and cancel routes."""
     result = await db.execute(select(Membership).where(Membership.id_membership == membership_id))
     membership = result.scalars().one_or_none()
     if not membership:
         return None
-    membership.status_membership = status
+    for key, value in data.items():
+        setattr(membership, key, value)
     await db.commit()
     await db.refresh(membership)
     return membership

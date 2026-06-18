@@ -14,11 +14,11 @@ async def get_dokter_by_id(db: AsyncSession, dokter_id: int):
     return result.scalars().one_or_none()
 
 async def get_all_dokters_by_partner_id(db: AsyncSession, partner_id: int):
-    result = await db.execute(select(Dokter).where(Dokter.id_user == partner_id))
+    result = await db.execute(select(Dokter).where(Dokter.id_partner == partner_id))
     return result.scalars().all()
 
 async def get_dokter_by_partner_id(db: AsyncSession, partner_id: int):
-    result = await db.execute(select(Dokter).where(Dokter.id_user == partner_id))
+    result = await db.execute(select(Dokter).where(Dokter.id_partner == partner_id))
     return result.scalars().one_or_none()
 
 async def get_dokter_by_spesialis(db: AsyncSession, spesialis: str):
