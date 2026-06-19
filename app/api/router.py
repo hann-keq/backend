@@ -1,34 +1,50 @@
-from typing import Optional
-
-from fastapi import APIRouter, Depends, HTTPException, status,Request,Form
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, RedirectResponse
 from app.core.database import get_db
-from app.core.security import create_access_token, decode_access_token
+from app.core.security import create_access_token
 from app.core.auth import get_current_user
 
 from app.models.models import User
 from app.services.pet.pet_service import add_pet
-from app.exceptions import user_exceptions, system_exceptions
+from app.exceptions import system_exceptions
 from app.schemas.pet_schema.pet_create import PetCreate
-from app.schemas.pet_schema.pet_response import PetResponse
 from app.schemas.user_schema.user_create import UserCreate
-from app.schemas.user_schema.user_response import UserResponse, UserResponseOnlyId
-from app.schemas.product_schema.schema import ProductCreate,ProductResponse
-from sqlalchemy import select
-from app.services.product import product_service
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse,RedirectResponse
 from app.services.alamat import service as alamat_service
 from app.schemas.alamat_schema import schema as alamat_schema
 
-from app.services.user.user_service import create_new_user, login_user, login_admin,create_new_admin,get_user_by_id
-from app.services.user import user_service
+from app.services.user.user_service import create_new_user, login_user
+from app.services.favorite import service as favorite_service
+
+from app.schemas.booking_schema.schema import BookingCreate
+from app.schemas.janji_schema.schema import JanjiTemuCreate
+
+
+from app.repositories import (
+    alamat_repository,
+    booking_repository,
+    favorit_repository,
+    membership_repository,
+    order_repository,
+    pet_repository,
+    produk_repository,
+    user_repository,
+    janji_temu_repository,
+)
+
+from app.schemas.booking_schema.schema import BookingCreate
+from app.schemas.janji_schema.schema import JanjiTemuCreate
+from app.schemas.membership_schema.schema import MembershipCreate
+
+
 templates = Jinja2Templates(directory="app/templates")
 router = APIRouter()
 
 
-
+# ================================================================
+#  AUTH
+# ================================================================
 
 @router.post("/register", response_class=HTMLResponse)
 async def sign_up(
@@ -38,113 +54,471 @@ async def sign_up(
     no_telepon: str = Form(...),
     password: str = Form(...),
     confirm_password: str = Form(...),
-    
-    db:AsyncSession = Depends(get_db)):
+    db: AsyncSession = Depends(get_db),
+):
     try:
         new_user = UserCreate(
             nama=nama,
             email=email,
             no_telepon=no_telepon,
             password=password,
-            confirm_password=confirm_password
+            confirm_password=confirm_password,
         )
         user = await create_new_user(db, new_user)
         if user:
             return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
-    except:
-            return templates.TemplateResponse(
-                request=request, 
-                name='signup.html', 
-                context={
-                    "request": request, 
-                    "error": "Email already registered", # Kirim pesan ke Jinja
-                    "nama": nama,                         # Data input dikembalikan biar ga ngetik ulang
-                    "email": email,
-                    "no_telepon": no_telepon
-                },
-                status_code=400 # Browser tetap membaca ini sebagai error 400 Bad Request
-            )
-    
+    except Exception:
+        return templates.TemplateResponse(
+            request=request,
+            name="signup.html",
+            context={
+                "request": request,
+                "error": "Email already registered",
+                "nama": nama,
+                "email": email,
+                "no_telepon": no_telepon,
+            },
+            status_code=400,
+        )
 
 
-
-
-@router.post('/login', response_class=HTMLResponse)
+@router.post("/login", response_class=HTMLResponse)
 async def login(
     request: Request,
     email: str = Form(...),
     password: str = Form(...),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
 ):
     form_data = {"email": email, "password": password}
     user = await login_user(db, form_data)
 
     if not user:
-        return templates.TemplateResponse(request = request,name='login.html', context={"error":"Invalid email or password"})
+        return templates.TemplateResponse(
+            request=request,
+            name="login.html",
+            context={"error": "Invalid email or password"},
+        )
 
-    # 1. BUAT ACCESS TOKEN KAMU SEPERTI BIASA
     access_token = create_access_token(data={"sub": str(user.id_user)})
-
-    # 2. BIKIN RESPONS REDIRECT
     response = RedirectResponse(url="/petcaredashboard", status_code=status.HTTP_303_SEE_OTHER)
-    
-    # 3. TITIPKAN TOKEN KE COOKIE BROWSER (Mirip $_SESSION di PHP)
-    # httponly=True bikin token aman dari serangan XSS Javascript jahat
-    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
-    
+    response.set_cookie(
+        key="access_token", value=f"Bearer {access_token}", httponly=True
+    )
     return response
 
 
+@router.post("/logout")
+async def logout():
+    response = RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+    response.delete_cookie("access_token")
+    return response
 
 
-@router.post('/pets/add', response_class=HTMLResponse)
+# ================================================================
+#  PETS
+# ================================================================
+
+@router.post("/pets/add", response_class=HTMLResponse)
 async def add_user_new_pet(
-      request: Request,
-      
-      pet_name: str = Form(...),
-      jenis_hewan:str = Form(...),
-      umur:int = Form(...),
-      berat:int = Form(...),
-      gender:str = Form(...),
-      db:AsyncSession = Depends(get_db), 
-      user_id: int = Depends(get_current_user)):
-    try: 
+    request: Request,
+    pet_name: str = Form(...),
+    jenis_hewan: str = Form(...),
+    umur: int = Form(...),
+    berat: int = Form(...),
+    gender: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
         pet_data = PetCreate(
             nama_hewan=pet_name,
             jenis_hewan=jenis_hewan,
             umur=umur,
             berat=berat,
             gender_hewan=gender,
-
-
         )
-        referer = request.headers.get("Referer")
-        print(f'Referer: {referer}')
-        
-        print(f'User id = {user_id.id_user}')
-        pet = await add_pet(db,user_id.id_user,pet_data)
-        print(f'Pet added: {pet}')
-        if "profile" in referer:
-            origin_page = "/profile"
-        elif "petcaredashboard" in referer:
-            origin_page = "/petcaredashboard"
-        print (f'Origin page: {origin_page}')
+        referer = request.headers.get("Referer", "")
+        origin_page = "/profile" if "profile" in referer else "/petcaredashboard"
+        await add_pet(db, current_user.id_user, pet_data)
         return RedirectResponse(url=origin_page, status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
-@router.post('/address/add', response_class=HTMLResponse)
-async def add_user_new_address(
-    alamat : alamat_schema.AlamatCreate = Depends(),
-    user = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+
+@router.post("/pets/edit", response_class=HTMLResponse)
+async def edit_pet(
+    request: Request,
+    pet_id: int = Form(...),
+    pet_name: str = Form(...),
+    jenis_hewan: str = Form(...),
+    umur: int = Form(...),
+    berat: int = Form(...),
+    gender: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-  try:
-       await alamat_service.create_new_alamat(db, alamat, user.id_user)
-       return RedirectResponse(url="/profile", status_code=status.HTTP_303_SEE_OTHER)
-  except Exception as e:
+    try:
+        existing = await pet_repository.get_pet_by_id(db, pet_id)
+        if not existing or existing.id_user != current_user.id_user:
+            raise HTTPException(status_code=404, detail="Pet not found")
+        await pet_repository.update_pet(
+            db,
+            pet_id,
+            {
+                "nama_hewan": pet_name,
+                "jenis_hewan": jenis_hewan,
+                "umur": umur,
+                "berat": berat,
+                "gender_hewan": gender,
+            },
+        )
+        return RedirectResponse(url="/profile", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
         system_exceptions.handle_system_error(e)
 
 
+@router.post("/pets/delete", response_class=HTMLResponse)
+async def delete_pet(
+    request: Request,
+    pet_id: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        existing = await pet_repository.get_pet_by_id(db, pet_id)
+        if not existing or existing.id_user != current_user.id_user:
+            raise HTTPException(status_code=404, detail="Pet not found")
+        await pet_repository.delete_pet(db, pet_id)
+        return RedirectResponse(url="/profile", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
 
-    
+
+# ================================================================
+#  ADDRESS
+# ================================================================
+
+@router.post("/address/add", response_class=HTMLResponse)
+async def add_user_new_address(
+    alamat: alamat_schema.AlamatCreate = Depends(),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        await alamat_service.create_new_alamat(db, alamat, current_user.id_user)
+        return RedirectResponse(url="/address.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+@router.post("/address/edit", response_class=HTMLResponse)
+async def edit_address(
+    alamat_id: int = Form(...),
+    alamat: str = Form(...),
+    kota: str = Form(...),
+    provinsi: str = Form(...),
+    kode_pos: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        existing = await alamat_repository.get_alamat_by_id(db, alamat_id)
+        if not existing or existing.id_user != current_user.id_user:
+            raise HTTPException(status_code=404, detail="Address not found")
+        await alamat_repository.update_alamat(
+            db, alamat_id, {"alamat": alamat, "kota": kota, "provinsi": provinsi, "kode_pos": kode_pos}
+        )
+        return RedirectResponse(url="/address.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+@router.post("/address/delete", response_class=HTMLResponse)
+async def delete_address(
+    alamat_id: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        existing = await alamat_repository.get_alamat_by_id(db, alamat_id)
+        if not existing or existing.id_user != current_user.id_user:
+            raise HTTPException(status_code=404, detail="Address not found")
+        await alamat_repository.delete_alamat(db, alamat_id)
+        return RedirectResponse(url="/address.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  PROFILE
+# ================================================================
+
+@router.post("/profile/edit", response_class=HTMLResponse)
+async def edit_profile(
+    request: Request,
+    nama: str = Form(...),
+    email: str = Form(...),
+    no_telepon: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        # Check for email conflict
+        existing = await user_repository.get_user_by_email(db, email)
+        if existing and existing.id_user != current_user.id_user:
+            return templates.TemplateResponse(
+                request=request,
+                name="editprofile.html",
+                context={
+                    "request": request,
+                    "user": current_user,
+                    "error": "Email already used by another account",
+                },
+            )
+        await user_repository.update_user(
+            db, current_user.id_user, {"nama": nama, "email": email, "no_telepon": no_telepon}
+        )
+        return RedirectResponse(url="/profile", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  FAVORITES
+# ================================================================
+
+@router.post("/favorites/toggle", response_class=HTMLResponse)
+async def toggle_favorite(
+    request: Request,
+    id_produk: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        await favorite_service.toggle_favorit(db, current_user.id_user, id_produk)
+        referer = request.headers.get("Referer", "/favorites.html")
+        return RedirectResponse(url=referer, status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  ORDERS  (checkout from petshop cart)
+# ================================================================
+
+@router.post("/orders/create", response_class=HTMLResponse)
+async def create_order(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # Read cart items from form fields sent as JSON string.
+    # The petshop template sends: items_json = JSON.stringify(cart)
+    # We receive it here — but since this is a form, we accept a single field.
+    import json
+
+    try:
+        form = await request.form()
+        items_json = form.get("items_json", "[]")
+        items = json.loads(items_json)
+
+        total_harga = sum(item["price"] * item["qty"] for item in items)
+
+        # Create the order
+        new_order = await order_repository.create_order_produk(
+            db,
+            {
+                "id_user": current_user.id_user,
+                "total_harga": total_harga,
+                "status_order": "Menunggu",
+            },
+        )
+
+        # Create detail_order rows and reduce stock
+        for item in items:
+            # find produk by name (petshop stores names; real app should use IDs)
+            produk_list = await produk_repository.get_all_products(db)
+            produk = next((p for p in produk_list if p.nama_produk == item.get("name")), None)
+            if produk:
+                await order_repository.create_detail_order(
+                    db,
+                    {
+                        "id_order_produk": new_order.id_order_produk,
+                        "id_produk": produk.id_produk,
+                        "jumlah": item["qty"],
+                        "subtotal": item["price"] * item["qty"],
+                    },
+                )
+                # attempt to reduce stock
+                await produk_repository.reduce_stock_product_by_id_product(
+                    db, produk.id_produk, item["qty"]
+                )
+
+        return RedirectResponse(url="/orders.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  BOOKING GROOMING
+# ================================================================
+
+@router.post("/bookings/create", response_class=HTMLResponse)
+async def create_booking(
+    id_pet: int = Form(...),
+    id_paket_grooming: int = Form(...),
+    tanggal_booking: str = Form(...),
+    jam_booking: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        from datetime import date, time
+
+        booking_data = BookingCreate(
+            id_pet=id_pet,
+            id_paket_grooming=id_paket_grooming,
+            tanggal_booking=date.fromisoformat(tanggal_booking),
+            jam_booking=time.fromisoformat(jam_booking),
+        )
+        booking_dict = booking_data.model_dump()
+        booking_dict["id_user"] = current_user.id_user
+        booking_dict["status_booking"] = "Menunggu"
+        await booking_repository.create_booking_grooming(db, booking_dict)
+
+        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+@router.post("/bookings/cancel", response_class=HTMLResponse)
+async def cancel_booking(
+    booking_id: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        existing = await booking_repository.get_booking_grooming_by_id(db, booking_id)
+        if not existing or existing.id_user != current_user.id_user:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        await booking_repository.update_booking_grooming(db, booking_id, "Dibatalkan")
+        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  JANJI TEMU  (vet appointments)
+# ================================================================
+
+@router.post("/janji-temu/create", response_class=HTMLResponse)
+async def create_janji_temu(
+    id_pet: int = Form(...),
+    id_dokter: int = Form(...),
+    tanggal_janji: str = Form(...),
+    jam_janji: str = Form(...),
+    keluhan: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        from datetime import date, time
+
+        janji_data = JanjiTemuCreate(
+            id_pet=id_pet,
+            id_dokter=id_dokter,
+            tanggal_janji=date.fromisoformat(tanggal_janji),
+            jam_janji=time.fromisoformat(jam_janji),
+            keluhan=keluhan,
+        )
+        janji_dict = janji_data.model_dump()
+        janji_dict["id_user"] = current_user.id_user
+        janji_dict["status_janji"] = "Menunggu"
+        await janji_temu_repository.create_janji_temu(db, janji_dict)
+
+        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+@router.post("/janji-temu/cancel", response_class=HTMLResponse)
+async def cancel_janji_temu(
+    janji_id: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        existing = await janji_temu_repository.get_janji_temu_by_id(db, janji_id)
+        if not existing or existing.id_user != current_user.id_user:
+            raise HTTPException(status_code=404, detail="Janji Temu not found")
+        await janji_temu_repository.update_status_janji_temu(db, janji_id, "Dibatalkan")
+        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  MEMBERSHIP
+# ================================================================
+
+@router.post("/membership/select", response_class=HTMLResponse)
+async def select_membership(
+    tipe_membership: str = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        from datetime import date, timedelta
+
+        today = date.today()
+        existing = await membership_repository.get_membership_by_user(db, current_user.id_user)
+        if existing:
+            # update existing
+            await membership_repository.update_membership_dates(
+                db,
+                existing.id_membership,
+                {
+                    "tipe_membership": tipe_membership,
+                    "tanggal_berlaku": today,
+                    "tanggal_kedaluarsa": today + timedelta(days=30),
+                },
+            )
+        else:
+            await membership_repository.create_membership(
+                db,
+                {
+                    "id_user": current_user.id_user,
+                    "tipe_membership": tipe_membership,
+                    "tanggal_berlaku": today,
+                    "tanggal_kedaluarsa": today + timedelta(days=30),
+                },
+            )
+        return RedirectResponse(url="/membership.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+@router.post("/membership/cancel", response_class=HTMLResponse)
+async def cancel_membership(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        existing = await membership_repository.get_membership_by_user(db, current_user.id_user)
+        if existing:
+            # downgrade to Basic
+            await membership_repository.update_membership_dates(
+                db,
+                existing.id_membership,
+                {"tipe_membership": "Basic"},
+            )
+        return RedirectResponse(url="/membership.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  PRODUCT  (admin-facing, kept for completeness)
+# ================================================================
+
+# No trailing imports needed

@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.models import OrderProduk,DetailOrder
+from app.models.models import OrderProduk, DetailOrder
 from sqlalchemy import select
 
 async def create_order_produk(db: AsyncSession, order_data: dict):
@@ -10,7 +10,7 @@ async def create_order_produk(db: AsyncSession, order_data: dict):
     return new_order
 
 async def get_ordered_produk_by_id(db: AsyncSession, order_id: int):
-    result = await db.execute(select(OrderProduk).where(OrderProduk.id_order == order_id))
+    result = await db.execute(select(OrderProduk).where(OrderProduk.id_order_produk == order_id))
     return result.scalars().one_or_none()
 
 async def get_all_ordered_produk_by_user(db: AsyncSession, user_id: int):
@@ -29,7 +29,7 @@ async def get_detail_order_by_id(db: AsyncSession, detail_order_id: int):
     return result.scalars().one_or_none()
 
 async def get_detail_orders_by_order(db: AsyncSession, order_id: int):
-    result = await db.execute(select(DetailOrder).where(DetailOrder.id_order == order_id))
+    result = await db.execute(select(DetailOrder).where(DetailOrder.id_order_produk == order_id))
     return result.scalars().all()
 
 async def get_detail_user_order(db: AsyncSession, user_id: int):
@@ -39,7 +39,7 @@ async def get_detail_user_order(db: AsyncSession, user_id: int):
     return result.scalars().all()
 
 async def update_status_order(db: AsyncSession, order_id: int, status: str):
-    result = await db.execute(select(OrderProduk).where(OrderProduk.id_order == order_id))
+    result = await db.execute(select(OrderProduk).where(OrderProduk.id_order_produk == order_id))
     order = result.scalars().one_or_none()
     if not order:
         return None
@@ -52,11 +52,11 @@ async def delete_detail_and_order(db: AsyncSession, id_order: int):
     # hapus detail abis itu hapus ordernya
     result = await db.execute(
         select(DetailOrder).where(DetailOrder.id_order_produk == id_order)
-        )
+    )
     for item in result.scalars().all():
         await db.delete(item)
-    
-    result = await db.execute(select(OrderProduk).where(OrderProduk.id_order == id_order))
+
+    result = await db.execute(select(OrderProduk).where(OrderProduk.id_order_produk == id_order))
     order = result.scalars().one_or_none()
     if order:
         await db.delete(order)
@@ -73,6 +73,3 @@ async def kurangi_stok_produk(db: AsyncSession, id_produk: int, jumlah: int):
             await db.refresh(detail)
             return detail
     return None
-
-
-
