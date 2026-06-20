@@ -70,3 +70,9 @@ async def get_current_admin_by_id(admin_id: int, db: AsyncSession = Depends(get_
         return admin
     except Exception as e:
         system_exceptions.handle_system_error(e)
+
+async def get_user_by_email(db: AsyncSession, email: str):
+    user = await user_repository.get_user_by_email(db, email)
+    if not user:
+        raise user_exceptions.handle_user_not_found(detail_message=f'User with email {email} not found')
+    return user
