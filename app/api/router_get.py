@@ -80,7 +80,7 @@ async def tampilin_halaman_login(request: Request):
     return templates.TemplateResponse(request, 'login.html')
 
 
-@router.get('/landing', response_class=HTMLResponse, name='petcarehome')
+@router.get('/', response_class=HTMLResponse, name='petcarehome')
 async def tampilin_landing(request: Request):
     return templates.TemplateResponse(request, 'petcarehome.html')
 
@@ -385,6 +385,7 @@ async def tampilin_new_pet(
     current_user: User = Depends(get_current_user),
 ):
     return templates.TemplateResponse(request, 'new-pet.html')
+
 
 
 # ================================================================

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from fastapi.security import HTTPBearer
-
+from authlib.integrations.starlette_client import OAuth
 import bcrypt
 from app.core.config import settings
 
@@ -12,7 +12,16 @@ bearer_scheme = HTTPBearer(
     auto_error=False,  # we handle 401 ourselves in auth.py
 )
 
-
+oauth = OAuth()
+oauth.register(
+    name='google',
+    client_id=settings.GOOGLE_CLIENT_ID,
+    client_secret=settings.GOOGLE_CLIENT_SECRET,
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
 # ---------------------------------------------------------------------------
 # Password hashing
 # ---------------------------------------------------------------------------
@@ -34,9 +43,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # ---------------------------------------------------------------------------
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
-    expires = datetime.now(timezone.utc) + timedelta(
-        hours=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    expires = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expires})
     if "user_id" in to_encode:
         to_encode["sub"] = str(to_encode["user_id"])
