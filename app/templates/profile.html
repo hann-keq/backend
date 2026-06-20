@@ -1,120 +1,74 @@
-{% extends "base.html" %} {% block prefetch %} {%endblock %} {% block style %}
+{% extends "base.html" %} 
+{% block prefetch %} {% endblock %} 
+{% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/profile.css') }}" />
+{% endblock %} 
 
-{% endblock %} {% block content %}
-
-<!-- SIDEBAR -->
+{% block content %}
 <div class="d-flex min-vh-100">
   {% include "sidebar.html" %}
 
-  <!-- content-->
-
-  <!-- MAIN CONTENT -->
   <main class="main-content flex-grow-1 px-3">
     <div class="container">
       <div class="d-flex align-items-start justify-content-between">
         <div>
           <h2 style="color: #4b2e2b">Profile</h2>
-          <p style="color: #8c5a3c; font-size: 14px">
-            View and manage your profile
-          </p>
+          <p style="color: #8c5a3c; font-size: 14px">View and manage your profile</p>
         </div>
       </div>
 
       <div class="profile-wrapper">
-        <!-- PROFILE CARD -->
         <div class="profile-card">
           <div class="profile-left">
-            <img src="image/sarah.jpg" class="profile-img" />
-
+            <img src="{{ url_for('static', path='image/sarah.jpg') }}" class="profile-img" />
             <div>
               <h3>{{ user.nama }}</h3>
               <p>{{ user.email }}</p>
-
               <span class="badge">⭐ Premium Member</span>
             </div>
           </div>
-
           <button class="edit-btn" id="openEditProfile">Edit Profile</button>
         </div>
 
-        <!-- PETS -->
-        <div
-          class="section-header d-flex justify-content-between align-items-center"
-        >
+        <div class="section-header d-flex justify-content-between align-items-center">
           <h3>My Pets</h3>
-          <a
-            href="{{url_for('new-pet') }}?next=/profile"
-            class="add-link text-decoration-none"
-            style="color: #8c5a3c; font-weight: 500"
-            >+ Add Pet</a
-          >
+          <a href="{{ url_for('new-pet') }}?next=/profile" class="add-link text-decoration-none" style="color: #8c5a3c; font-weight: 500">
+            + Add Pet
+          </a>
         </div>
 
-        <<div class="pets-grid">
-  {% for pet in pets %}
-  <div class="pet-card">
-    <div class="pet-left">
-      <img src="image/{{ pet.nama_hewan | lower }}.jpg" class="pet-img" alt="{{ pet.nama_hewan }}" />
-      <div>
-        <h4>{{ pet.nama_hewan }}</h4>
-        <p>{{ pet.ras }}</p>
-        <span>{{ pet.umur }} years</span>
-      </div>
-    </div>
-    <i class="fas fa-pen"></i>
-  </div>
-  {% else %}
-  <div class="text-center py-3">
-    <p style="color: #8c5a3c;">Belum ada peliharaan yang terdaftar.</p>
-  </div>
-  {% endfor %}
-</div>
-
+        <div class="pets-grid">
+          {% for pet in pets %}
           <div class="pet-card">
             <div class="pet-left">
-              <img src="image/luna.jpg" class="pet-img" alt="Luna" />
+              <img src="{{ url_for('static', path='image/default.jpg') }}" class="pet-img" alt="{{ pet.nama_hewan }}" />
               <div>
-                <h4>Luna</h4>
-                <p>Tabby Cat</p>
-                <span>2 years</span>
+                <h4>{{ pet.nama_hewan }}</h4>
+                <p>{{ pet.ras }}</p>
+                <span>{{ pet.umur }} years</span>
               </div>
             </div>
-            <i class="fas fa-pen"></i>
+            <a href="/edit-pet/{{ pet.id_pet }}" style="color: #4b2e2b;">
+              <i class="fas fa-pen"></i>
+            </a>
           </div>
+          {% else %}
+          <div class="text-center w-100 py-4">
+            <p style="color: #8c5a3c;">Belum ada peliharaan yang ditambahkan.</p>
+          </div>
+          {% endfor %}
         </div>
 
-        <!-- ACCOUNT INFO -->
-        <div class="section-header">
-          <h3>Account Information</h3>
-        </div>
-
+        <div class="section-header"><h3>Account Information</h3></div>
         <div class="account-box">
           <div class="account-row">
-            <div>
-              <h4>Personal Details</h4>
-              <p>Name, email, phone</p>
-            </div>
+            <div><h4>Personal Details</h4><p>Name, email, phone</p></div>
             <span>Edit</span>
           </div>
-
-          <div class="account-row">
-            <div>
-              <h4>Membership</h4>
-              <p>Premium Plan - Active</p>
-            </div>
-            <i class="fas fa-chevron-right"></i>
-          </div>
+      
         </div>
 
-        <!-- LOGOUT -->
-        <button
-          class="logout-btn"
-          data-bs-toggle="modal"
-          data-bs-target="#logoutModal"
-        >
-          Log Out
-        </button>
+        <button class="logout-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">Log Out</button>
       </div>
     </div>
   </main>
@@ -122,90 +76,24 @@
 
 <div class="modal fade" id="logoutModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div
-      class="modal-content border-0 rounded-4 p-4 text-center"
-      style="background-color: #fff8f0"
-    >
-      <!-- ICON -->
-      <div class="mb-3">
-        <i
-          class="bi bi-box-arrow-right"
-          style="font-size: 40px; color: #8c5a3c"
-        ></i>
-      </div>
-
-      <!-- TITLE -->
+    <div class="modal-content border-0 rounded-4 p-4 text-center" style="background-color: #fff8f0">
+      <div class="mb-3"><i class="bi bi-box-arrow-right" style="font-size: 40px; color: #8c5a3c"></i></div>
       <h5 style="color: #4b2e2b; font-weight: 600">Keluar dari akun?</h5>
-
-      <!-- TEXT -->
-      <p style="color: #8c5a3c; font-size: 14px">
-        Kamu akan keluar dari akun PetCare.
-      </p>
-
-      <!-- BUTTON -->
+      <p style="color: #8c5a3c; font-size: 14px">Kamu akan keluar dari akun PetCare.</p>
       <div class="d-flex justify-content-center gap-2 mt-3">
-        <button
-          class="btn rounded-pill px-4"
-          style="background-color: #e6d3c3; color: #4b2e2b"
-          data-bs-dismiss="modal"
-        >
-          Tidak
-        </button>
-
-        <button
-          class="btn rounded-pill px-4 text-white"
-          style="background-color: #8c5a3c"
-          id="confirmLogout"
-        >
-          Keluar
-        </button>
+        <button class="btn rounded-pill px-4" style="background-color: #e6d3c3; color: #4b2e2b" data-bs-dismiss="modal">Tidak</button>
+        <button class="btn rounded-pill px-4 text-white" style="background-color: #8c5a3c" id="confirmLogout">Keluar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Bootstrap JS (WAJIB) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-  // efek masuk
-  window.addEventListener("pageshow", () => {
-    document.body.classList.remove("fade-out");
+  document.getElementById("confirmLogout").addEventListener("click", function () {
+    window.location.href = "/landing";
   });
 
-  // klik navbar
-  document.querySelectorAll(".main-nav a").forEach((link) => {
-    link.addEventListener("click", function (e) {
-      const target = this.getAttribute("href");
-
-      if (target && target !== "#") {
-        e.preventDefault();
-
-        document.body.classList.add("fade-out");
-
-        // langsung pindah tanpa delay lama
-        setTimeout(() => {
-          window.location.href = target;
-        }, 150); // lebih cepat
-      }
-    });
-  });
-
-  // logout
-  document
-    .getElementById("confirmLogout")
-    .addEventListener("click", function () {
-      document.body.classList.add("fade-out");
-
-      setTimeout(() => {
-        window.location.href = "/landing";
-      }, 200);
-    });
-
-  const editBtn = document.getElementById("openEditProfile");
-
-  editBtn.addEventListener("click", function () {
-    // pindah ke halaman edit profile
+  document.getElementById("openEditProfile").addEventListener("click", function () {
     window.location.href = "{{ url_for('editprofile') }}";
   });
 </script>

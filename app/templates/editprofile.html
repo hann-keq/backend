@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -18,45 +17,38 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
 
-    <!-- Custom CSS -->
-    <!-- <link rel="stylesheet" href="css/editprofile.css" /> -->
     <link
       rel="stylesheet"
       href="{{ url_for('static', path='css/editprofile.css') }}"
     />
 
     <title>Edit Profile</title>
-    <link rel="icon" type="img/png" href="/img/logo.png" />
+    <link rel="icon" type="image/png" href="{{ url_for('static', path='img/logo.png') }}" />
   </head>
   <body>
     <div class="main-container">
-      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="header-text">Edit Profile</h2>
-        <a href="/profile" class="btn btn-cancel">Back</a>
+        <a href="{{ url_for('profile') }}" class="btn btn-cancel">Back</a>
       </div>
 
-      <!-- Profile Card -->
       <div class="profile-card">
         <div class="profile-header">
-          <!-- Profile Image + Upload -->
           <div class="profile-img-container">
-            <img src="image/sarah.jpg" class="profile-edit-img" alt="Profile" />
+            <img src="{{ url_for('static', path='image/sarah.jpg') }}" class="profile-edit-img" alt="Profile" />
             <div class="upload-btn" title="Change Photo">
               <i class="bi bi-camera"></i>
             </div>
             <input type="file" id="profilePhoto" style="display: none" />
           </div>
 
-          <!-- Profile Info -->
           <div class="profile-info">
-            <h4>Sarah Johnson</h4>
-            <p>sarah.j@email.com</p>
+            <h4>{{ user.nama }}</h4>
+            <p>{{ user.email }}</p>
             <span class="badge badge-premium">⭐ Premium Member</span>
           </div>
         </div>
 
-        <!-- Form -->
         <form action="/profile/edit" method="POST">
           <div class="mb-3">
             <label for="name" class="form-label">Full Name</label>
@@ -65,7 +57,7 @@
               name="nama"
               class="form-control"
               id="name"
-              value="Sarah Johnson"
+              value="{{ user.nama }}"
             />
           </div>
 
@@ -76,7 +68,7 @@
               name="email"
               class="form-control"
               id="email"
-              value="sarah.j@email.com"
+              value="{{ user.email }}"
             />
           </div>
 
@@ -87,16 +79,15 @@
               name="no_telepon"
               class="form-control"
               id="phone"
-              value="+62 812 3456 7890"
+              value="{{ user.no_telepon or '' }}"
             />
           </div>
 
-          <!-- Buttons -->
           <div class="d-flex justify-content-end gap-2 mt-4">
             <button
               type="button"
               class="btn btn-cancel"
-              onclick="window.location.href = '/profile'"
+              onclick="window.location.href = '{{ url_for('profile') }}'"
             >
               Cancel
             </button>
