@@ -28,32 +28,14 @@
             <img src="image/sarah.jpg" class="profile-img" />
 
             <div>
-              <h3>Sarah Johnson</h3>
-              <p>sarah.j@email.com</p>
+              <h3>{{ user.nama }}</h3>
+              <p>{{ user.email }}</p>
 
               <span class="badge">⭐ Premium Member</span>
             </div>
           </div>
 
           <button class="edit-btn" id="openEditProfile">Edit Profile</button>
-        </div>
-
-        <!-- STATS -->
-        <div class="stats-row">
-          <div class="stat-box">
-            <h2>2</h2>
-            <p>Pets</p>
-          </div>
-
-          <div class="stat-box">
-            <h2>15</h2>
-            <p>Bookings</p>
-          </div>
-
-          <div class="stat-box">
-            <h2>8</h2>
-            <p>Reviews</p>
-          </div>
         </div>
 
         <!-- PETS -->
@@ -69,18 +51,25 @@
           >
         </div>
 
-        <div class="pets-grid">
-          <div class="pet-card">
-            <div class="pet-left">
-              <img src="image/max.jpg" class="pet-img" alt="Max" />
-              <div>
-                <h4>Max</h4>
-                <p>Golden Retriever</p>
-                <span>3 years</span>
-              </div>
-            </div>
-            <i class="fas fa-pen"></i>
-          </div>
+        <<div class="pets-grid">
+  {% for pet in pets %}
+  <div class="pet-card">
+    <div class="pet-left">
+      <img src="image/{{ pet.nama_hewan | lower }}.jpg" class="pet-img" alt="{{ pet.nama_hewan }}" />
+      <div>
+        <h4>{{ pet.nama_hewan }}</h4>
+        <p>{{ pet.ras }}</p>
+        <span>{{ pet.umur }} years</span>
+      </div>
+    </div>
+    <i class="fas fa-pen"></i>
+  </div>
+  {% else %}
+  <div class="text-center py-3">
+    <p style="color: #8c5a3c;">Belum ada peliharaan yang terdaftar.</p>
+  </div>
+  {% endfor %}
+</div>
 
           <div class="pet-card">
             <div class="pet-left">
