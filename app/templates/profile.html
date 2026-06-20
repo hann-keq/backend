@@ -1,10 +1,6 @@
-{% extends "base.html" %} 
-{% block prefetch %} {% endblock %} 
-{% block style %}
+{% extends "base.html" %} {% block prefetch %} {% endblock %} {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/profile.css') }}" />
-{% endblock %} 
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="d-flex min-vh-100">
   {% include "sidebar.html" %}
 
@@ -13,48 +9,84 @@
       <div class="d-flex align-items-start justify-content-between">
         <div>
           <h2 style="color: #4b2e2b">Profile</h2>
-          <p style="color: #8c5a3c; font-size: 14px">View and manage your profile</p>
+          <p style="color: #8c5a3c; font-size: 14px">
+            View and manage your profile
+          </p>
         </div>
       </div>
 
       <div class="profile-wrapper">
         <div class="profile-card">
           <div class="profile-left">
-            <img src="{{ url_for('static', path='image/sarah.jpg') }}" class="profile-img" />
+            <img
+              src="{{ url_for('static', path='image/sarah.jpg') }}"
+              class="profile-img"
+            />
             <div>
               <h3>{{ user.nama }}</h3>
               <p>{{ user.email }}</p>
-              <span class="badge">⭐ Premium Member</span>
             </div>
           </div>
           <button class="edit-btn" id="openEditProfile">Edit Profile</button>
         </div>
 
-        <div class="section-header d-flex justify-content-between align-items-center">
+        <div
+          class="section-header d-flex justify-content-between align-items-center"
+        >
           <h3>My Pets</h3>
-          <a href="{{ url_for('new-pet') }}?next=/profile" class="add-link text-decoration-none" style="color: #8c5a3c; font-weight: 500">
+          <a
+            href="{{ url_for('new-pet') }}?next=/profile"
+            class="add-link text-decoration-none"
+            style="color: #8c5a3c; font-weight: 500"
+          >
             + Add Pet
           </a>
         </div>
 
         <div class="pets-grid">
           {% for pet in pets %}
-          <div class="pet-card">
-            <div class="pet-left">
-              <img src="{{ url_for('static', path='image/default.jpg') }}" class="pet-img" alt="{{ pet.nama_hewan }}" />
-              <div>
-                <h4>{{ pet.nama_hewan }}</h4>
-                <p>{{ pet.ras }}</p>
-                <span>{{ pet.umur }} years</span>
+          <div
+            class="pet-card d-flex align-items-center p-3 mb-3 border rounded-4 bg-white shadow-sm"
+          >
+            <img
+              src="{{ url_for('static', path='image/default.jpg') }}"
+              class="rounded-circle me-3"
+              style="width: 65px; height: 65px; object-fit: cover"
+              alt="{{ pet.nama_hewan }}"
+            />
+
+            <div class="flex-grow-1">
+              <h5 class="mb-0 fw-bold" style="color: #4b2e2b">
+                {{ pet.nama_hewan }}
+              </h5>
+              <p class="text-muted mb-1" style="font-size: 0.9rem">
+                {{ pet.jenis_hewan.value }}
+              </p>
+
+              <div class="text-muted" style="font-size: 0.85rem">
+                {{ pet.umur }} years &bull; {{ pet.berat }} kg &bull; {{
+                pet.gender_hewan.value }}
               </div>
             </div>
-            <a href="/edit-pet/{{ pet.id_pet }}" style="color: #4b2e2b;">
-              <i class="fas fa-pen"></i>
-            </a>
+
+            <button
+              type="button"
+              class="btn btn-link edit-pet-btn ms-auto"
+              data-bs-toggle="modal"
+              data-bs-target="#editPetModal"
+              data-id="{{ pet.id_pet }}"
+              data-nama="{{ pet.nama_hewan }}"
+              data-ras="{{ pet.jenis_hewan.value }}"
+              data-umur="{{ pet.umur }}"
+              data-berat="{{ pet.berat }}"
+              data-gender="{{ pet.gender_hewan.value }}"
+            >
+              <i class="fas fa-pen" style="color: #8c5a3c"></i>
+            </button>
           </div>
           {% else %}
           <div class="text-center w-100 py-4">
-            <p style="color: #8c5a3c;">Belum ada peliharaan yang ditambahkan.</p>
+            <p style="color: #8c5a3c">Belum ada peliharaan yang ditambahkan.</p>
           </div>
           {% endfor %}
         </div>
@@ -62,39 +94,181 @@
         <div class="section-header"><h3>Account Information</h3></div>
         <div class="account-box">
           <div class="account-row">
-            <div><h4>Personal Details</h4><p>Name, email, phone</p></div>
+            <div>
+              <h4>Personal Details</h4>
+              <p>Name, email, phone</p>
+            </div>
             <span>Edit</span>
           </div>
-      
         </div>
 
-        <button class="logout-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">Log Out</button>
+        <button
+          class="logout-btn"
+          data-bs-toggle="modal"
+          data-bs-target="#logoutModal"
+        >
+          Log Out
+        </button>
       </div>
     </div>
   </main>
 </div>
 
+<!-- Modal Edit Pet -->
+<div class="modal fade" id="editPetModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4">
+      <form action="/pets/edit" method="POST">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title">Edit Pet</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="pet_id" id="modal-pet-id" />
+
+          <div class="mb-3">
+            <label class="form-label">Pet Name</label>
+            <input
+              type="text"
+              name="pet_name"
+              id="modal-pet-name"
+              class="form-control"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Breed / Type</label>
+            <select
+              name="jenis_hewan"
+              id="modal-pet-jenis"
+              class="form-select"
+              required
+            >
+              <option value="KUCING">Kucing</option>
+              <option value="ANJING">Anjing</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label">Age</label>
+              <input
+                type="number"
+                name="umur"
+                id="modal-pet-umur"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label">Weight (kg)</label>
+              <input
+                type="number"
+                step="0.1"
+                name="berat"
+                id="modal-pet-berat"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Gender</label>
+            <select name="gender" id="modal-pet-gender" class="form-select">
+              <option value="Jantan">Jantan</option>
+              <option value="Betina">Betina</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn text-white"
+            style="background-color: #8c5a3c"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Logout -->
 <div class="modal fade" id="logoutModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-4 p-4 text-center" style="background-color: #fff8f0">
-      <div class="mb-3"><i class="bi bi-box-arrow-right" style="font-size: 40px; color: #8c5a3c"></i></div>
+    <div
+      class="modal-content border-0 rounded-4 p-4 text-center"
+      style="background-color: #fff8f0"
+    >
+      <div class="mb-3">
+        <i
+          class="bi bi-box-arrow-right"
+          style="font-size: 40px; color: #8c5a3c"
+        ></i>
+      </div>
       <h5 style="color: #4b2e2b; font-weight: 600">Keluar dari akun?</h5>
-      <p style="color: #8c5a3c; font-size: 14px">Kamu akan keluar dari akun PetCare.</p>
+      <p style="color: #8c5a3c; font-size: 14px">
+        Kamu akan keluar dari akun PetCare.
+      </p>
       <div class="d-flex justify-content-center gap-2 mt-3">
-        <button class="btn rounded-pill px-4" style="background-color: #e6d3c3; color: #4b2e2b" data-bs-dismiss="modal">Tidak</button>
-        <button class="btn rounded-pill px-4 text-white" style="background-color: #8c5a3c" id="confirmLogout">Keluar</button>
+        <button
+          class="btn rounded-pill px-4"
+          style="background-color: #e6d3c3; color: #4b2e2b"
+          data-bs-dismiss="modal"
+        >
+          Tidak
+        </button>
+        <button
+          class="btn rounded-pill px-4 text-white"
+          style="background-color: #8c5a3c"
+          id="confirmLogout"
+        >
+          Keluar
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  document.getElementById("confirmLogout").addEventListener("click", function () {
-    window.location.href = "/landing";
-  });
+  document
+    .getElementById("confirmLogout")
+    .addEventListener("click", function () {
+      window.location.href = "/landing";
+    });
 
-  document.getElementById("openEditProfile").addEventListener("click", function () {
-    window.location.href = "{{ url_for('editprofile') }}";
+  document
+    .getElementById("openEditProfile")
+    .addEventListener("click", function () {
+      window.location.href = "{{ url_for('editprofile') }}";
+    });
+
+  const editPetModal = document.getElementById("editPetModal");
+  editPetModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+
+    document.getElementById("modal-pet-id").value =
+      button.getAttribute("data-id");
+    document.getElementById("modal-pet-name").value =
+      button.getAttribute("data-nama");
+    document.getElementById("modal-pet-jenis").value =
+      button.getAttribute("data-ras");
+    document.getElementById("modal-pet-umur").value =
+      button.getAttribute("data-umur");
+    document.getElementById("modal-pet-berat").value =
+      button.getAttribute("data-berat");
+    document.getElementById("modal-pet-gender").value =
+      button.getAttribute("data-gender");
   });
 </script>
 {% endblock %}
