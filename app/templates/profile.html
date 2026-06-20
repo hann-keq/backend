@@ -202,11 +202,17 @@
     });
   });
 
-  // logout
+  // logout — POST to /logout so the cookie is deleted server-side
   document
     .getElementById("confirmLogout")
-    .addEventListener("click", function () {
+    .addEventListener("click", async function () {
       document.body.classList.add("fade-out");
+
+      try {
+        await fetch("/logout", { method: "POST" });
+      } catch (_) {
+        // ignore network errors
+      }
 
       setTimeout(() => {
         window.location.href = "/";
