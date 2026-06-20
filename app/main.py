@@ -27,11 +27,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Session middleware — REQUIRED by Authlib OAuth for state/CSRF tokens
-app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY_GOOGLE)
-
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -40,8 +35,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# SessionMiddleware — MUST be on app before SQLAdmin mounts /admin,
+# so the parent app's middleware handles the session cookie for
+# /admin/* paths uniformly (no separate session store on admin.app).
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY_GOOGLE,
+    session_cookie="session",
+    same_site="lax",
+)
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 # Routers
 app.include_router(router)
 app.include_router(get_router)
 
+# Init admin — no separate SessionMiddleware on admin.app
 init_admin(app)
