@@ -51,7 +51,7 @@
             <p class="text-soft">Where every paw finds the perfect care</p>
 
             <img
-              src="image/pexels-photo-35624900.jpeg"
+              src="{{ url_for('static', path='image/pexels-photo-35624900.jpeg') }}" class="img-fluid main-img shadow-lg my-4"
               class="img-fluid main-img shadow-lg my-4"
             />
 
@@ -164,10 +164,10 @@
 
               <p class="text-center mt-3 text-soft">
                 Already have an account?
-                <a href="login.html" class="text-info fw-semibold">Sign in</a>
+                <a href="/login" class="text-info fw-semibold">Sign in</a>
               </p>
               <div class="text-center mt-2">
-                <a href="petcarehome.html" class="back-home">
+                <a href="/petcarehome" class="back-home">
                   <i class="bi bi-arrow-left"></i> Back Home
                 </a>
               </div>
