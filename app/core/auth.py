@@ -3,11 +3,43 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials
 
-from app.core.security import decode_access_token, bearer_scheme
-from app.repositories.user_repository import get_user_by_id
+from app.core.security import decode_access_token, bearer_scheme,oauth,hash_password,create_access_token
+from app.repositories.user_repository import get_user_by_id,get_user_by_email,create_user
 from app.core.database import get_db
 from app.exceptions import user_exceptions, system_exceptions
 
+
+async def google_authorize(request: Request,callback_url: str):
+    redirect_uri = request.url_for(callback_url)
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+async def access_token_oauth(request: Request, db: AsyncSession = Depends(get_db)):
+    token = await oauth.google.authorize_access_token(request)
+    user_info = token.get("userinfo")
+
+    if not user_info:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to retrieve user information from Google.",
+        )
+    email = user_info.get("email")
+
+    user = await get_user_by_email(db, email)
+
+    if not user:
+        hash_pass = hash_password("google_oauth_user")  # Placeholder password for OAuth users
+        user = await create_user(db, {
+            "email": email,
+            "password": hash_pass,
+            "role": "User",
+            "nama": user_info.get("name") or "Google User",
+            "no_telepon": "0000000000",
+            "foto": user_info.get("picture") or "default_picture",
+        })
+
+    # "sub" is what get_current_user decodes; user_id gets auto-mapped to "sub"
+    jwt_token = create_access_token(data={"sub": str(user.id_user)})
+    return jwt_token
 
 async def get_current_user(
     request: Request,

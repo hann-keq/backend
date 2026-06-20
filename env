@@ -1,0 +1,26 @@
+# DB_HOST=db
+DB_HOST=your_db_host_here
+# DB_HOST_DEV=100.125.73.37
+
+DB_PORT=3306
+DB_USER=your_db_user_here
+DB_ROOT_PASSWORD=your_db_root_password_here
+DB_NAME=db_pet_care
+
+DB_PASSWORD=your_db_password_here
+
+#phpMyAdmin
+PMA_HOST=db
+#run  this to generate new secret key: python -c "import secrets; print(secrets.token_urlsafe(32))"
+SECRET_KEY=your_secret_key_here
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE=7
+ALGORITHM=HS256
+
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+SECRET_KEY_GOOGLE=your_secret_key_here
+
+MERCHANT_ID=your_merchant_id_here
+MIDTRANS_CLIENT_KEY=your_client_key_here
+MIDTRANS_SERVER_KEY=your_server_key_here

@@ -114,7 +114,6 @@
   </main>
 </div>
 
-<!-- Modal Edit Pet -->
 <div class="modal fade" id="editPetModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4">
@@ -203,7 +202,6 @@
   </div>
 </div>
 
-<!-- Modal Logout -->
 <div class="modal fade" id="logoutModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div
@@ -241,10 +239,42 @@
 </div>
 
 <script>
+  // Efek masuk
+  window.addEventListener("pageshow", () => {
+    document.body.classList.remove("fade-out");
+  });
+
+  // Klik navbar
+  document.querySelectorAll(".main-nav a").forEach((link) => {
+    link.addEventListener("click", function (e) {
+      const target = this.getAttribute("href");
+
+      if (target && target !== "#") {
+        e.preventDefault();
+        document.body.classList.add("fade-out");
+
+        setTimeout(() => {
+          window.location.href = target;
+        }, 150);
+      }
+    });
+  });
+
+  // Logout — POST to /logout agar cookie terhapus server-side
   document
     .getElementById("confirmLogout")
-    .addEventListener("click", function () {
-      window.location.href = "/landing";
+    .addEventListener("click", async function () {
+      document.body.classList.add("fade-out");
+
+      try {
+        await fetch("/logout", { method: "POST" });
+      } catch (_) {
+        // ignore network errors
+      }
+
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 200);
     });
 
   document

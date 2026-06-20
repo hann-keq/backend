@@ -17,7 +17,9 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
     SECRET_KEY_GOOGLE: str
-
+    MERCHANT_ID: str
+    MIDTRANS_CLIENT_KEY: str
+    MIDTRANS_SERVER_KEY: str
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

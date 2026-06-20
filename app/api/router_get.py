@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi.templating import Jinja2Templates
-from starlette.responses import HTMLResponse
-from app.core.auth import get_current_user
+from starlette.responses import HTMLResponse, RedirectResponse
+from app.core.auth import get_current_user, google_authorize, access_token_oauth
 from app.core.database import get_db
 from app.core.security import decode_access_token
 from app.exceptions import system_exceptions
@@ -88,7 +88,23 @@ async def tampilin_landing(request: Request):
 @router.get('/demo', response_class=HTMLResponse, name='demo')
 async def tampilin_demo(request: Request):
     return templates.TemplateResponse(request, 'demo.html')
+# ==========================================================
+# auth google
+@router.get('/login/google', response_class=HTMLResponse, name='login_google')
+async def login_google(request: Request):
+    return await google_authorize(request, callback_url='auth_callback')
 
+@router.get('/auth/callback', response_class=HTMLResponse, name='auth_callback')
+async def auth_callback(request: Request, db: AsyncSession = Depends(get_db)):
+    token = await access_token_oauth(request, db)
+
+    response = RedirectResponse(url="/petcaredashboard", status_code=status.HTTP_303_SEE_OTHER)
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {token}",
+        httponly=True,
+    )
+    return response
 
 # ================================================================
 #  AUTHENTICATED PAGES — with DB queries

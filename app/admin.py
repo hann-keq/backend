@@ -388,6 +388,8 @@ class AdminAuth(AuthenticationBackend):
             if user_data and verify_password(password_input, user_data.password):
                 if user_data.role == RoleUser.ADMIN:  
                     request.session.update({"user_role": "admin", "user_id": user_data.id_user})
+                    print(f"Admin {user_data.nama} berhasil login.")
+                    print("Session setelah login:", request.session)
                     return True
 
             # --- JALUR 2: CEK DATA DI TABEL PARTNERS (UNTUK PARTNER) ---
@@ -407,6 +409,10 @@ class AdminAuth(AuthenticationBackend):
         return True
 
     async def authenticate(self, request: Request) -> bool:
+        print("Memeriksa autentikasi untuk request:", request.url)
+        print("Session saat ini:", request.session)
+        user = request.session.get("user_role")
+        print("User role yang ditemukan di session:", user)
         return request.session.get("user_role") is not None
 
 

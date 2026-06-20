@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from starlette.middleware.sessions import SessionMiddleware
 
+from app.core.config import settings
 from app.core.database import engine, Base
 from app.api.router import router
 from app.api.router_get import router as get_router
@@ -11,7 +13,7 @@ from app.admin import init_admin
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startup
+    # startup — create all tables from ORM models
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
@@ -25,8 +27,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -35,8 +35,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# SessionMiddleware — MUST be on app before SQLAdmin mounts /admin,
+# so the parent app's middleware handles the session cookie for
+# /admin/* paths uniformly (no separate session store on admin.app).
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY_GOOGLE,
+    session_cookie="session",
+    same_site="lax",
+)
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 # Routers
 app.include_router(router)
 app.include_router(get_router)
 
+# Init admin — no separate SessionMiddleware on admin.app
 init_admin(app)
