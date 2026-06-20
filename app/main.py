@@ -5,7 +5,6 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.core.security import oauth_register_google
 from app.api.router import router
 from app.api.router_get import router as get_router
 from fastapi.staticfiles import StaticFiles
@@ -14,10 +13,9 @@ from app.admin import init_admin
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startup — create tables + register Google OAuth client
+    # startup — create all tables from ORM models
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    oauth_register_google()  # registers oauth.google so /login/google works
     yield
     # shutdown (optional)
 

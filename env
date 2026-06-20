@@ -19,4 +19,8 @@ ALGORITHM=HS256
 
 GOOGLE_CLIENT_ID=your_google_client_id_here
 GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-SECRET_KEY=your_secret_key_here
+SECRET_KEY_GOOGLE=your_secret_key_here
+
+MERCHANT_ID=your_merchant_id_here
+MIDTRANS_CLIENT_KEY=your_client_key_here
+MIDTRANS_SERVER_KEY=your_server_key_here
