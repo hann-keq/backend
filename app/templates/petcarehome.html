@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <title>PetCare</title>
-    <link rel="prefetch" href="login.html" />
-    <link rel="prefetch" href="signup.html" />
-    <link rel="prefetch" href="demo.html" />
+    <link rel="prefetch" href="/login" />
+    <link rel="prefetch" href="/signup" />
+    <link rel="prefetch" href="/demo" />
 
     <link
       rel="stylesheet"
@@ -98,7 +98,7 @@
           <!-- Kanan -->
           <div class="col-md-6 text-center">
             <img
-              src="static/kitten-8061043_1280.png"
+              src="{{ url_for('static', path='static/kitten-8061043_1280.png') }}"
               class="img-fluid hero-img"
               alt="Kitten"
             />
@@ -182,7 +182,7 @@
         <div class="row justify-content-center">
           <div class="col-md-4 mb-4">
             <div class="card service-card">
-              <img src="static/image-48679-800.jpg" class="card-img-top" />
+              <img src="{{ url_for('static', path='static/image-48679-800.jpg') }}" class="card-img-top" />
               <div class="card-body text-center">
                 <h5 class="card-title">Veterinary Care</h5>
                 <p class="card-text">
@@ -198,7 +198,7 @@
 
           <div class="col-md-4 mb-4">
             <div class="card service-card">
-              <img src="static/grooming.jpg" class="card-img-top" />
+              <img src="{{ url_for('static', path='static/grooming.jpg') }}" class="card-img-top" />
               <div class="card-body text-center">
                 <h5 class="card-title">Professional Grooming</h5>
                 <p class="card-text">
@@ -215,7 +215,7 @@
           <div class="col-md-4 mb-4">
             <div class="card service-card">
               <img
-                src="static/the-benefits-of-premium-pet-food-get-set-pet.webp"
+                src="{{ url_for('static', path='static/the-benefits-of-premium-pet-food-get-set-pet.webp') }}"
                 class="card-img-top"
               />
               <div class="card-body text-center">
@@ -260,7 +260,7 @@
 
                 <div class="d-flex align-items-center mt-4">
                   <img
-                    src="static/dd714720a1ebdd2919ecbb99e6179f75.jpg"
+                    src="{{ url_for('static', path='static/dd714720a1ebdd2919ecbb99e6179f75.jpg') }}"
                     class="avatar me-3"
                   />
                   <div>
@@ -338,7 +338,7 @@
           <!-- Card 1 -->
           <div class="col-md-4">
             <div class="card news-card h-100">
-              <img src="image/dog.jpg" class="card-img-top" />
+              <img src="{{ url_for('static', path='image/dog.jpg') }}" class="card-img-top" />
               <div class="card-body">
                 <span class="badge bg-success mb-2">Health</span>
                 <h5 class="card-title">Keep Your Dog Healthy</h5>
@@ -352,7 +352,7 @@
           <!-- Card 2 -->
           <div class="col-md-4">
             <div class="card news-card h-100">
-              <img src="image/cat.jpg" class="card-img-top" />
+              <img src="{{ url_for('static', path='image/cat.jpg') }}" class="card-img-top" />
               <div class="card-body">
                 <span class="badge bg-primary mb-2">Tips</span>
                 <h5 class="card-title">Cat Grooming Basics</h5>
@@ -364,7 +364,7 @@
           <!-- Card 3 -->
           <div class="col-md-4">
             <div class="card news-card h-100">
-              <img src="image/dog.jpg" class="card-img-top" />
+              <img src="{{ url_for('static', path='image/dog.jpg') }}" class="card-img-top" />
               <div class="card-body">
                 <span class="badge bg-primary mb-2">Update</span>
                 <h5 class="card-title">New App Features</h5>
@@ -389,11 +389,11 @@
       </p>
       <div class="pet-buttons">
         <!-- Tombol Join Pengaturan -->
-        <a href="signup.html" class="btn btn-primary btn-lg rounded-pill"
+        <a href="/signup" class="btn btn-primary btn-lg rounded-pill"
           >Start Free Trial →</a
         >
         <a
-          href="demo.html"
+          href="/demo"
           class="btn btn-outline-secondary btn-lg rounded-pill"
           >Watch Demo</a
         >
