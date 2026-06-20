@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Jalankan migrasi dan seeder Alembic
-echo "Running database migrations..."
-alembic upgrade head
 
 # Jalankan server aplikasi utama
 echo "Starting Uvicorn server..."
