@@ -32,11 +32,9 @@
               <div class="pet-info">
                 <h3>{{ pet.nama_hewan }}</h3>
                 <p class="pet-breed">{{ pet.ras }} • {{ pet.umur }} years</p>
-                <span class="status-badge {{ 'urgent' if pet.status == 'Urgent' else 'healthy' }}">
-                  {{ pet.status or 'Healthy' }}
-                </span>
                 <p class="pet-reminder-summary">
-                  <i class="fas fa-calendar-alt"></i> {{ pet.next_appointment or 'No schedule' }}
+                  <i class="fas fa-calendar-alt"></i> {{ pet.next_appointment or
+                  'No schedule' }}
                 </p>
               </div>
             </div>
@@ -58,12 +56,18 @@
             <span>Shop Now</span>
           </a>
 
-          <a href="{{ url_for('notification') }}" class="action-btn action-reminders">
+          <a
+            href="{{ url_for('notification') }}"
+            class="action-btn action-reminders"
+          >
             <i class="bi bi-bell"></i>
             <span>Reminders</span>
           </a>
 
-          <a href="{{ url_for('favorites') }}" class="action-btn action-favorites">
+          <a
+            href="{{ url_for('favorites') }}"
+            class="action-btn action-favorites"
+          >
             <i class="bi bi-heart"></i>
             <span>Favorites</span>
           </a>
