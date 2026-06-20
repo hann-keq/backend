@@ -10,27 +10,6 @@
 <div class="dashboard-container">
   <main class="main-content">
     <div class="main-column">
-      <section class="stats-row">
-        <div class="stat-card">
-          <i class="fas fa-heartbeat stat-icon"></i>
-          <h1 class="stat-value">8,542</h1>
-          <p class="stat-label">Total Steps Today</p>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-chart-line stat-icon stat-icon-blue"></i>
-          <h1 class="stat-value">1,250</h1>
-          <p class="stat-label">Calories Burned</p>
-        </div>
-        <div class="stat-card">
-          <i class="fas fa-clock stat-icon stat-icon-yellow"></i>
-          <div class="stat-value-group">
-            <h1 class="stat-value">145</h1>
-            <span class="stat-unit">min</span>
-          </div>
-          <p class="stat-label">Active Minutes</p>
-        </div>
-      </section>
-
       <section class="section-container">
         <div class="section-header">
           <h2>Your Pets</h2>
@@ -41,60 +20,33 @@
           >
         </div>
         <div class="pets-grid">
+          {% for pet in pets %}
           <div class="pet-card">
             <i class="far fa-heart heart-icon"></i>
             <div class="pet-card-main">
               <img
-                src="{{ url_for('static', path='image/dog.jpg') }}"
-                alt="Max"
+                src="{{ url_for('static', path='image/' + (pet.foto or 'dog.jpg')) }}"
+                alt="{{ pet.nama_hewan }}"
                 class="pet-photo"
               />
               <div class="pet-info">
-                <h3>Max</h3>
-                <p class="pet-breed">Golden Retriever • 3 years</p>
-                <span class="status-badge healthy">Healthy</span>
+                <h3>{{ pet.nama_hewan }}</h3>
+                <p class="pet-breed">{{ pet.ras }} • {{ pet.umur }} years</p>
                 <p class="pet-reminder-summary">
-                  <i class="fas fa-cut"></i> Grooming - Mar 20
+                  <i class="fas fa-calendar-alt"></i> {{ pet.next_appointment or
+                  'No schedule' }}
                 </p>
               </div>
             </div>
-            <div class="pet-card-footer">
-              <span class="footer-stat">Weight: 32 kg</span>
-              <span class="footer-stat">Activity: 85%</span>
-            </div>
           </div>
-          <div class="pet-card">
-            <i class="far fa-heart heart-icon"></i>
-            <div class="pet-card-main">
-              <img
-                src="{{ url_for('static', path='image/cat.jpg') }}"
-                alt="Luna"
-                class="pet-photo"
-              />
-              <div class="pet-info">
-                <h3>Luna</h3>
-                <p class="pet-breed">Tabby Cat • 2 years</p>
-                <span class="status-badge urgent">Due for vaccine</span>
-                <p class="pet-reminder-summary">
-                  <i class="fas fa-user-md"></i> Vet checkup - Mar 18
-                </p>
-              </div>
-            </div>
-            <div class="pet-card-footer">
-              <span class="footer-stat">Weight: 4.5 kg</span>
-              <span class="footer-stat">Activity: 72%</span>
-            </div>
-          </div>
+          {% endfor %}
         </div>
       </section>
 
       <section class="section-container">
         <h2>Quick Actions</h2>
         <div class="quick-actions-grid">
-          <a
-            href="{{ url_for('appointments') }}"
-            class="action-btn action-booking"
-          >
+          <a href="{{ url_for('booking') }}" class="action-btn action-booking">
             <i class="bi bi-calendar"></i>
             <span>Book Appointment</span>
           </a>
@@ -121,30 +73,6 @@
           </a>
         </div>
       </section>
-
-      <section class="section-container">
-        <h2>Recent Activity</h2>
-        <div class="activity-list">
-          <div class="activity-item">
-            <div class="activity-icon-container">
-              <i class="fas fa-walking"></i>
-            </div>
-            <div class="activity-text">
-              <p><strong>Max</strong> - Completed daily walk</p>
-              <span>2 hours ago</span>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon-container">
-              <i class="fas fa-utensils"></i>
-            </div>
-            <div class="activity-text">
-              <p><strong>Luna</strong> - Meal time recorded</p>
-              <span>4 hours ago</span>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
 
     <aside class="sidebar-column">
@@ -165,52 +93,11 @@
             <span>Mar 20, 10:00 AM</span>
           </div>
         </div>
-        <div class="reminder-card">
-          <i class="fas fa-bone reminder-icon reminder-icon-brown"></i>
-          <div class="reminder-text">
-            <p>Refill Max's food</p>
-            <span>Mar 22</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="sidebar-section">
-        <h2>Achievements</h2>
-        <div class="achievement-card">
-          <div class="achievement-main">
-            <div class="achievement-icon-container">
-              <i class="fas fa-award"></i>
-            </div>
-            <div class="achievement-text">
-              <p>Perfect Pet Parent</p>
-              <span>30 days streak!</span>
-            </div>
-          </div>
-          <div class="progress-bar-container">
-            <div class="progress-bar-fill" style="width: 75%"></div>
-          </div>
-          <span class="progress-label">75% to next level</span>
-        </div>
-      </section>
-
-      <section class="sidebar-section">
-        <h2>Loyalty Rewards</h2>
-        <div class="rewards-card">
-          <div class="rewards-main">
-            <div class="rewards-icon-container">
-              <i class="fas fa-star"></i>
-            </div>
-            <div class="rewards-text">
-              <h1>1,250 Points</h1>
-              <span>Available to redeem</span>
-            </div>
-          </div>
-          <span class="rewards-badge">Premium</span>
-        </div>
       </section>
     </aside>
   </main>
 </div>
+
 <script>
   window.addEventListener("pageshow", () => {
     document.body.classList.remove("fade-out");

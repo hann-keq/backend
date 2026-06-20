@@ -200,12 +200,21 @@ async def delete_pet(
 
 @router.post("/address/add", response_class=HTMLResponse)
 async def add_user_new_address(
-    alamat: alamat_schema.AlamatCreate = Depends(),
+    alamat: str = Form(...),
+    kota: str = Form(...),
+    provinsi: str = Form(...),
+    kode_pos: int = Form(...),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        await alamat_service.create_new_alamat(db, alamat, current_user.id_user)
+        new_alamat = alamat_schema.AlamatCreate(
+            alamat=alamat,
+            kota=kota,
+            provinsi=provinsi,
+            kode_pos=kode_pos,
+        )
+        await alamat_service.create_new_alamat(db, new_alamat, current_user.id_user)
         return RedirectResponse(url="/address.html", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
