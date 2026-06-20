@@ -1,0 +1,130 @@
+<div class="detail-modal-overlay" id="appointmentModal">
+    <div class="detail-modal-container">
+        <button class="close-btn">
+            <i class="fas fa-times"></i>
+        </button>
+        <!-- Header -->
+        <div class="modal-header">
+            <div class="header-top">
+                <div class="service-icon-box vet-bg">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <div class="header-info">
+                    <h2>Vet Checkup — Annual Vaccination</h2>
+                    <p>Tomorrow • 2:00 PM</p>
+                    <div class="appointment-status">
+                        <span class="badge-upcoming">
+                            Upcoming
+                        </span>
+                        <span class="badge-warning">
+                            <i class="far fa-clock"></i>
+                            Coming up soon
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pet -->
+        <div class="pet-profile">
+            <img src="{{ url_for('static', path='image/luna.jpg') }}"
+                class="pet-avatar"
+                alt="Luna">
+            <div class="pet-details">
+                <h3>Luna</h3>
+                <p>Tabby Cat • 2 years</p>
+            </div>
+        </div>
+        <!-- Details -->
+        <div class="appointment-details">
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="far fa-calendar"></i>
+                </div>
+                <div class="detail-text">
+                    <small>Date & Time</small>
+                    <p>Tomorrow, 2:00 PM</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <div class="detail-text">
+                    <small>Package</small>
+                    <p>
+                        Annual Vaccination
+                        (Rabies + FVRCP Combo)
+                    </p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="detail-text">
+                    <small>Location</small>
+                    <p>Paws & Care Vet Clinic</p>
+                    <span class="sub-detail">
+                        Block 7, Care Lane, Central
+                    </span>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="far fa-user"></i>
+                </div>
+                <div class="detail-text">
+                    <small>Veterinarian</small>
+                    <p>Dr. Sarah Mitchell</p>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="detail-text">
+                    <small>Contact</small>
+                    <p>+62 812-3456-7890</p>
+                </div>
+            </div>
+        </div>
+        <!-- Checklist -->
+        <div class="preparation-checklist">
+            <h4>Preparation Checklist</h4>
+            <ul>
+                <li>
+                    <i class="far fa-check-circle"></i>
+                    Fast Luna 2 hours before appointment
+                </li>
+                <li>
+                    <i class="far fa-check-circle"></i>
+                    Bring vaccination record booklet
+                </li>
+                <li>
+                    <i class="far fa-check-circle"></i>
+                    Pack her favorite treat for comfort
+                </li>
+                <li>
+                    <i class="far fa-check-circle"></i>
+                    Confirm appointment 1 hour prior
+                </li>
+            </ul>
+        </div>
+        <!-- Notes -->
+        <div class="notes-box">
+            <h4>Notes</h4>
+            <p>
+                Luna is due for her annual rabies and
+                FVRCP combo vaccine.
+                Please fast her for 2 hours before
+                the visit.
+            </p>
+        </div>
+        <!-- Buttons -->
+        <div class="action-buttons">
+            <button class="btn-cancel">
+                Cancel Appointment
+            </button>
+        </div>
+    </div>
+</div>
