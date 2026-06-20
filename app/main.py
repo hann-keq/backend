@@ -5,7 +5,6 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.core.security import oauth_register_google
 from app.api.router import router
 from app.api.router_get import router as get_router
 from fastapi.staticfiles import StaticFiles
@@ -14,10 +13,9 @@ from app.admin import init_admin
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # startup — create tables + register Google OAuth client
+    # startup — create all tables from ORM models
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    oauth_register_google()  # registers oauth.google so /login/google works
     yield
     # shutdown (optional)
 
@@ -29,11 +27,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Session middleware — REQUIRED by Authlib OAuth for state/CSRF tokens
-app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY_GOOGLE)
-
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -42,8 +35,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# SessionMiddleware — MUST be on app before SQLAdmin mounts /admin,
+# so the parent app's middleware handles the session cookie for
+# /admin/* paths uniformly (no separate session store on admin.app).
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY_GOOGLE,
+    session_cookie="session",
+    same_site="lax",
+)
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 # Routers
 app.include_router(router)
 app.include_router(get_router)
 
+# Init admin — no separate SessionMiddleware on admin.app
 init_admin(app)
