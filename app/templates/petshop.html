@@ -48,24 +48,24 @@
   <div class="products">
     {% for product in products %}
     <div class="card"
-         data-category="{{ product.tipe_produk.value }}"
-         data-stok="{{ product.stok }}"
-         data-id-produk="{{ product.id_produk }}"
-         data-nama="{{ product.nama_produk }}"
-         data-harga="{{ product.harga }}">
+        data-category="{{ product.tipe_produk.value }}"
+        data-stok="{{ product.stok }}"
+        data-id-produk="{{ product.id_produk }}"
+        data-nama="{{ product.nama_produk }}"
+        data-harga="{{ product.harga }}">
       <div class="img">
         <i class="fa-regular fa-heart"></i>
         <div class="img-wrapper{{ ' out-of-stock' if product.stok == 0 else '' }}">
           <img src="{{ product.gambar}}" alt="" />
         </div>
       </div>
-      <h5>{{ product.nama_produk }}</h5>
+      <h5 style="margin-bottom: 4px;">{{ product.nama_produk }}</h5>
       {% if product.stok > 0 %}
-        <small style="color:#8c5a3c">Stok: {{ product.stok }}</small>
+      <small style="color:#8c5a3c; display:block; padding: 0 15px; margin-top: 4px; margin-bottom: 2px;">Stok: {{ product.stok }} pcs</small>
       {% else %}
-        <small style="color:#d4183d">Habis</small>
+      <small style="color:#d4183d; display:block; padding: 0 15px; margin-top: 4px; margin-bottom: 2px;">Habis</small>
       {% endif %}
-      <p class="rating">⭐ 4.5 (128)</p>
+      <p class="rating" style="margin-top: 0; margin-bottom: 0;">⭐ 4.5 (128)</p>
       <div class="bottom">
         <span>Rp {{ product.harga|rupiah }}</span>
         {% if product.stok > 0 %}
@@ -107,27 +107,27 @@
         <div class="cart-item">
           <img src="{{ product.gambar }}" />
           <div class="cart-info">
-            <h5>{{ product.nama_produk }}</h5>
-            <span>Rp {{ product.harga|rupiah }}</span>
+            <h5 style="margin-bottom: 4px; font-size: 14px;">{{ product.nama_produk }}</h5>
+            <span style="display: block; color: #c58b5e; font-weight: 600; font-size: 13px;">Rp {{ product.harga|rupiah }}</span>
+
             <div class="qty-control">
-              <form method="POST" action="/cart/update" style="display:inline">
+              <form method="POST" action="/cart/remove" style="display:inline;margin-left:12px">
                 <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
-                <input type="hidden" name="jumlah" value="{{ qty - 1 }}" />
-                <button type="submit" class="minus"
-                  {% if qty <= 1 %}style="visibility:hidden"{% endif %}>-</button>
+                <button type="submit" style="background:none;border:none;color:#d4183d;cursor:pointer;font-size:14px">🗑</button>
               </form>
               <span class="qty">{{ qty }}</span>
               <form method="POST" action="/cart/update" style="display:inline">
                 <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
                 <input type="hidden" name="jumlah" value="{{ qty + 1 }}" />
                 <button type="submit" class="plus"
-                  {% if qty >= product.stok %}disabled title="Max stok"{% endif %}>+</button>
+                {% if qty >= product.stok %}disabled title="Max stok"{% endif %}>+</button>
               </form>
               <form method="POST" action="/cart/remove" style="display:inline;margin-left:8px">
                 <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
                 <button type="submit" style="background:none;border:none;color:#d4183d;cursor:pointer">🗑</button>
               </form>
             </div>
+
           </div>
         </div>
       {% endif %}
@@ -137,7 +137,7 @@
   <div class="cart-footer">
     <p>Subtotal <span>Rp {{ ns.subtotal|rupiah }}</span></p>
     <form method="GET" action="{{ url_for('choosepayment') }}">
-     <button type="submit" style="width:100%">Checkout</button>
+    <button type="submit" style="width:100%">Checkout</button>
     </form>
   </div>
 </div>
