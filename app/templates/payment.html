@@ -1,51 +1,125 @@
 {% extends "base.html" %} {% block prefetch %} {%endblock %} {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
-
 {% endblock %} {% block content %}
-<!-- end of navbar-->
-<!-- SIDEBAR -->
 <div class="d-flex min-vh-100">
   {% include 'sidebar.html' %}
 
-  <!-- content-->
-
-  <!-- MAIN CONTENT -->
   <main class="main-content flex-grow-1 px-3">
     <div class="container">
-      <div class="d-flex align-items-start justify-content-between">
+      <div class="d-flex align-items-start justify-content-between mb-4">
         <div>
           <h2 style="color: #4b2e2b">Payment Methods</h2>
           <p style="color: #8c5a3c; font-size: 14px">
-            Manage your saved payment cards
+            Manage your saved payment methods
           </p>
         </div>
 
-        <div class="btn background-green text-white rounded-pill px-3 ms-3 a">
-          <i class="bi bi-plus-lg me-2"></i>Add Card
-        </div>
+        <button
+          type="button"
+          class="btn background-green text-white rounded-pill px-3 ms-3 border-0"
+          data-bs-toggle="modal"
+          data-bs-target="#addPaymentModal"
+        >
+          <i class="bi bi-plus-lg me-2"></i>Add Method
+        </button>
       </div>
 
+      {% for card in payment_methods %}
       <div class="pb-4">
         <div
-          class="card background-brown-with-green-border py-3 px-3"
+          class="card {% if card.is_default %}background-brown-with-green-border{% else %}border-brown{% endif %} py-3 px-3"
           style="border-radius: 10px"
         >
           <div class="card-body">
             <div class="row">
               <div class="col-sm-5">
+                {% if card.brand | lower == 'gopay' %}
                 <div
-                  class="card-visa squircle d-flex flex-column justify-content-between"
+                  class="squircle d-flex flex-column justify-content-between"
+                  style="
+                    background-color: #00aa13;
+                    border-radius: 15px;
+                    padding: 1.5rem;
+                  "
+                >
+                  <div class="d-flex justify-content-between">
+                    <div class="squircle-card"></div>
+                    <div class="text-white h5 mb-0"><strong>GoPay</strong></div>
+                  </div>
+                  <div class="mb-3 mt-4">
+                    <span
+                      class="text-white"
+                      style="opacity: 0.8; font-size: small"
+                      >Phone Number</span
+                    ><br />
+                    <span class="card-number text-white fs-5"
+                      ><strong>**** **** {{ card.last4 }}</strong></span
+                    >
+                  </div>
+                  <div class="justify-content-between d-flex">
+                    <div>
+                      <span style="opacity: 0.8; color: white; font-size: small"
+                        >Account Name</span
+                      >
+                      <div class="text-white fs-6">
+                        <strong>{{ card.holder_name }}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {% elif card.brand | lower == 'atm' or card.brand | lower ==
+                'transfer bank' %}
+                <div
+                  class="squircle d-flex flex-column justify-content-between"
+                  style="
+                    background-color: #005e6a;
+                    border-radius: 15px;
+                    padding: 1.5rem;
+                  "
+                >
+                  <div class="d-flex justify-content-between">
+                    <div class="squircle-card"></div>
+                    <div class="text-white h5 mb-0">
+                      <strong>Bank Transfer</strong>
+                    </div>
+                  </div>
+                  <div class="mb-3 mt-4">
+                    <span
+                      class="text-white"
+                      style="opacity: 0.8; font-size: small"
+                      >Account Number</span
+                    ><br />
+                    <span class="card-number text-white fs-5"
+                      ><strong>**** **** {{ card.last4 }}</strong></span
+                    >
+                  </div>
+                  <div class="justify-content-between d-flex">
+                    <div>
+                      <span style="opacity: 0.8; color: white; font-size: small"
+                        >Account Name</span
+                      >
+                      <div class="text-white fs-6">
+                        <strong>{{ card.holder_name }}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {% else %}
+                <div
+                  class="card-{{ card.brand | lower }} squircle d-flex flex-column justify-content-between"
                 >
                   <div class="d-flex justify-content-between">
                     <div class="squircle-card"></div>
                     <div class="text-white visa-font">
-                      <strong>Visa</strong>
+                      <strong>{{ card.brand }}</strong>
                     </div>
                   </div>
                   <div class="ml-25 mb-3">
                     <span class="card-bullet text-white">●●●● ●●●● ●●●● </span>
                     <span class="card-number text-white"
-                      ><strong>4242</strong></span
+                      ><strong>{{ card.last4 }}</strong></span
                     >
                   </div>
                   <div class="ml-25 justify-content-between d-flex mb-25 mr-2">
@@ -53,297 +127,333 @@
                       <span style="opacity: 0.8; color: white; font-size: small"
                         >Card Holder</span
                       >
-                      <div class="text-white fs-6"><strong>Keqing</strong></div>
+                      <div class="text-white fs-6">
+                        <strong>{{ card.holder_name }}</strong>
+                      </div>
                     </div>
                     <div>
                       <span style="opacity: 0.8; color: white; font-size: small"
                         >Expires</span
                       >
                       <div class="text-white fs-6" style="opacity: 0.9">
-                        <strong>12/31</strong>
+                        <strong
+                          >{{ '%02d' % card.exp_month }}/{{ card.exp_year |
+                          string | truncate(2, True, '', -2) }}</strong
+                        >
                       </div>
                     </div>
                   </div>
                 </div>
+                {% endif %}
               </div>
-              <div class="col-sm-7 d-flex flex-column justify-content-between">
+
+              <div
+                class="col-sm-7 d-flex flex-column justify-content-between mt-3 mt-sm-0"
+              >
                 <div>
                   <ul
                     class="list-unstyled text-brown mb-4"
                     style="font-size: small"
                   >
                     <li class="text-dark-brown mb-2 fs-6">
-                      <strong>Visa •••• 4262</strong>
+                      <strong>{{ card.brand }} •••• {{ card.last4 }}</strong>
+                      {% if card.is_default %}
                       <small
-                        class="text-white background-green rounded-pill px-2 py-1"
+                        class="text-white background-green rounded-pill px-2 py-1 ms-2"
                         style="font-size: 11px"
                         >Default</small
                       >
+                      {% endif %}
                     </li>
                     <li class="mb-2" style="font-size: 13px">
-                      Expires on 12/31
+                      {{ card.holder_name }}
                     </li>
-                    <li class="mb-2" style="font-size: 13px">Keqing</li>
+
+                    {% if card.brand | lower not in ['gopay', 'atm', 'transfer
+                    bank'] %}
+                    <li class="mb-2" style="font-size: 13px">
+                      Expires on {{ '%02d' % card.exp_month }}/{{ card.exp_year
+                      | string | truncate(2, True, '', -2) }}
+                    </li>
+                    {% endif %}
                   </ul>
                 </div>
+
+                {% if card.is_default %}
                 <div
                   class="btn w-100 rounded-pill border-brown background-light-brown"
                 >
-                  <i class="bi bi-pencil-square"></i>
-                  <span class="">edit</span>
+                  <i class="bi bi-pencil-square"></i> Edit
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pb-4">
-        <div class="card border-brown py-3 px-3" style="border-radius: 10px">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-5">
-                <div
-                  class="card-mastercard squircle d-flex flex-column justify-content-between"
-                >
-                  <div class="d-flex justify-content-between">
-                    <div class="squircle-card"></div>
-                    <div class="text-white visa-font">
-                      <strong>Mastercard</strong>
-                    </div>
-                  </div>
-                  <div class="ml-25 mb-3">
-                    <span class="card-bullet text-white">●●●● ●●●● ●●●● </span>
-                    <span class="card-number text-white"
-                      ><strong>6767</strong></span
-                    >
-                  </div>
-                  <div class="ml-25 justify-content-between d-flex mb-25 mr-2">
-                    <div>
-                      <span style="opacity: 0.8; color: white; font-size: small"
-                        >Card Holder</span
-                      >
-                      <div class="text-white fs-6"><strong>Keqing</strong></div>
-                    </div>
-                    <div>
-                      <span style="opacity: 0.8; color: white; font-size: small"
-                        >Expires</span
-                      >
-                      <div class="text-white fs-6" style="opacity: 0.9">
-                        <strong>12/31</strong>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-7 d-flex flex-column justify-content-between">
-                <div>
-                  <ul
-                    class="list-unstyled text-brown mb-4"
-                    style="font-size: small"
-                  >
-                    <li class="text-dark-brown mb-2 fs-6">
-                      <strong>Mastercard •••• 6767</strong>
-                    </li>
-                    <li class="mb-2" style="font-size: 13px">
-                      Expires on 12/31
-                    </li>
-                    <li class="mb-2" style="font-size: 13px">Keqing</li>
-                  </ul>
-                </div>
+                {% else %}
                 <div class="row">
                   <div class="col">
                     <div
                       class="btn w-100 rounded-pill border-brown background-brown-with-hover"
                     >
-                      <i class="bi bi-pencil-square"></i>
-                      <span class="">edit</span>
+                      <i class="bi bi-pencil-square"></i> Edit
                     </div>
                   </div>
                   <div class="col">
-                    <div class="btn w-100 rounded-pill button-green font-green">
-                      <i class="bi bi-star"></i>
-                      Set default
-                    </div>
+                    <form
+                      action="/payments/set-default"
+                      method="POST"
+                      class="m-0"
+                    >
+                      <input
+                        type="hidden"
+                        name="card_id"
+                        value="{{ card.id_card }}"
+                      />
+                      <button
+                        type="submit"
+                        class="btn w-100 rounded-pill button-green font-green"
+                      >
+                        <i class="bi bi-star"></i> Set default
+                      </button>
+                    </form>
                   </div>
-                  <div class="col-sm-1">
-                    <div class="btn background-red" style="border-radius: 1rem">
-                      <i class="bi bi-trash3"></i>
-                    </div>
+                  <div class="col-sm-2">
+                    <form action="/payments/delete" method="POST" class="m-0">
+                      <input
+                        type="hidden"
+                        name="card_id"
+                        value="{{ card.id_card }}"
+                      />
+                      <button
+                        type="submit"
+                        class="btn background-red w-100"
+                        style="border-radius: 1rem"
+                      >
+                        <i class="bi bi-trash3 text-white"></i>
+                      </button>
+                    </form>
                   </div>
                 </div>
+                {% endif %}
               </div>
             </div>
           </div>
         </div>
       </div>
+      {% else %}
+      <div class="text-center py-5">
+        <h5 style="color: #8c5a3c">No payment methods saved.</h5>
+        <p class="text-muted">
+          Click "Add Method" to add a new payment option.
+        </p>
+      </div>
+      {% endfor %}
+    </div>
 
-      <div class="pb-4">
-        <div class="card border-brown py-3 px-3" style="border-radius: 10px">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-5">
-                <div
-                  class="card-mastercard squircle d-flex flex-column justify-content-between"
-                >
-                  <div class="d-flex justify-content-between">
-                    <div class="squircle-card"></div>
-                    <div class="text-white visa-font">
-                      <strong>Mastercard</strong>
-                    </div>
-                  </div>
-                  <div class="ml-25 mb-3">
-                    <span class="card-bullet text-white">●●●● ●●●● ●●●● </span>
-                    <span class="card-number text-white"
-                      ><strong>4646</strong></span
-                    >
-                  </div>
-                  <div class="ml-25 justify-content-between d-flex mb-25 mr-2">
-                    <div>
-                      <span style="opacity: 0.8; color: white; font-size: small"
-                        >Card Holder</span
-                      >
-                      <div class="text-white fs-6"><strong>Keqing</strong></div>
-                    </div>
-                    <div>
-                      <span style="opacity: 0.8; color: white; font-size: small"
-                        >Expires</span
-                      >
-                      <div class="text-white fs-6" style="opacity: 0.9">
-                        <strong>12/31</strong>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-7 d-flex flex-column justify-content-between">
-                <div>
-                  <ul
-                    class="list-unstyled text-brown mb-4"
-                    style="font-size: small"
-                  >
-                    <li class="text-dark-brown mb-2 fs-6">
-                      <strong>Mastercard •••• 4646</strong>
-                    </li>
-                    <li class="mb-2" style="font-size: 13px">
-                      Expires on 12/31
-                    </li>
-                    <li class="mb-2" style="font-size: 13px">Keqing</li>
-                  </ul>
-                </div>
-                <div class="row">
-                  <div class="col">
-                    <div
-                      class="btn w-100 rounded-pill border-brown background-light-brown"
-                    >
-                      <i class="bi bi-pencil-square"></i>
-                      <span class="">edit</span>
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="btn w-100 rounded-pill button-green font-green">
-                      <i class="bi bi-star"></i>
-                      Set default
-                    </div>
-                  </div>
-                  <div class="col-sm-1">
-                    <div class="btn background-red" style="border-radius: 1rem">
-                      <i class="bi bi-trash3"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div
+      class="modal fade"
+      id="addPaymentModal"
+      tabindex="-1"
+      aria-labelledby="addPaymentModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div
+          class="modal-content"
+          style="border-radius: 15px; border: 2px solid #8c5a3c"
+        >
+          <div class="modal-header border-0 pb-0">
+            <h5
+              class="modal-title"
+              id="addPaymentModalLabel"
+              style="color: #4b2e2b"
+            >
+              <strong>Add Payment Method</strong>
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
-        </div>
-      </div>
-      <div class="pb-4">
-        <div class="card border-brown py-3 px-3" style="border-radius: 10px">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-5">
-                <div
-                  class="card-mastercard squircle d-flex flex-column justify-content-between"
+          <div class="modal-body">
+            <form action="/payments/add" method="POST">
+              <div class="mb-4">
+                <label class="form-label" style="color: #8c5a3c"
+                  ><strong>Payment Type</strong></label
                 >
-                  <div class="d-flex justify-content-between">
-                    <div class="squircle-card"></div>
-                    <div class="text-white visa-font">
-                      <strong>Mastercard</strong>
-                    </div>
-                  </div>
-                  <div class="ml-25 mb-3">
-                    <span class="card-bullet text-white">●●●● ●●●● ●●●● </span>
-                    <span class="card-number text-white"
-                      ><strong>6969</strong></span
-                    >
-                  </div>
-                  <div class="ml-25 justify-content-between d-flex mb-25 mr-2">
-                    <div>
-                      <span style="opacity: 0.8; color: white; font-size: small"
-                        >Card Holder</span
-                      >
-                      <div class="text-white fs-6"><strong>Keqing</strong></div>
-                    </div>
-                    <div>
-                      <span style="opacity: 0.8; color: white; font-size: small"
-                        >Expires</span
-                      >
-                      <div class="text-white fs-6" style="opacity: 0.9">
-                        <strong>12/31</strong>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <select
+                  class="form-select rounded-pill border-brown"
+                  name="payment_type"
+                  id="paymentTypeSelect"
+                  onchange="togglePaymentFields()"
+                >
+                  <option value="card">Credit / Debit Card</option>
+                  <option value="gopay">GoPay</option>
+                  <option value="atm">Bank Transfer (ATM)</option>
+                </select>
               </div>
-              <div class="col-sm-7 d-flex flex-column justify-content-between">
-                <div>
-                  <ul
-                    class="list-unstyled text-brown mb-4"
-                    style="font-size: small"
+
+              <div class="mb-3">
+                <label class="form-label" id="nameLabel" style="color: #8c5a3c"
+                  >Cardholder Name</label
+                >
+                <input
+                  type="text"
+                  class="form-control rounded-pill border-brown"
+                  name="holder_name"
+                  required
+                  placeholder="e.g. Keqing"
+                />
+              </div>
+
+              <div id="cardFields">
+                <div class="mb-3">
+                  <label class="form-label" style="color: #8c5a3c"
+                    >Card Number</label
                   >
-                    <li class="text-dark-brown mb-2 fs-6">
-                      <strong>Mastercard •••• 6969</strong>
-                    </li>
-                    <li class="mb-2" style="font-size: 13px">
-                      Expires on 12/31
-                    </li>
-                    <li class="mb-2" style="font-size: 13px">Keqing</li>
-                  </ul>
+                  <input
+                    type="text"
+                    class="form-control rounded-pill border-brown"
+                    name="card_number"
+                    placeholder="1234 5678 1234 5678"
+                    maxlength="19"
+                  />
                 </div>
-                <div class="row">
-                  <div class="col">
-                    <div
-                      class="btn w-100 rounded-pill border-brown background-light-brown"
+                <div class="row mb-3">
+                  <div class="col-4">
+                    <label class="form-label" style="color: #8c5a3c"
+                      >Exp. Month</label
                     >
-                      <i class="bi bi-pencil-square"></i>
-                      <span class="">edit</span>
-                    </div>
+                    <input
+                      type="number"
+                      class="form-control rounded-pill border-brown"
+                      name="exp_month"
+                      placeholder="MM"
+                      min="1"
+                      max="12"
+                    />
                   </div>
-                  <div class="col">
-                    <div class="btn w-100 rounded-pill button-green font-green">
-                      <i class="bi bi-star"></i>
-                      Set default
-                    </div>
+                  <div class="col-4">
+                    <label class="form-label" style="color: #8c5a3c"
+                      >Exp. Year</label
+                    >
+                    <input
+                      type="number"
+                      class="form-control rounded-pill border-brown"
+                      name="exp_year"
+                      placeholder="YYYY"
+                      min="2024"
+                    />
                   </div>
-                  <div class="col-sm-1">
-                    <div class="btn background-red" style="border-radius: 1rem">
-                      <i class="bi bi-trash3"></i>
-                    </div>
+                  <div class="col-4">
+                    <label class="form-label" style="color: #8c5a3c">CVV</label>
+                    <input
+                      type="text"
+                      class="form-control rounded-pill border-brown"
+                      placeholder="123"
+                      maxlength="4"
+                    />
                   </div>
                 </div>
               </div>
-            </div>
+
+              <div id="gopayFields" style="display: none">
+                <div class="mb-3">
+                  <label class="form-label" style="color: #8c5a3c"
+                    >GoPay Phone Number</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control rounded-pill border-brown"
+                    name="gopay_number"
+                    placeholder="081234567890"
+                  />
+                </div>
+              </div>
+
+              <div id="atmFields" style="display: none">
+                <div class="mb-3">
+                  <label class="form-label" style="color: #8c5a3c"
+                    >Bank Name</label
+                  >
+                  <select
+                    class="form-select rounded-pill border-brown"
+                    name="bank_name"
+                  >
+                    <option value="BCA">BCA</option>
+                    <option value="Mandiri">Mandiri</option>
+                    <option value="BNI">BNI</option>
+                    <option value="BRI">BRI</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" style="color: #8c5a3c"
+                    >Account Number</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control rounded-pill border-brown"
+                    name="account_number"
+                    placeholder="1234567890"
+                  />
+                </div>
+              </div>
+
+              <div class="form-check mb-4 mt-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="set_default"
+                  value="true"
+                  id="setDefaultCheck"
+                />
+                <label
+                  class="form-check-label"
+                  for="setDefaultCheck"
+                  style="color: #8c5a3c"
+                >
+                  Set as default payment method
+                </label>
+              </div>
+              <button
+                type="submit"
+                class="btn background-green text-white w-100 rounded-pill py-2"
+              >
+                Save Payment Method
+              </button>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </main>
-  <!--end of content-->
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"
-  ></script>
-  {% endblock %}
 </div>
+
+<script>
+  function togglePaymentFields() {
+    const type = document.getElementById("paymentTypeSelect").value;
+    const nameLabel = document.getElementById("nameLabel");
+
+    // Hide everything first
+    document.getElementById("cardFields").style.display = "none";
+    document.getElementById("gopayFields").style.display = "none";
+    document.getElementById("atmFields").style.display = "none";
+
+    // Show selected fields and change label
+    if (type === "card") {
+      document.getElementById("cardFields").style.display = "block";
+      nameLabel.innerText = "Cardholder Name";
+    } else if (type === "gopay") {
+      document.getElementById("gopayFields").style.display = "block";
+      nameLabel.innerText = "GoPay Account Name";
+    } else if (type === "atm") {
+      document.getElementById("atmFields").style.display = "block";
+      nameLabel.innerText = "Bank Account Name";
+    }
+  }
+</script>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+  crossorigin="anonymous"
+></script>
+{% endblock %}
