@@ -22,7 +22,7 @@
           <div class="profile-left">
             {% if user.foto %}
             <img
-              src="{{ user.foto}}"
+              src="{{ user.foto or url_for('static', path='image/default.jpg') }}"
               class="profile-img"
             />
             {% else %}
@@ -45,14 +45,12 @@
               <span class="badge"
                 >⭐ {{ membership.tipe_membership.value }} Member</span
               >
-              {% else %}
-              <span class="badge">🐾 Pet Lover</span>
-              {% endif %}
+              {% else %} {% endif %}
             </div>
           </div>
           <button
             class="edit-btn"
-            onclick="window.location.href='/editprofile'"
+            onclick="window.location.href = '/editprofile'"
           >
             Edit Profile
           </button>
@@ -70,27 +68,16 @@
           >
         </div>
 
-        <div class="pets-grid d-flex flex-column gap-3">
+        <div class="pets-grid d-flex flex-column">
           {% for pet in pets %}
           <div class="pet-card">
             <div class="pet-left">
               <div
                 class="pet-img d-flex align-items-center justify-content-center"
-                style="background: #fef1e3; font-size: 20px">
-                {% if 'static' in pet.foto %}
-                
-                <img
-                  src="{{ pet.foto }}"
-                  alt="{{ pet.nama_hewan }}"
-                  class="pet-img"
-                />
-                {% else %}
-                <p>{{ pet.foto }}</p>
-                
-                {% if pet.jenis_hewan.value == 'Kucing' %}🐱{% else %}🐶
-                {% endif%}
-                {% endif %}
-                
+                style="background: #fef1e3; font-size: 20px"
+              >
+                {% if pet.jenis_hewan.value == 'Kucing' %}🐱{% else %}🐶{% endif
+                %}
               </div>
               <div>
                 <h4>{{ pet.nama_hewan }}</h4>
@@ -100,74 +87,28 @@
                 <span>{{ pet.umur }} years • {{ pet.berat }} kg</span>
               </div>
             </div>
-            <i class="fas fa-pen"></i>
-          </div>
 
+            <button
+              type="button"
+              class="btn btn-link edit-pet-btn ms-auto"
+              data-bs-toggle="modal"
+              data-bs-target="#editPetModal"
+              data-id="{{ pet.id_pet }}"
+              data-nama="{{ pet.nama_hewan }}"
+              data-ras="{{ pet.jenis_hewan.value }}"
+              data-umur="{{ pet.umur }}"
+              data-berat="{{ pet.berat }}"
+              data-gambar="{{ pet.foto or url_for('static', path='image/default.jpg') }}"
+              data-gender="{{ pet.gender_hewan.value }}"
+            >
+              <i class="fas fa-pen" style="color: #8c5a3c"></i>
+            </button>
+          </div>
           {% else %}
           <div
-            class="pet-card dummy-pet"
-            style="opacity: 0.65; border: 2px dashed #e6d3c3"
+            class="w-100 text-center py-4 d-flex justify-content-center align-items-center"
           >
-            <div class="pet-left">
-              <div
-                class="pet-img d-flex align-items-center justify-content-center"
-                style="background: #f1f5f9; font-size: 20px"
-              >
-                🐶
-              </div>
-              <div>
-                <h4 class="d-flex align-items-center gap-2">
-                  Buddy
-                  <span
-                    style="
-                      font-size: 11px;
-                      color: #8c5a3c;
-                      background: #e6d3c3;
-                      padding: 1px 6px;
-                      border-radius: 4px;
-                      font-weight: 500;
-                    "
-                    >Sample</span
-                  >
-                </h4>
-                <p>Anjing • Jantan</p>
-                <span>3 years • 12.5 kg</span>
-              </div>
-            </div>
-            <i class="fas fa-pen" style="color: #cbd5e1"></i>
-          </div>
-
-          <div
-            class="pet-card dummy-pet"
-            style="opacity: 0.65; border: 2px dashed #e6d3c3"
-          >
-            <div class="pet-left">
-              <div
-                class="pet-img d-flex align-items-center justify-content-center"
-                style="background: #f1f5f9; font-size: 20px"
-              >
-                🐱
-              </div>
-              <div>
-                <h4 class="d-flex align-items-center gap-2">
-                  Whiskers
-                  <span
-                    style="
-                      font-size: 11px;
-                      color: #8c5a3c;
-                      background: #e6d3c3;
-                      padding: 1px 6px;
-                      border-radius: 4px;
-                      font-weight: 500;
-                    "
-                    >Sample</span
-                  >
-                </h4>
-                <p>Kucing • Betina</p>
-                <span>1 years • 4.2 kg</span>
-              </div>
-            </div>
-            <i class="fas fa-pen" style="color: #cbd5e1"></i>
+            <p class="m-0">Belum ada peliharaan yang ditambahkan.</p>
           </div>
           {% endfor %}
         </div>
@@ -189,6 +130,16 @@
               >Edit</a
             >
           </div>
+          <div class="account-row">
+            <div>
+              <h4>My Address</h4>
+              <p>Manage your delivery addresses</p>
+            </div>
+            <a href="{{ url_for('address') }}" style="color: #c08552">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+        </div>
 
         <!-- LOGOUT -->
         <button
@@ -203,7 +154,102 @@
   </main>
 </div>
 
-<!-- LOGOUT MODAL -->
+<div class="modal fade" id="editPetModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4">
+      <form action="/pets/edit" method="POST" enctype="multipart/form-data">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title">Edit Pet</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="pet_id" id="modal-pet-id" />
+          <input type="hidden" name="existing_foto" id="modal-pet-foto-lama" />
+          <div class="mb-3">
+            <label class="form-label">Pet Name</label>
+            <input
+              type="text"
+              name="pet_name"
+              id="modal-pet-name"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="modal-pet-gambar">Foto</label>
+            <input
+              type="file"
+              name="pet_gambar"
+              id="modal-pet-gambar"
+              class="form-control"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Breed / Type</label>
+            <select
+              name="jenis_hewan"
+              id="modal-pet-jenis"
+              class="form-select"
+              required
+            >
+              <option value="KUCING">Kucing</option>
+              <option value="ANJING">Anjing</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label">Age</label>
+              <input
+                type="number"
+                name="umur"
+                id="modal-pet-umur"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label">Weight (kg)</label>
+              <input
+                type="number"
+                step="0.1"
+                name="berat"
+                id="modal-pet-berat"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Gender</label>
+            <select name="gender" id="modal-pet-gender" class="form-select">
+              <option value="Jantan">Jantan</option>
+              <option value="Betina">Betina</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn text-white"
+            style="background-color: #8c5a3c"
+          >
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="logoutModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div
@@ -258,6 +304,50 @@
         }, 150);
       }
     });
+  });
+
+  // Logout — POST to /logout agar cookie terhapus server-side
+  document
+    .getElementById("confirmLogout")
+    .addEventListener("click", async function () {
+      document.body.classList.add("fade-out");
+
+      try {
+        await fetch("/logout", { method: "POST" });
+      } catch (_) {
+        // ignore network errors
+      }
+
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 200);
+    });
+
+  document
+    .getElementById("openEditProfile")
+    .addEventListener("click", function () {
+      window.location.href = "{{ url_for('editprofile') }}";
+    });
+
+  const editPetModal = document.getElementById("editPetModal");
+  editPetModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+
+    document.getElementById("modal-pet-id").value =
+      button.getAttribute("data-id");
+    document.getElementById("modal-pet-name").value =
+      button.getAttribute("data-nama");
+    // Store existing photo URL in hidden field (kept if no new file chosen)
+    document.getElementById("modal-pet-foto-lama").value =
+      button.getAttribute("data-gambar") || "";
+    document.getElementById("modal-pet-jenis").value =
+      button.getAttribute("data-ras");
+    document.getElementById("modal-pet-umur").value =
+      button.getAttribute("data-umur");
+    document.getElementById("modal-pet-berat").value =
+      button.getAttribute("data-berat");
+    document.getElementById("modal-pet-gender").value =
+      button.getAttribute("data-gender");
   });
 </script>
 {% endblock %}
