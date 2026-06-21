@@ -268,7 +268,7 @@ class ProductAdmin(ModelView, model=Produk):
             return f"Rp {formatted}"
         return "Rp 0,00"
     
-    form_columns = ['nama_produk','gambar', 'harga', 'stok' ]
+    form_columns = ['nama_produk','gambar', 'harga', 'stok' ,"tipe_produk"]
     form_overrides = {'gambar': FileField}
     column_formatters = {
         'gambar': lambda model, attr:Markup(
@@ -312,7 +312,39 @@ class ProductAdmin(ModelView, model=Produk):
             request.headers.get("referer", "/admin/product-model/list"), 
             status_code=303
         )
-    
+    @action(
+        name="mark_as_tersedia",
+        label="tandai sebagai tersedia",
+        confirmation_message="Yakin ingin mengembalikan produk ini?",
+        add_in_list=True,
+        add_in_detail=True,
+
+    )
+    async def mark_as_tersedia(self, request: Request):
+        # 1. Ambil param pks. Contoh hasil: ['7,8,9']
+        pks_param = request.query_params.getlist("pks")
+        
+        id_list = []
+        if pks_param:
+            # Pecah string '7,8,9' berdasarkan koma dan ubah ke integer
+            id_list = [int(x) for x in pks_param[0].split(",") if x.strip()]
+
+        if id_list:
+            async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+            async with async_session() as session:
+                # 2. Update massal sekaligus pakai .in_() tanpa perlu looping select
+                stmt = (
+                    update(Produk)
+                    .where(Produk.id_produk.in_(id_list))
+                    .values(status_produk="TERSEDIA")
+                )
+                await session.execute(stmt)
+                await session.commit()
+                
+        return RedirectResponse(
+            request.headers.get("referer", "/admin/product-model/list"), 
+            status_code=303
+        )
     async def on_model_change(self, data: dict, model, is_created: bool, request: Request) -> None:
         if "gambar" in data and data["gambar"]:
             file_data = data["gambar"]
