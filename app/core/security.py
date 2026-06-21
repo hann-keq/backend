@@ -44,7 +44,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # ---------------------------------------------------------------------------
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
-    expires = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expires = datetime.now(timezone.utc) + timedelta(days=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expires})
     if "user_id" in to_encode:
         to_encode["sub"] = str(to_encode["user_id"])

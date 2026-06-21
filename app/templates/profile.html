@@ -43,7 +43,7 @@
           </a>
         </div>
 
-        <div class="pets-grid">
+        <div class="pets-grid d-flex flex-column">
           {% for pet in pets %}
           <div
             class="pet-card d-flex align-items-center p-3 mb-3 border rounded-4 bg-white shadow-sm"
@@ -85,8 +85,10 @@
             </button>
           </div>
           {% else %}
-          <div class="text-center w-100 py-4">
-            <p style="color: #8c5a3c">Belum ada peliharaan yang ditambahkan.</p>
+          <div
+            class="w-100 text-center py-4 d-flex justify-content-center align-items-center"
+          >
+            <p class="m-0">Belum ada peliharaan yang ditambahkan.</p>
           </div>
           {% endfor %}
         </div>

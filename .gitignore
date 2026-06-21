@@ -31,4 +31,8 @@ venv/
 .vscode/
 .idea/
 
-static/uploads/dokter/
+app/static/uploads/dokter/*
+app/static/uploads/produk/*
+
+!app/static/uploads/dokter/.gitkeep
+!app/static/uploads/produk/.gitkeep
