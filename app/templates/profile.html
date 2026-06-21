@@ -1,6 +1,7 @@
-{% extends "base.html" %} {% block prefetch %} {% endblock %} {% block style %}
+{% extends "base.html" %} {% block prefetch %} {%endblock %} {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/profile.css') }}" />
 {% endblock %} {% block content %}
+
 <div class="d-flex min-vh-100">
   {% include "sidebar.html" %}
 
@@ -16,20 +17,48 @@
       </div>
 
       <div class="profile-wrapper">
+        <!-- PROFILE CARD -->
         <div class="profile-card">
           <div class="profile-left">
+            {% if user.foto %}
             <img
-              src="{{ url_for('static', path='image/sarah.jpg') }}"
+              src="{{ user.foto or url_for('static', path='image/default.jpg') }}"
               class="profile-img"
             />
+            {% else %}
+            <div
+              class="profile-img d-flex align-items-center justify-content-center"
+              style="
+                background: rgba(255, 255, 255, 0.2);
+                font-size: 24px;
+                font-weight: 700;
+                color: white;
+              "
+            >
+              {{ user.nama[0].upper() }}
+            </div>
+            {% endif %}
             <div>
               <h3>{{ user.nama }}</h3>
               <p>{{ user.email }}</p>
+              {% if membership %}
+              <span class="badge"
+                >⭐ {{ membership.tipe_membership.value }} Member</span
+              >
+              {% else %}
+              <span class="badge">🐾 Pet Lover</span>
+              {% endif %}
             </div>
           </div>
-          <button class="edit-btn" id="openEditProfile">Edit Profile</button>
+          <button
+            class="edit-btn"
+            onclick="window.location.href = '/editprofile'"
+          >
+            Edit Profile
+          </button>
         </div>
 
+        <!-- PETS -->
         <div
           class="section-header d-flex justify-content-between align-items-center"
         >
@@ -37,10 +66,8 @@
           <a
             href="{{ url_for('new-pet') }}?next=/profile"
             class="add-link text-decoration-none"
-            style="color: #8c5a3c; font-weight: 500"
+            >+ Add Pet</a
           >
-            + Add Pet
-          </a>
         </div>
 
         <div class="pets-grid d-flex flex-column">
@@ -49,7 +76,7 @@
             class="pet-card d-flex align-items-center p-3 mb-3 border rounded-4 bg-white shadow-sm"
           >
             <img
-              src="{{ url_for('static', path='image/default.jpg') }}"
+              src="{{ pet.foto or url_for('static', path='image/default.jpg') }}"
               class="rounded-circle me-3"
               style="width: 65px; height: 65px; object-fit: cover"
               alt="{{ pet.nama_hewan }}"
@@ -79,6 +106,7 @@
               data-ras="{{ pet.jenis_hewan.value }}"
               data-umur="{{ pet.umur }}"
               data-berat="{{ pet.berat }}"
+              data-gambar="{{ pet.foto or url_for('static', path='image/default.jpg') }}"
               data-gender="{{ pet.gender_hewan.value }}"
             >
               <i class="fas fa-pen" style="color: #8c5a3c"></i>
@@ -93,17 +121,51 @@
           {% endfor %}
         </div>
 
-        <div class="section-header"><h3>Account Information</h3></div>
+        <!-- ACCOUNT INFO -->
+        <div class="section-header">
+          <h3>Account Information</h3>
+        </div>
+
         <div class="account-box">
           <div class="account-row">
             <div>
               <h4>Personal Details</h4>
-              <p>Name, email, phone</p>
+              <p>{{ user.nama }} • {{ user.email }} • {{ user.no_telepon }}</p>
             </div>
-            <span>Edit</span>
+            <a
+              href="{{ url_for('editprofile') }}"
+              style="color: #c08552; font-size: 14px"
+              >Edit</a
+            >
+          </div>
+          <div class="account-row">
+            <div>
+              <h4>Membership</h4>
+              {% if membership %}
+              <p>
+                {{ membership.tipe_membership.value }} — Active until {{
+                membership.tanggal_kedaluarsa }}
+              </p>
+              {% else %}
+              <p>No active membership</p>
+              {% endif %}
+            </div>
+            <a href="{{ url_for('membership') }}" style="color: #c08552">
+              <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+          <div class="account-row">
+            <div>
+              <h4>My Address</h4>
+              <p>Manage your delivery addresses</p>
+            </div>
+            <a href="{{ url_for('address') }}" style="color: #c08552">
+              <i class="fas fa-chevron-right"></i>
+            </a>
           </div>
         </div>
 
+        <!-- LOGOUT -->
         <button
           class="logout-btn"
           data-bs-toggle="modal"
@@ -119,7 +181,7 @@
 <div class="modal fade" id="editPetModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4">
-      <form action="/pets/edit" method="POST">
+      <form action="/pets/edit" method="POST" enctype="multipart/form-data">
         <div class="modal-header border-0 pb-0">
           <h5 class="modal-title">Edit Pet</h5>
           <button
@@ -130,7 +192,7 @@
         </div>
         <div class="modal-body">
           <input type="hidden" name="pet_id" id="modal-pet-id" />
-
+          <input type="hidden" name="existing_foto" id="modal-pet-foto-lama" />
           <div class="mb-3">
             <label class="form-label">Pet Name</label>
             <input
@@ -141,7 +203,15 @@
               required
             />
           </div>
-
+          <div class="mb-3">
+            <label for="modal-pet-gambar">Foto</label>
+            <input
+              type="file"
+              name="pet_gambar"
+              id="modal-pet-gambar"
+              class="form-control"
+            />
+          </div>
           <div class="mb-3">
             <label class="form-label">Breed / Type</label>
             <select
@@ -228,33 +298,31 @@
         >
           Tidak
         </button>
-        <button
-          class="btn rounded-pill px-4 text-white"
-          style="background-color: #8c5a3c"
-          id="confirmLogout"
-        >
-          Keluar
-        </button>
+        <form action="/logout" method="POST">
+          <button
+            type="submit"
+            class="btn rounded-pill px-4 text-white"
+            style="background-color: #8c5a3c"
+          >
+            Keluar
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // Efek masuk
-  window.addEventListener("pageshow", () => {
-    document.body.classList.remove("fade-out");
-  });
-
-  // Klik navbar
+  window.addEventListener("pageshow", () =>
+    document.body.classList.remove("fade-out"),
+  );
   document.querySelectorAll(".main-nav a").forEach((link) => {
     link.addEventListener("click", function (e) {
       const target = this.getAttribute("href");
-
       if (target && target !== "#") {
         e.preventDefault();
         document.body.classList.add("fade-out");
-
         setTimeout(() => {
           window.location.href = target;
         }, 150);
@@ -293,6 +361,9 @@
       button.getAttribute("data-id");
     document.getElementById("modal-pet-name").value =
       button.getAttribute("data-nama");
+    // Store existing photo URL in hidden field (kept if no new file chosen)
+    document.getElementById("modal-pet-foto-lama").value =
+      button.getAttribute("data-gambar") || "";
     document.getElementById("modal-pet-jenis").value =
       button.getAttribute("data-ras");
     document.getElementById("modal-pet-umur").value =
