@@ -38,13 +38,32 @@ services:
     depends_on:
       - db
 
-  fastapi:
+  fastapi-app:
     build:
       context: .
-    container_name: fastapi
+    container_name: fastapi_main_app
     restart: always
     ports:
       - "8001:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+  # Servis untuk Aplikasi Admin (Port 8002 di dalam, 8002 di luar)
+  fastapi-admin:
+    build:
+      context: .
+    container_name: fastapi_admin_app
+    restart: always
+    ports:
+      - "8002:8002"
+    command: uvicorn app.admin_app:admin_app --host 0.0.0.0 --port 8002
     depends_on:
       - db
     environment:
