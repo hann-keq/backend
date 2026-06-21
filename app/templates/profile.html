@@ -178,32 +178,6 @@
               >Edit</a
             >
           </div>
-          <div class="account-row">
-            <div>
-              <h4>Membership</h4>
-              {% if membership %}
-              <p>
-                {{ membership.tipe_membership.value }} — Active until {{
-                membership.tanggal_kedaluarsa }}
-              </p>
-              {% else %}
-              <p>No active membership</p>
-              {% endif %}
-            </div>
-            <a href="{{ url_for('membership') }}" style="color: #c08552">
-              <i class="fas fa-chevron-right"></i>
-            </a>
-          </div>
-          <div class="account-row">
-            <div>
-              <h4>My Address</h4>
-              <p>Manage your delivery addresses</p>
-            </div>
-            <a href="{{ url_for('address') }}" style="color: #c08552">
-              <i class="fas fa-chevron-right"></i>
-            </a>
-          </div>
-        </div>
 
         <!-- LOGOUT -->
         <button

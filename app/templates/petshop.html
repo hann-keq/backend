@@ -136,8 +136,8 @@
 
   <div class="cart-footer">
     <p>Subtotal <span>Rp {{ ns.subtotal|rupiah }}</span></p>
-    <form method="POST" action="/orders/create">
-      <button type="submit" style="width:100%">Checkout</button>
+    <form method="GET" action="{{ url_for('choosepayment') }}">
+     <button type="submit" style="width:100%">Checkout</button>
     </form>
   </div>
 </div>

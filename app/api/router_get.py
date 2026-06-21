@@ -451,13 +451,39 @@ async def tampilin_payment(
 @router.get('/choosepayment.html', response_class=HTMLResponse, name='choosepayment')
 async def tampilin_choosepayment(
     request: Request,
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+    cart_items = await cart_repository.get_cart_items(db, cart.id_cart)
+
+    items = []
+    subtotal = 0.0
+    for ci in cart_items:
+        p = await produk_repository.get_product_by_id(db, ci.id_produk)
+        if p:
+            item_subtotal = p.harga * ci.jumlah
+            subtotal += item_subtotal
+            items.append({
+                "nama_produk": p.nama_produk,
+                "gambar": p.gambar,
+                "harga": p.harga,
+                "jumlah": ci.jumlah,
+                "subtotal": item_subtotal,
+            })
+
+    shipping = 2.00
+    total = subtotal + shipping
+
     return templates.TemplateResponse(
         request,
         'choosepayment.html',
         context={
             "current_page": "shop",
             "user": current_user,
+            "items": items,
+            "subtotal": subtotal,
+            "shipping": shipping,
+            "total": total,
         },
     )

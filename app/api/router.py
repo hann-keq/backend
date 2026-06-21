@@ -614,57 +614,60 @@ async def cancel_membership(
 
 @router.post("/checkout", response_class=HTMLResponse)
 async def checkout(
-    cart_data: str = Form(...),
     metode_pembayaran: str = Form(...),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        import json
-        from sqlalchemy import select
-        from app.models.models import Produk
+        from app.models.models import Pembayaran
 
-        cart = json.loads(cart_data)
-        if not cart:
-            raise HTTPException(status_code=400, detail="Cart is empty")
+        cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+        cart_items = await cart_repository.get_cart_items(db, cart.id_cart)
 
-        total_harga = sum(item['price'] * item['qty'] for item in cart) + 2.00
+        if not cart_items:
+            return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
 
-        # 1. Create order
+        total_harga = 0.0
+        detail_data = []
+
+        for ci in cart_items:
+            p = await produk_repository.get_product_by_id(db, ci.id_produk)
+            if p and p.stok >= ci.jumlah:
+                subtotal = p.harga * ci.jumlah
+                total_harga += subtotal
+                detail_data.append((ci.id_produk, ci.jumlah, subtotal))
+
+        if not detail_data:
+            return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
+
+        total_harga += 2.00  # shipping
+
         new_order = await order_repository.create_order_produk(db, {
             'id_user': current_user.id_user,
             'total_harga': total_harga,
-            'status_order': 'Menunggu'
+            'status_order': 'Menunggu',
         })
 
-        # 2. Create detail + reduce stock for each item
-        for item in cart:
-            produk_result = await db.execute(
-                select(Produk).where(Produk.nama_produk == item['name'])
-            )
-            produk = produk_result.scalars().one_or_none()
-            if produk:
-                await order_repository.create_detail_order(db, {  # ✅ fixed name
-                    'id_order_produk': new_order.id_order_produk,
-                    'id_produk': produk.id_produk,
-                    'jumlah': item['qty'],
-                    'subtotal': produk.harga * item['qty']
-                })
-                # ✅ reduce stock directly here instead of using broken repo function
-                produk.stok -= item['qty']
-                await db.commit()
+        for id_produk, jumlah, subtotal in detail_data:
+            await order_repository.create_detail_order(db, {
+                'id_order_produk': new_order.id_order_produk,
+                'id_produk': id_produk,
+                'jumlah': jumlah,
+                'subtotal': subtotal,
+            })
+            await produk_repository.reduce_stock_product_by_id_product(db, id_produk, jumlah)
 
-        # 3. Create pembayaran
-        from app.models.models import Pembayaran
         pembayaran = Pembayaran(
             id_user=current_user.id_user,
             id_order_produk=new_order.id_order_produk,
             jumlah_bayar=total_harga,
             metode_pembayaran=metode_pembayaran,
-            status_pembayaran='Dibayar'
+            status_pembayaran='Dibayar',
         )
         db.add(pembayaran)
         await db.commit()
+
+        await cart_repository.clear_cart(db, cart.id_cart)
 
         return RedirectResponse(url="/orders.html", status_code=status.HTTP_303_SEE_OTHER)
 
