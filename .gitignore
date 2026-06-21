@@ -31,4 +31,5 @@ venv/
 .vscode/
 .idea/
 
-app/static/uploads
+app/static/uploads/dokter/*
+app/static/uploads/produk/*
