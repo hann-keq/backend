@@ -6,6 +6,9 @@ from app.schemas.pet_schema.pet_create import PetCreate
 async def add_pet(db: AsyncSession, user_id: int, pet_data: PetCreate):
     pet_dict = pet_data.model_dump()
     pet_dict['id_user'] = user_id
+    # Pydantic field is 'foto_hewan', DB column is 'foto'
+    if 'foto_hewan' in pet_dict:
+        pet_dict['foto'] = pet_dict.pop('foto_hewan')
     return await pet_repository.create_pet(db, pet_dict)
 
 async def update_pet(db: AsyncSession, user_id: int, pet_id: int, pet_data: PetCreate):

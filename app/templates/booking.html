@@ -2,6 +2,7 @@
 {% block prefetch %}{% endblock %}
 {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', path='css/detail_booking.css') }}" />
 {% endblock %}
 {% block content %}
   
@@ -63,7 +64,7 @@
                 <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
               </div>
               <div class="card-actions">
-                <button class="btn-details">Details</button>
+                <button class="btn-details view-details-btn">Details</button>
                 <button class="btn-cancel">Cancel</button>
               </div>
             </div>
@@ -85,7 +86,7 @@
                 <p><i class="fas fa-phone"></i> +1 (555) 345-6789</p>
               </div>
               <div class="card-actions">
-                <button class="btn-details">Details</button>
+                <button class="btn-details view-details-btn">Details</button>
                 <button class="btn-cancel">Cancel</button>
               </div>
             </div>
@@ -291,8 +292,9 @@
         </div>
       </div>
     </div>
-
+{% include 'detail_booking.html' %}
     <script src="{{ url_for('static', path='js/booking.js') }}"></script>
+    <script src="{{ url_for('static', path='js/detail_booking.js') }}"></script>
   </body>
 </html>
 {% endblock %}

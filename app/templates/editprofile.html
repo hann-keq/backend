@@ -40,7 +40,7 @@
         <div class="profile-header">
           <div class="profile-img-container">
             <img
-              src="{{ url_for('static', path='image/sarah.jpg') }}"
+              src="{{ user.foto or url_for('static', path='img/default-profile.png') }}"
               class="profile-edit-img"
               alt="Profile"
             />
@@ -53,7 +53,6 @@
           <div class="profile-info">
             <h4>{{ user.nama }}</h4>
             <p>{{ user.email }}</p>
-            <span class="badge badge-premium">⭐ Premium Member</span>
           </div>
         </div>
 
@@ -95,7 +94,7 @@
             <button
               type="button"
               class="btn btn-cancel"
-              onclick="window.location.href = '{{ url_for('profile') }}'"
+              onclick="window.location.href = '/profile'"
             >
               Cancel
             </button>

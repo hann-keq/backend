@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Form,UploadFile,File
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import HTMLResponse, RedirectResponse
 from app.core.templates import templates
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.auth import get_current_user
-
+import os
 from app.models.models import User
 from app.services.pet.pet_service import add_pet
 from app.exceptions import system_exceptions
@@ -126,22 +126,34 @@ async def add_user_new_pet(
     umur: int = Form(...),
     berat: int = Form(...),
     gender: str = Form(...),
+    foto_hewan: UploadFile = File(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     try:
+        file_url = None
+        if foto_hewan and foto_hewan.filename:
+            upload_dir = "app/static/uploads/pets"
+            os.makedirs(upload_dir, exist_ok=True)
+            file_path = os.path.join(upload_dir, foto_hewan.filename)
+            with open(file_path, "wb") as buffer:
+                buffer.write(await foto_hewan.read())
+            file_url = f"/static/uploads/pets/{foto_hewan.filename}"
+        
         pet_data = PetCreate(
             nama_hewan=pet_name,
             jenis_hewan=jenis_hewan,
             umur=umur,
             berat=berat,
             gender_hewan=gender,
+            foto_hewan=file_url,
         )
         referer = request.headers.get("Referer", "")
         origin_page = "/profile" if "profile" in referer else "/petcaredashboard"
         await add_pet(db, current_user.id_user, pet_data)
         return RedirectResponse(url=origin_page, status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
+        print(f"Error adding pet: {e}")
         system_exceptions.handle_system_error(e)
 
 
@@ -154,6 +166,8 @@ async def edit_pet(
     umur: int = Form(...),
     berat: int = Form(...),
     gender: str = Form(...),
+    pet_gambar: UploadFile = File(None),
+    existing_foto: str = Form(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -161,17 +175,26 @@ async def edit_pet(
         existing = await pet_repository.get_pet_by_id(db, pet_id)
         if not existing or existing.id_user != current_user.id_user:
             raise HTTPException(status_code=404, detail="Pet not found")
-        await pet_repository.update_pet(
-            db,
-            pet_id,
-            {
-                "nama_hewan": pet_name,
-                "jenis_hewan": jenis_hewan,
-                "umur": umur,
-                "berat": berat,
-                "gender_hewan": gender,
-            },
-        )
+
+        update_dict = {
+            "nama_hewan": pet_name,
+            "jenis_hewan": jenis_hewan,
+            "umur": umur,
+            "berat": berat,
+            "gender_hewan": gender,
+        }
+
+        if pet_gambar and pet_gambar.filename:
+            upload_dir = "app/static/uploads/pets"
+            os.makedirs(upload_dir, exist_ok=True)
+            file_path = os.path.join(upload_dir, pet_gambar.filename)
+            with open(file_path, "wb") as buffer:
+                buffer.write(await pet_gambar.read())
+            update_dict["foto"] = f"/static/uploads/pets/{pet_gambar.filename}"
+        elif existing_foto:
+            update_dict["foto"] = existing_foto  # keep existing photo
+
+        await pet_repository.update_pet(db, pet_id, update_dict)
         return RedirectResponse(url="/profile", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)

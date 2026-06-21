@@ -91,6 +91,7 @@ class Pet(Base):
     nama_hewan : Mapped[str] = mapped_column(String(255),nullable=False)
     jenis_hewan : Mapped[JenisHewan] = mapped_column(Enum(JenisHewan),nullable=False,default=JenisHewan.KUCING.value)
     umur : Mapped[int] = mapped_column(Integer,nullable=False)
+    foto : Mapped[str] = mapped_column(String(255),nullable=True)
     gender_hewan : Mapped[GenderHewan] = mapped_column(Enum(GenderHewan),nullable=False,default=GenderHewan.JANTAN.value)
     berat : Mapped[float] = mapped_column(Float,nullable=False)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
