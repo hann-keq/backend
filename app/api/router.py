@@ -611,3 +611,65 @@ async def cancel_membership(
 # ================================================================
 
 # No trailing imports needed
+
+@router.post("/checkout", response_class=HTMLResponse)
+async def checkout(
+    cart_data: str = Form(...),
+    metode_pembayaran: str = Form(...),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    try:
+        import json
+        from sqlalchemy import select
+        from app.models.models import Produk
+
+        cart = json.loads(cart_data)
+        if not cart:
+            raise HTTPException(status_code=400, detail="Cart is empty")
+
+        total_harga = sum(item['price'] * item['qty'] for item in cart) + 2.00
+
+        # 1. Create order
+        new_order = await order_repository.create_order_produk(db, {
+            'id_user': current_user.id_user,
+            'total_harga': total_harga,
+            'status_order': 'Menunggu'
+        })
+
+        # 2. Create detail + reduce stock for each item
+        for item in cart:
+            produk_result = await db.execute(
+                select(Produk).where(Produk.nama_produk == item['name'])
+            )
+            produk = produk_result.scalars().one_or_none()
+            if produk:
+                await order_repository.create_detail_order(db, {  # ✅ fixed name
+                    'id_order_produk': new_order.id_order_produk,
+                    'id_produk': produk.id_produk,
+                    'jumlah': item['qty'],
+                    'subtotal': produk.harga * item['qty']
+                })
+                # ✅ reduce stock directly here instead of using broken repo function
+                produk.stok -= item['qty']
+                await db.commit()
+
+        # 3. Create pembayaran
+        from app.models.models import Pembayaran
+        pembayaran = Pembayaran(
+            id_user=current_user.id_user,
+            id_order_produk=new_order.id_order_produk,
+            jumlah_bayar=total_harga,
+            metode_pembayaran=metode_pembayaran,
+            status_pembayaran='Dibayar'
+        )
+        db.add(pembayaran)
+        await db.commit()
+
+        return RedirectResponse(url="/orders.html", status_code=status.HTTP_303_SEE_OTHER)
+
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+

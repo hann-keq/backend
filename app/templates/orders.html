@@ -1,260 +1,64 @@
 {% extends 'base.html' %} {% block prefetch %} {%endblock %} {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
 {% endblock %} {% block content %}
-<!-- end of navbar-->
-<!-- content-->
-<!-- SIDEBAR -->
 <div class="d-flex min-vh-100">
   {% include 'sidebar.html' %}
-
-  <!-- MAIN CONTENT -->
   <main class="main-content flex-grow-1">
     <div class="container">
       <h2 style="color: #4b2e2b">My Orders</h2>
-      <p style="color: #8c5a3c; font-size: 14px">
-        Track and manage your orders
-      </p>
-
-      <!-- isi content -->
-      <!-- filter-->
+      <p style="color: #8c5a3c; font-size: 14px">Track and manage your orders</p>
 
       <div class="d-flex gap-2" style="padding-top: 10px; padding-bottom: 20px">
         <div class="filter-item filter-menu-active">All Orders</div>
-
-        <div class="filter-item">Delivered (4)</div>
-
-        <div class="filter-item">In Transit (1)</div>
-
-        <div class="filter-item">Cancelled (1)</div>
+        <div class="filter-item">Menunggu</div>
+        <div class="filter-item">Diproses</div>
+        <div class="filter-item">Selesai</div>
+        <div class="filter-item">Dibatalkan</div>
       </div>
-      <!-- end of filter-->
-      <!-- card 1-->
+
+      {% for entry in orders_with_items %}
+      {% set o = entry['order'] %}
       <div class="card p-4 rounded-3 shadow-sm mb-4">
-        <!-- HEADER -->
-        <div
-          class="d-flex justify-content-between align-items-start"
-          style="padding-bottom: 10px"
-        >
+        <div class="d-flex justify-content-between align-items-start" style="padding-bottom: 10px">
           <div class="d-flex gap-3">
             <i class="bi bi-box fs-4"></i>
-
             <div>
-              <h6 class="mb-0 fw-bold">Order ORD-001</h6>
-              <small class="text-muted">Mar 15, 2026</small>
+              <h6 class="mb-0 fw-bold">Order #{{ o.id_order_produk }}</h6>
+              <small class="text-muted">{{ o.created_at.strftime('%b %d, %Y') }}</small>
             </div>
           </div>
-
-          <span class="badge bg-secondary"> Delivered </span>
+          {% if o.status_order.value == 'Menunggu' %}
+          <span class="badge" style="background-color: #c58b5e">Menunggu</span>
+          {% elif o.status_order.value == 'Diproses' %}
+          <span class="badge" style="background-color: #7fb7be">Diproses</span>
+          {% elif o.status_order.value == 'Selesai' %}
+          <span class="badge bg-secondary">Selesai</span>
+          {% elif o.status_order.value == 'Dibatalkan' %}
+          <span class="badge" style="background-color: #d4183d">Dibatalkan</span>
+          {% endif %}
         </div>
 
-        <!-- ITEMS -->
         <div class="mt-3" style="padding-bottom: 20px">
           <p class="mb-1">Items:</p>
           <ul class="mb-0">
-            <li>Premium Dog Food</li>
-            <li>Interactive Pet Toy</li>
-            <li>Healthy Pet Treats</li>
+            {% for item in entry['items'] %}
+            <li>{{ item['nama_produk'] }} x{{ item['jumlah'] }} — ${{ "%.2f"|format(item['subtotal']) }}</li>
+            {% endfor %}
           </ul>
         </div>
 
-        <!-- FOOTER -->
         <div class="border-top pt-3 mt-3 d-flex justify-content-between">
-          <small>3 items • <strong>$78.97</strong></small>
+          <small>{{ entry['item_count'] }} items • <strong>${{ "%.2f"|format(o.total_harga) }}</strong></small>
           <a href="#">View Details →</a>
         </div>
       </div>
-
-      <!-- card 2-->
-      <div class="card p-4 rounded-3 shadow-sm mb-4">
-        <!-- HEADER -->
-        <div
-          class="d-flex justify-content-between align-items-start"
-          style="padding-bottom: 10px"
-        >
-          <div class="d-flex gap-3">
-            <i class="bi bi-box fs-4"></i>
-
-            <div>
-              <h6 class="mb-0 fw-bold">Order ORD-001</h6>
-              <small class="text-muted">Mar 15, 2026</small>
-            </div>
-          </div>
-
-          <span class="badge bg-secondary"> Delivered </span>
-        </div>
-
-        <!-- ITEMS -->
-        <div class="mt-3" style="padding-bottom: 20px">
-          <p class="mb-1">Items:</p>
-          <ul class="mb-0">
-            <li>Premium Dog Food</li>
-            <li>Interactive Pet Toy</li>
-            <li>Healthy Pet Treats</li>
-          </ul>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="border-top pt-3 mt-3 d-flex justify-content-between">
-          <small>3 items • <strong>$78.97</strong></small>
-          <a href="#">View Details →</a>
-        </div>
-      </div>
-
-      <!-- card 3-->
-      <div class="card p-4 rounded-3 shadow-sm mb-4">
-        <!-- HEADER -->
-        <div
-          class="d-flex justify-content-between align-items-start"
-          style="padding-bottom: 10px"
-        >
-          <div class="d-flex gap-3">
-            <i class="bi bi-box fs-4"></i>
-
-            <div>
-              <h6 class="mb-0 fw-bold">Order ORD-001</h6>
-              <small class="text-muted">Mar 15, 2026</small>
-            </div>
-          </div>
-
-          <span class="badge bg-secondary"> Delivered </span>
-        </div>
-
-        <!-- ITEMS -->
-        <div class="mt-3" style="padding-bottom: 20px">
-          <p class="mb-1">Items:</p>
-          <ul class="mb-0">
-            <li>Premium Dog Food</li>
-            <li>Interactive Pet Toy</li>
-            <li>Healthy Pet Treats</li>
-          </ul>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="border-top pt-3 mt-3 d-flex justify-content-between">
-          <small>3 items • <strong>$78.97</strong></small>
-          <a href="#">View Details →</a>
-        </div>
-      </div>
-      <!-- card 4-->
-      <div class="card p-4 rounded-3 shadow-sm mb-4">
-        <!-- HEADER -->
-        <div
-          class="d-flex justify-content-between align-items-start"
-          style="padding-bottom: 10px"
-        >
-          <div class="d-flex gap-3">
-            <i class="bi bi-box fs-4"></i>
-
-            <div>
-              <h6 class="mb-0 fw-bold">Order ORD-001</h6>
-              <small class="text-muted">Mar 15, 2026</small>
-            </div>
-          </div>
-
-          <span class="badge bg-secondary"> Delivered </span>
-        </div>
-
-        <!-- ITEMS -->
-        <div class="mt-3" style="padding-bottom: 20px">
-          <p class="mb-1">Items:</p>
-          <ul class="mb-0">
-            <li>Premium Dog Food</li>
-            <li>Interactive Pet Toy</li>
-            <li>Healthy Pet Treats</li>
-          </ul>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="border-top pt-3 mt-3 d-flex justify-content-between">
-          <small>3 items • <strong>$78.97</strong></small>
-          <a href="#">View Details →</a>
-        </div>
-      </div>
-      <!-- card 5-->
-      <div class="card p-4 rounded-3 shadow-sm mb-4">
-        <!-- HEADER -->
-        <div
-          class="d-flex justify-content-between align-items-start"
-          style="padding-bottom: 10px"
-        >
-          <div class="d-flex gap-3">
-            <i class="bi bi-box fs-4"></i>
-
-            <div>
-              <h6 class="mb-0 fw-bold">Order ORD-001</h6>
-              <small class="text-muted">Mar 15, 2026</small>
-            </div>
-          </div>
-
-          <span class="badge" style="background-color: #7fb7be"> Transit </span>
-        </div>
-
-        <!-- ITEMS -->
-        <div class="mt-3" style="padding-bottom: 20px">
-          <p class="mb-1">Items:</p>
-          <ul class="mb-0">
-            <li>Premium Dog Food</li>
-            <li>Interactive Pet Toy</li>
-            <li>Healthy Pet Treats</li>
-          </ul>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="border-top pt-3 mt-3 d-flex justify-content-between">
-          <small>3 items • <strong>$78.97</strong></small>
-          <a href="#">View Details →</a>
-        </div>
-      </div>
-      <!-- card 6-->
-      <div class="card p-4 rounded-3 shadow-sm mb-4">
-        <!-- HEADER -->
-        <div
-          class="d-flex justify-content-between align-items-start"
-          style="padding-bottom: 10px"
-        >
-          <div class="d-flex gap-3">
-            <i class="bi bi-box fs-4"></i>
-
-            <div>
-              <h6 class="mb-0 fw-bold">Order ORD-001</h6>
-              <small class="text-muted">Mar 15, 2026</small>
-            </div>
-          </div>
-
-          <span
-            class="badge"
-            style="
-              background: linear-gradient(
-                to bottom,
-                #d4183d,
-                rgba(212, 24, 61, 1)
-              );
-            "
-          >
-            Cancelled
-          </span>
-        </div>
-
-        <!-- ITEMS -->
-        <div class="mt-3" style="padding-bottom: 20px">
-          <p class="mb-1">Items:</p>
-          <ul class="mb-0">
-            <li>Premium Dog Food</li>
-            <li>Interactive Pet Toy</li>
-            <li>Healthy Pet Treats</li>
-          </ul>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="border-top pt-3 mt-3 d-flex justify-content-between">
-          <small>3 items • <strong>$78.97</strong></small>
-          <a href="#">View Details →</a>
-        </div>
-      </div>
+      {% else %}
+      <div class="text-muted mt-4">No orders yet.</div>
+      {% endfor %}
     </div>
   </main>
 </div>
-<!--end of content-->
+
 <script
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"

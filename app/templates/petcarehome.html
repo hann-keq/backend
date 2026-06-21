@@ -6,7 +6,7 @@
     <link rel="prefetch" href="/login" />
     <link rel="prefetch" href="/signup" />
     <link rel="prefetch" href="/demo" />
-
+    #bb
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -73,7 +73,9 @@
               caring for your furry friends easier than ever.
             </p>
             <div class="hero-buttons">
-              <a href="/signup" class="btn btn-hero-primary">Get Started Free →</a>
+              <a href="/signup" class="btn btn-hero-primary"
+                >Get Started Free →</a
+              >
               <a href="/demo" class="btn btn-hero-outline">Watch Demo</a>
             </div>
           </div>
@@ -94,7 +96,8 @@
         <span class="badge-feature">Features</span>
         <h2 class="features-title">Why Pet Parents Love PetCare</h2>
         <p class="features-subtitle">
-          We've built everything you need to give your pets the best care possible
+          We've built everything you need to give your pets the best care
+          possible
         </p>
 
         <div class="row mt-5 g-4">
@@ -154,21 +157,33 @@
         <div class="row justify-content-center">
           <div class="col-md-4 mb-4">
             <div class="card service-card">
-              <img src="{{ url_for('static', path='static/image-48679-800.jpg') }}" class="card-img-top" />
+              <img
+                src="{{ url_for('static', path='static/image-48679-800.jpg') }}"
+                class="card-img-top"
+              />
               <div class="card-body text-center">
                 <h5 class="card-title">Veterinary Care</h5>
-                <p class="card-text">Connect with certified vets for consultations</p>
-                <a href="/services/veterinary" class="learn-more">Learn More →</a>
+                <p class="card-text">
+                  Connect with certified vets for consultations
+                </p>
+                <a href="/services/veterinary" class="learn-more"
+                  >Learn More →</a
+                >
               </div>
             </div>
           </div>
 
           <div class="col-md-4 mb-4">
             <div class="card service-card">
-              <img src="{{ url_for('static', path='static/grooming.jpg') }}" class="card-img-top" />
+              <img
+                src="{{ url_for('static', path='static/grooming.jpg') }}"
+                class="card-img-top"
+              />
               <div class="card-body text-center">
                 <h5 class="card-title">Professional Grooming</h5>
-                <p class="card-text">Book trusted groomers for your furry friends</p>
+                <p class="card-text">
+                  Book trusted groomers for your furry friends
+                </p>
                 <a href="/services/grooming" class="learn-more">Learn More →</a>
               </div>
             </div>
@@ -176,10 +191,15 @@
 
           <div class="col-md-4 mb-4">
             <div class="card service-card">
-              <img src="{{ url_for('static', path='static/the-benefits-of-premium-pet-food-get-set-pet.webp') }}" class="card-img-top" />
+              <img
+                src="{{ url_for('static', path='static/the-benefits-of-premium-pet-food-get-set-pet.webp') }}"
+                class="card-img-top"
+              />
               <div class="card-body text-center">
                 <h5 class="card-title">Premium Products</h5>
-                <p class="card-text">Shop high-quality food, toys, and accessories</p>
+                <p class="card-text">
+                  Shop high-quality food, toys, and accessories
+                </p>
                 <a href="/services/products" class="learn-more">Learn More →</a>
               </div>
             </div>
@@ -192,7 +212,9 @@
       <div class="container text-center">
         <span class="badge-feature mb-3 d-inline-block">Testimonials</span>
         <h2 class="fw-bold mb-2">Loved by Pet Parents Everywhere</h2>
-        <p class="text-muted mb-5">Join thousands of happy pet owners who trust PetCare</p>
+        <p class="text-muted mb-5">
+          Join thousands of happy pet owners who trust PetCare
+        </p>
 
         <div class="row g-4">
           <div class="col-md-4">
@@ -200,10 +222,14 @@
               <div class="card-body text-start p-4">
                 <div class="text-warning mb-2">★★★★★</div>
                 <p class="text-muted small">
-                  "PetCare has made managing my dog's appointments so much easier! The reminders are a lifesaver."
+                  "PetCare has made managing my dog's appointments so much
+                  easier! The reminders are a lifesaver."
                 </p>
                 <div class="d-flex align-items-center mt-4">
-                  <img src="{{ url_for('static', path='static/dd714720a1ebdd2919ecbb99e6179f75.jpg') }}" class="avatar me-3" />
+                  <img
+                    src="{{ url_for('static', path='static/dd714720a1ebdd2919ecbb99e6179f75.jpg') }}"
+                    class="avatar me-3"
+                  />
                   <div>
                     <h6 class="mb-0">Jessica Martinez</h6>
                     <small class="text-muted">Dog Owner</small>
@@ -218,10 +244,14 @@
               <div class="card-body text-start p-4">
                 <div class="text-warning mb-2">★★★★★</div>
                 <p class="text-muted small">
-                  "Love the shopping feature! I can order all of Luna's favorite treats and they arrive next day."
+                  "Love the shopping feature! I can order all of Luna's favorite
+                  treats and they arrive next day."
                 </p>
                 <div class="d-flex align-items-center mt-4">
-                  <img src="{{ url_for('static', path='static/dd714720a1ebdd2919ecbb99e6179f75.jpg') }}" class="avatar me-3" />
+                  <img
+                    src="{{ url_for('static', path='static/dd714720a1ebdd2919ecbb99e6179f75.jpg') }}"
+                    class="avatar me-3"
+                  />
                   <div>
                     <h6 class="mb-0">Michael Chen</h6>
                     <small class="text-muted">Cat Owner</small>
@@ -236,10 +266,14 @@
               <div class="card-body text-start p-4">
                 <div class="text-warning mb-2">★★★★★</div>
                 <p class="text-muted small">
-                  "Managing three pets was overwhelming until I found PetCare. It's a game changer!"
+                  "Managing three pets was overwhelming until I found PetCare.
+                  It's a game changer!"
                 </p>
                 <div class="d-flex align-items-center mt-4">
-                  <img src="{{ url_for('static', path='image/dd714720a1ebdd2919ecbb99e6179f75.jpg') }}" class="avatar me-3" />
+                  <img
+                    src="{{ url_for('static', path='image/dd714720a1ebdd2919ecbb99e6179f75.jpg') }}"
+                    class="avatar me-3"
+                  />
                   <div>
                     <h6 class="mb-0">Sarah Johnson</h6>
                     <small class="text-muted">Dog Owner</small>
@@ -263,18 +297,26 @@
         <div class="row g-4">
           <div class="col-md-4">
             <div class="card news-card h-100">
-              <img src="{{ url_for('static', path='image/dog.jpg') }}" class="card-img-top" />
+              <img
+                src="{{ url_for('static', path='image/dog.jpg') }}"
+                class="card-img-top"
+              />
               <div class="card-body">
                 <span class="badge bg-success mb-2">Health</span>
                 <h5 class="card-title">Keep Your Dog Healthy</h5>
-                <p class="card-text">Simple habits that improve your pets life.</p>
+                <p class="card-text">
+                  Simple habits that improve your pets life.
+                </p>
               </div>
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="card news-card h-100">
-              <img src="{{ url_for('static', path='image/cat.jpg') }}" class="card-img-top" />
+              <img
+                src="{{ url_for('static', path='image/cat.jpg') }}"
+                class="card-img-top"
+              />
               <div class="card-body">
                 <span class="badge bg-primary mb-2">Tips</span>
                 <h5 class="card-title">Cat Grooming Basics</h5>
@@ -285,7 +327,10 @@
 
           <div class="col-md-4">
             <div class="card news-card h-100">
-              <img src="{{ url_for('static', path='image/dog.jpg') }}" class="card-img-top" />
+              <img
+                src="{{ url_for('static', path='image/dog.jpg') }}"
+                class="card-img-top"
+              />
               <div class="card-body">
                 <span class="badge bg-primary mb-2">Update</span>
                 <h5 class="card-title">New App Features</h5>
@@ -303,10 +348,16 @@
 
     <div class="petcare">
       <h1 class="pet-title">Ready to Give Your Pet the Best Care?</h1>
-      <p class="pet-text">Join PetCare today and experience stress-free pet parenting</p>
+      <p class="pet-text">
+        Join PetCare today and experience stress-free pet parenting
+      </p>
       <div class="pet-buttons">
-        <a href="/signup" class="btn btn-primary btn-lg rounded-pill">Start Free Trial →</a>
-        <a href="/demo" class="btn btn-outline-secondary btn-lg rounded-pill">Watch Demo</a>
+        <a href="/signup" class="btn btn-primary btn-lg rounded-pill"
+          >Start Free Trial →</a
+        >
+        <a href="/demo" class="btn btn-outline-secondary btn-lg rounded-pill"
+          >Watch Demo</a
+        >
       </div>
     </div>
 
@@ -318,7 +369,9 @@
               <div class="fas fa-paw logo-icon me-2"></div>
               <h5 class="mb-0">PetCare</h5>
             </div>
-            <p class="footer-desc">Your trusted partner in pet care and wellness.</p>
+            <p class="footer-desc">
+              Your trusted partner in pet care and wellness.
+            </p>
           </div>
 
           <div class="col-md-3 mb-4">
