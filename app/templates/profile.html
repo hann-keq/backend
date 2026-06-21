@@ -22,7 +22,7 @@
           <div class="profile-left">
             {% if user.foto %}
             <img
-              src="{{ url_for('static', path='image/' + user.foto) }}"
+              src="{{ user.foto}}"
               class="profile-img"
             />
             {% else %}
@@ -52,7 +52,7 @@
           </div>
           <button
             class="edit-btn"
-            onclick="window.location.href='{{ url_for('editprofile') }}'"
+            onclick="window.location.href='/editprofile'"
           >
             Edit Profile
           </button>
@@ -76,10 +76,21 @@
             <div class="pet-left">
               <div
                 class="pet-img d-flex align-items-center justify-content-center"
-                style="background: #fef1e3; font-size: 20px"
-              >
-                {% if pet.jenis_hewan.value == 'Kucing' %}🐱{% else %}🐶{% endif
-                %}
+                style="background: #fef1e3; font-size: 20px">
+                {% if 'static' in pet.foto %}
+                
+                <img
+                  src="{{ pet.foto }}"
+                  alt="{{ pet.nama_hewan }}"
+                  class="pet-img"
+                />
+                {% else %}
+                <p>{{ pet.foto }}</p>
+                
+                {% if pet.jenis_hewan.value == 'Kucing' %}🐱{% else %}🐶
+                {% endif%}
+                {% endif %}
+                
               </div>
               <div>
                 <h4>{{ pet.nama_hewan }}</h4>

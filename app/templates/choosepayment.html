@@ -34,7 +34,6 @@
   {% else %}
 
   <div class="payment-grid">
-    <!-- LEFT: ORDER SUMMARY -->
     <div>
       <p class="payment-section-title">Order Summary</p>
       <div class="order-summary-card">
@@ -68,11 +67,10 @@
       </div>
     </div>
 
-    <!-- RIGHT: PAYMENT METHOD -->
     <div>
       <p class="payment-section-title">Payment Method</p>
       <div class="payment-methods-card">
-        <form id="checkoutForm" action="/checkout" method="POST">
+        <form id="checkoutForm">
           <input
             type="hidden"
             name="metode_pembayaran"
@@ -119,7 +117,7 @@
             </div>
           </div>
 
-          <button type="submit" class="pay-btn">
+          <button type="button" id="pay-button" class="pay-btn">
             <i class="fas fa-lock" style="margin-right: 8px"></i>
             Pay Now — Rp {{ "{:,.0f}".format(total) }}
           </button>
@@ -130,7 +128,14 @@
   {% endif %}
 </div>
 
+<script
+  type="text/javascript"
+  src="https://app.sandbox.midtrans.com/snap/snap.js"
+  data-client-key="MIDTRANS_CLIENT_KEY_KAMU"
+></script>
+
 <script>
+  // Fungsi pemilih metode visual bawaan kamu
   function selectMethod(el, value) {
     document
       .querySelectorAll(".payment-method")
@@ -138,6 +143,51 @@
     el.classList.add("selected");
     el.querySelector("input[type='radio']").checked = true;
     document.getElementById("metode_pembayaran").value = value;
+  }
+
+  // Interseptor Tombol untuk Trigger Pop-Up Snap
+  const payButton = document.getElementById("pay-button");
+  const snapToken = "{{ snap_token }}"; // Menangkap string token yang di-render Jinja2
+
+  if (payButton) {
+    payButton.addEventListener("click", function () {
+      // Validasi proteksi seandainya server gagal memproses handshake token ke Midtrans API
+      if (!snapToken || snapToken === "None" || snapToken === "") {
+        alert(
+          "Sistem gagal memproses token pembayaran. Silakan muat ulang halaman.",
+        );
+        return;
+      }
+
+      // Eksekusi trigger pop-up pembayaran utama
+      window.snap.pay(snapToken, {
+        onSuccess: async function (result) {
+          // Sync ke database — buat order + pembayaran
+          const form = new FormData();
+          form.append("order_id", result.order_id);
+          form.append("payment_type", result.payment_type || "QRIS");
+
+          try {
+            await fetch("/midtrans/callback", { method: "POST", body: form });
+          } catch (err) {
+            console.error("Callback gagal:", err);
+          }
+
+          window.location.href = "/orders";
+        },
+        onPending: function (result) {
+          alert("Menunggu penyelesaian pembayaran Anda.");
+          console.log(result);
+        },
+        onError: function (result) {
+          alert("Proses pembayaran dibatalkan atau gagal.");
+          console.log(result);
+        },
+        onClose: function () {
+          alert("Anda menutup panel pembayaran sebelum transaksi selesai.");
+        },
+      });
+    });
   }
 </script>
 {% endblock %}

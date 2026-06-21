@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,6 +12,8 @@ from app.exceptions import system_exceptions
 from app.models.models import User
 from app.schemas.user_schema.user_response import UserResponseOnlyId
 from app.services.user.user_service import get_user_by_id
+from app.core.midtrans import snap
+from app.api.router_midtrans import router as midtrans_router
 
 # ---- repository imports (used directly for read queries) ----
 from app.repositories import (
@@ -123,7 +127,30 @@ async def tampilin_dashboard(
     try:
         uid = current_user.id_user
         all_pet = await pet_repository.get_all_user_pets(db, uid)
+        
         all_janji = await janji_temu_repository.get_all_janji_temu_by_user(db, uid)
+
+        orders = await order_repository.get_all_ordered_produk_by_user(db, current_user.id_user)
+
+        orders_with_items = []
+        for o in (orders or []):
+            details = await order_repository.get_detail_orders_by_order(db, o.id_order_produk)
+            if not details:  # ✅ skip orders with no items
+                continue
+            items = []
+            for d in details:
+                p = await produk_repository.get_product_by_id(db, d.id_produk)
+                items.append({
+                    "nama_produk": p.nama_produk if p else "Unknown",
+                    "jumlah": d.jumlah,
+                    "subtotal": d.subtotal,
+                })
+            orders_with_items.append({
+                "order": o,
+                "items": items,
+                "item_count": len(items),
+            })
+            print(f"order items {orders_with_items[-1]['items']}")
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
@@ -135,7 +162,9 @@ async def tampilin_dashboard(
             "user": current_user,
             "pets": all_pet,
             "janji_temu": all_janji,
+            "orders": orders_with_items,
         },
+
     )
 
 
@@ -215,6 +244,7 @@ async def tampilin_petshop(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    
     products = await produk_repository.get_all_products_except_deleted(db)
     cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
     cart_items = await cart_repository.get_cart_items(db, cart.id_cart)
@@ -223,7 +253,7 @@ async def tampilin_petshop(
     cart_map = {}
     for ci in cart_items:
         cart_map[ci.id_produk] = ci.jumlah
-
+    
     return templates.TemplateResponse(
         request,
         'petshop.html',
@@ -269,7 +299,7 @@ async def tampilin_favorites(
 # ORDERS  (user's order history with line items)
 # -----------------------------------------------------------------
 
-@router.get('/orders.html', response_class=HTMLResponse, name='orders')
+@router.get('/orders', response_class=HTMLResponse, name='orders')
 async def tampilin_orders(
     request: Request,
     db: AsyncSession = Depends(get_db),
@@ -475,6 +505,24 @@ async def tampilin_choosepayment(
     shipping = 2.00
     total = subtotal + shipping
 
+    order_id = f"PetCare-Shop-{int(time.time())}"
+    total_real = int(total)
+
+    transcation_params = {
+        "transaction_details": {
+            "order_id": order_id,
+            "gross_amount": total_real
+        },
+        "credit_card": {"secure": True},
+        "enabled_payments": ["qris", "gopay", "bank_transfer"]
+    }
+    try :
+        transaction = snap.create_transaction(transcation_params)
+        snap_token = transaction['token']
+        print(f"Snap token generated: {snap_token}")
+    except Exception as e:
+        snap_token = None
+        raise HTTPException(status_code=400, detail=f"Midtrans Error: {str(e)}")    
     return templates.TemplateResponse(
         request,
         'choosepayment.html',
@@ -485,5 +533,7 @@ async def tampilin_choosepayment(
             "subtotal": subtotal,
             "shipping": shipping,
             "total": total,
+            "snap_token": snap_token,
+
         },
     )
