@@ -15,26 +15,54 @@
 
   <h2 style="margin-bottom: 25px">Checkout</h2>
 
+  {% if not items %}
+  <div class="empty-cart-msg" style="text-align: center; padding: 60px 0">
+    <p>Your cart is empty.</p>
+    <a
+      href="{{ url_for('petshop') }}"
+      class="pay-btn"
+      style="
+        display: inline-block;
+        text-decoration: none;
+        width: auto;
+        padding: 12px 30px;
+      "
+    >
+      Go to Shop
+    </a>
+  </div>
+  {% else %}
+
   <div class="payment-grid">
     <!-- LEFT: ORDER SUMMARY -->
     <div>
       <p class="payment-section-title">Order Summary</p>
       <div class="order-summary-card">
-        <div id="order-items">
-          <div class="empty-cart-msg">Your cart is empty.</div>
+        {% for item in items %}
+        <div class="order-item">
+          <img src="{{ item.gambar }}" alt="{{ item.nama_produk }}" />
+          <div class="order-item-info">
+            <h6>{{ item.nama_produk }}</h6>
+            <span>Qty: {{ item.jumlah }}</span>
+          </div>
+          <div class="order-item-price">
+            Rp {{ "{:,.0f}".format(item.subtotal) }}
+          </div>
         </div>
-        <div class="order-total" id="order-total" style="display: none">
+        {% endfor %}
+
+        <div class="order-total">
           <div class="order-total-row">
             <span>Subtotal</span>
-            <span id="subtotal-val">$0.00</span>
+            <span>Rp {{ "{:,.0f}".format(subtotal) }}</span>
           </div>
           <div class="order-total-row">
             <span>Shipping</span>
-            <span>$2.00</span>
+            <span>Rp {{ "{:,.0f}".format(shipping) }}</span>
           </div>
           <div class="order-total-row grand">
             <span>Total</span>
-            <span id="grand-total-val">$0.00</span>
+            <span>Rp {{ "{:,.0f}".format(total) }}</span>
           </div>
         </div>
       </div>
@@ -45,7 +73,6 @@
       <p class="payment-section-title">Payment Method</p>
       <div class="payment-methods-card">
         <form id="checkoutForm" action="/checkout" method="POST">
-          <input type="hidden" name="cart_data" id="cart_data" />
           <input
             type="hidden"
             name="metode_pembayaran"
@@ -92,60 +119,18 @@
             </div>
           </div>
 
-          <button
-            type="submit"
-            class="pay-btn"
-            onclick="return prepareCheckout();"
-          >
+          <button type="submit" class="pay-btn">
             <i class="fas fa-lock" style="margin-right: 8px"></i>
-            Pay Now
+            Pay Now — Rp {{ "{:,.0f}".format(total) }}
           </button>
         </form>
       </div>
     </div>
   </div>
+  {% endif %}
 </div>
 
 <script>
-  const SHIPPING = 2.0;
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  function renderOrderSummary() {
-    const container = document.getElementById("order-items");
-    const totalSection = document.getElementById("order-total");
-
-    if (!cart.length) {
-      container.innerHTML =
-        '<div class="empty-cart-msg">Your cart is empty.</div>';
-      return;
-    }
-
-    let subtotal = 0;
-    container.innerHTML = "";
-
-    cart.forEach((item) => {
-      subtotal += item.price * item.qty;
-      const div = document.createElement("div");
-      div.classList.add("order-item");
-      div.innerHTML = `
-        <img src="${item.img}" alt="${item.name}" />
-        <div class="order-item-info">
-          <h6>${item.name}</h6>
-          <span>Qty: ${item.qty}</span>
-        </div>
-        <div class="order-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-      `;
-      container.appendChild(div);
-    });
-
-    const grand = subtotal + SHIPPING;
-    document.getElementById("subtotal-val").textContent =
-      "$" + subtotal.toFixed(2);
-    document.getElementById("grand-total-val").textContent =
-      "$" + grand.toFixed(2);
-    totalSection.style.display = "block";
-  }
-
   function selectMethod(el, value) {
     document
       .querySelectorAll(".payment-method")
@@ -154,17 +139,5 @@
     el.querySelector("input[type='radio']").checked = true;
     document.getElementById("metode_pembayaran").value = value;
   }
-
-  function prepareCheckout() {
-    if (!cart.length) {
-      alert("Your cart is empty!");
-      return false;
-    }
-    document.getElementById("cart_data").value = JSON.stringify(cart);
-    localStorage.removeItem("cart");
-    return true;
-  }
-
-  renderOrderSummary();
 </script>
 {% endblock %}
