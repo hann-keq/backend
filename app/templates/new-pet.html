@@ -1,10 +1,6 @@
-{% extends 'base.html' %} {% block prefetch %} {%endblock %} {% block style %}
+{% extends 'base.html' %} {% block prefetch %} {% endblock %} {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
 {% endblock %} {% block content %}
-<!-- end of navbar-->
-<!-- content-->
-
-<!-- MAIN CONTENT -->
 <main class="main-content">
   <div class="container">
     <div class="d-flex align-items-center ms-4">
@@ -21,16 +17,32 @@
       </div>
     </div>
     <div class="justify-content-center">
-      <form action="/pets/add" method="post">
+      <form action="/pets/add" method="post" enctype="multipart/form-data">
         <div class="card w-75 mx-auto mt-4 border-10px">
           <div class="card-body">
             <h6 class="card-title">Pet photo</h6>
-            <div
+
+            <input
+              type="file"
+              id="petPhotoInput"
+              name="foto_hewan"
+              style="display: none"
+              accept="image/*"
+            />
+
+            <label
+              for="petPhotoInput"
               class="btn icon-circle-big d-flex align-items-center justify-content-center mx-auto flex-column text-dark-brown"
+              style="cursor: pointer"
             >
-              <div><i class="bi bi-upload icon-size"></i></div>
-              <span style="font-size: 9px">Upload photo</span>
-            </div>
+              <div
+                id="previewContainer"
+                class="d-flex align-items-center justify-content-center flex-column"
+              >
+                <div><i class="bi bi-upload icon-size"></i></div>
+                <span style="font-size: 9px">Upload photo</span>
+              </div>
+            </label>
           </div>
         </div>
 
@@ -147,11 +159,28 @@
     </div>
   </div>
 </main>
-<!--end of content-->
 
 <script
   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
   crossorigin="anonymous"
 ></script>
+
+<script>
+  document
+    .getElementById("petPhotoInput")
+    .addEventListener("change", function (event) {
+      const [file] = event.target.files;
+      if (file) {
+        const previewContainer = document.getElementById("previewContainer");
+
+        // Mengganti isi lingkaran upload dengan gambar yang dipilih user
+        previewContainer.innerHTML = `
+        <img src="${URL.createObjectURL(file)}"
+             style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"
+             alt="Pet Preview" />
+      `;
+      }
+    });
+</script>
 {% endblock %}
