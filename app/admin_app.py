@@ -216,12 +216,39 @@ class UserAdmin(ModelView, model=User):
     name = "Data User/Admin"
     name_plural = "Kelola User & Admin"
     icon = "fa-solid fa-users"
-    column_list = [User.id_user, User.nama, User.email, User.role]
-    form_columns = ["nama", "email", "no_telepon", "password", "role"]
+    column_list = [User.id_user,'foto', User.nama, User.email, User.role]
+    column_labels = {
+        'foto':'Foto Profil'
+    }
+    form_columns = ["nama", "email", "no_telepon", "password", "role",'foto']
+    form_overrides = {'foto': FileField}
 
+    column_formatters = {
+        'foto': lambda model, attr:Markup(
+            f'<img src="{model.foto}" class="img-thumbnail" '
+            f'style="max-height:50px;max-width:50px;object-fit:cover;">'
+        ) if model.foto else Markup('<i class="fa-solid fa-user fa-2x text-secondary"></i>')
+
+    }
     async def on_model_change(self, data: dict, model, is_created: bool, request: Request) -> None:
         if "password" in data and data["password"]:
             data["password"] = hash_password(data["password"])
+        if "foto" in data and data["foto"]:
+            file_data = data["foto"]
+            if hasattr(file_data, 'filename') and file_data.filename:
+                upload_dir = "app/static/uploads/user"
+                os.makedirs(upload_dir, exist_ok=True)
+                clean_nama = data.get("nama", "user").replace(" ", "_")
+                filename = f"{clean_nama}_{file_data.filename}"
+                file_path = os.path.join(upload_dir, filename)
+                with open(file_path, "wb") as buffer:
+                    buffer.write(await file_data.read())
+                data["foto"] = f"/static/uploads/user/{filename}"
+            else:
+                if not is_created:
+                    data.pop("foto", None)
+                else:
+                    data["foto"] = None
 
     def is_accessible(self, request: Request) -> bool:
         return request.session.get("user_role") == "admin"
@@ -268,7 +295,7 @@ class ProductAdmin(ModelView, model=Produk):
             return f"Rp {formatted}"
         return "Rp 0,00"
     
-    form_columns = ['nama_produk','gambar', 'harga', 'stok' ]
+    form_columns = ['nama_produk','gambar', 'harga', 'stok' ,"tipe_produk"]
     form_overrides = {'gambar': FileField}
     column_formatters = {
         'gambar': lambda model, attr:Markup(
@@ -312,7 +339,39 @@ class ProductAdmin(ModelView, model=Produk):
             request.headers.get("referer", "/admin/product-model/list"), 
             status_code=303
         )
-    
+    @action(
+        name="mark_as_tersedia",
+        label="tandai sebagai tersedia",
+        confirmation_message="Yakin ingin mengembalikan produk ini?",
+        add_in_list=True,
+        add_in_detail=True,
+
+    )
+    async def mark_as_tersedia(self, request: Request):
+        # 1. Ambil param pks. Contoh hasil: ['7,8,9']
+        pks_param = request.query_params.getlist("pks")
+        
+        id_list = []
+        if pks_param:
+            # Pecah string '7,8,9' berdasarkan koma dan ubah ke integer
+            id_list = [int(x) for x in pks_param[0].split(",") if x.strip()]
+
+        if id_list:
+            async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+            async with async_session() as session:
+                # 2. Update massal sekaligus pakai .in_() tanpa perlu looping select
+                stmt = (
+                    update(Produk)
+                    .where(Produk.id_produk.in_(id_list))
+                    .values(status_produk="TERSEDIA")
+                )
+                await session.execute(stmt)
+                await session.commit()
+                
+        return RedirectResponse(
+            request.headers.get("referer", "/admin/product-model/list"), 
+            status_code=303
+        )
     async def on_model_change(self, data: dict, model, is_created: bool, request: Request) -> None:
         if "gambar" in data and data["gambar"]:
             file_data = data["gambar"]
