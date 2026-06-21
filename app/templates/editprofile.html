@@ -23,7 +23,11 @@
     />
 
     <title>Edit Profile</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', path='img/logo.png') }}" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="{{ url_for('static', path='img/logo.png') }}"
+    />
   </head>
   <body>
     <div class="main-container">
@@ -35,7 +39,11 @@
       <div class="profile-card">
         <div class="profile-header">
           <div class="profile-img-container">
-            <img src="{{ url_for('static', path='image/sarah.jpg') }}" class="profile-edit-img" alt="Profile" />
+            <img
+              src="{{ url_for('static', path='image/sarah.jpg') }}"
+              class="profile-edit-img"
+              alt="Profile"
+            />
             <div class="upload-btn" title="Change Photo">
               <i class="bi bi-camera"></i>
             </div>

@@ -1318,11 +1318,8 @@ h3,
 /* TRANSITION HALAMAN */
 body {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-  will-change: opacity, transform;
+  transition: opacity 0.25s ease;
+  will-change: opacity;
 }
 
 /* keluar */

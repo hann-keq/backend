@@ -24,6 +24,7 @@ from app.schemas.janji_schema.schema import JanjiTemuCreate
 from app.repositories import (
     alamat_repository,
     booking_repository,
+    cart_repository,
     favorit_repository,
     membership_repository,
     order_repository,
@@ -292,6 +293,57 @@ async def edit_profile(
 
 
 # ================================================================
+#  CART — server-backed, per user, NOT localStorage
+# ================================================================
+
+@router.post("/cart/add", response_class=HTMLResponse)
+async def cart_add(
+    request: Request,
+    id_produk: int = Form(...),
+    jumlah: int = Form(1),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+        await cart_repository.add_item(db, cart.id_cart, id_produk, jumlah)
+        return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+@router.post("/cart/update", response_class=HTMLResponse)
+async def cart_update(
+    request: Request,
+    id_produk: int = Form(...),
+    jumlah: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+        await cart_repository.update_item_qty(db, cart.id_cart, id_produk, jumlah)
+        return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+@router.post("/cart/remove")
+async def cart_remove(
+    request: Request,
+    id_produk: int = Form(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+        await cart_repository.remove_item(db, cart.id_cart, id_produk)
+        return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
+
+# ================================================================
 #  FAVORITES
 # ================================================================
 
@@ -320,19 +372,30 @@ async def create_order(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # Read cart items from form fields sent as JSON string.
-    # The petshop template sends: items_json = JSON.stringify(cart)
-    # We receive it here — but since this is a form, we accept a single field.
+    """Checkout: reads cart_items from DB, creates order_produk + detail_order, then clears cart."""
     import json
 
     try:
-        form = await request.form()
-        items_json = form.get("items_json", "[]")
-        items = json.loads(items_json)
+        cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+        cart_items = await cart_repository.get_cart_items(db, cart.id_cart)
 
-        total_harga = sum(item["price"] * item["qty"] for item in items)
+        if not cart_items:
+            return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
 
-        # Create the order
+        total_harga = 0.0
+        detail_data = []
+
+        for ci in cart_items:
+            produk = await produk_repository.get_product_by_id(db, ci.id_produk)
+            if not produk or produk.stok < ci.jumlah:
+                continue  # skip unavailable products
+            subtotal = produk.harga * ci.jumlah
+            total_harga += subtotal
+            detail_data.append((ci.id_produk, ci.jumlah, subtotal))
+
+        if not detail_data:
+            return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
+
         new_order = await order_repository.create_order_produk(
             db,
             {
@@ -342,25 +405,20 @@ async def create_order(
             },
         )
 
-        # Create detail_order rows and reduce stock
-        for item in items:
-            # find produk by name (petshop stores names; real app should use IDs)
-            produk_list = await produk_repository.get_all_products(db)
-            produk = next((p for p in produk_list if p.nama_produk == item.get("name")), None)
-            if produk:
-                await order_repository.create_detail_order(
-                    db,
-                    {
-                        "id_order_produk": new_order.id_order_produk,
-                        "id_produk": produk.id_produk,
-                        "jumlah": item["qty"],
-                        "subtotal": item["price"] * item["qty"],
-                    },
-                )
-                # attempt to reduce stock
-                await produk_repository.reduce_stock_product_by_id_product(
-                    db, produk.id_produk, item["qty"]
-                )
+        for id_produk, jumlah, subtotal in detail_data:
+            await order_repository.create_detail_order(
+                db,
+                {
+                    "id_order_produk": new_order.id_order_produk,
+                    "id_produk": id_produk,
+                    "jumlah": jumlah,
+                    "subtotal": subtotal,
+                },
+            )
+            await produk_repository.reduce_stock_product_by_id_product(db, id_produk, jumlah)
+
+        # Clear the cart after successful order
+        await cart_repository.clear_cart(db, cart.id_cart)
 
         return RedirectResponse(url="/orders.html", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
