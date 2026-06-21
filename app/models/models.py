@@ -42,7 +42,15 @@ class TipeMembership(pyEnum):
     BASIC = 'Basic'
     PREMIUM = 'Premium'
     VIP = 'VIP'
-
+class StatusProduk(pyEnum):
+    TERSEDIA = 'Tersedia'
+    HABIS = 'Habis'
+    DIHAPUS = 'Dihapus'
+class tipeProduk(pyEnum):
+    MAKANAN = 'Makanan'
+    MAINAN = 'Mainan'
+    OBAT = 'Obat'
+    AKSESORIS = 'Aksesoris'
 class MetodePembayaran(pyEnum):
     QRIS = 'QRIS'
     GOPAY = 'GoPay'
@@ -166,6 +174,8 @@ class Produk(Base):
     harga : Mapped[float] = mapped_column(Float,nullable=False)
     stok : Mapped[int] = mapped_column(Integer,nullable=False)
     gambar : Mapped[str] = mapped_column(String(255),nullable=True)
+    status_produk : Mapped[StatusProduk] = mapped_column(Enum(StatusProduk),nullable=False,default=StatusProduk.TERSEDIA.value)
+    tipe_produk : Mapped[tipeProduk] = mapped_column(Enum(tipeProduk),nullable=False,default=tipeProduk.MAKANAN.value)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
 

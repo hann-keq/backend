@@ -1,365 +1,199 @@
-{% extends 'base.html' %}
-{% block prefetch %}{% endblock %}
-{% block style %}
-<link rel="stylesheet" href="{{ url_for('static', path='css/dashboard.css') }}" />
-{% endblock %}
-{% block content %}
+{% extends 'base.html' %} {% block prefetch %}{% endblock %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', path='css/dashboard.css') }}"
+/>
+<link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+{% endblock %} {% block content %}
 
-      <!-- CONTENT -->
-      <div class="container">
-        <!-- HEADER -->
-        <div class="shop-header-wrapper">
-          <div class="shop-header">
-            <!-- BAGIAN ATAS -->
-            <div class="shop-header-top">
-              <div>
-                <h2>Pet Shop</h2>
-                <p>Everything your pet needs in one place</p>
-              </div>
-
-              <!-- CART -->
-              <div class="shop-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge">2</span>
-              </div>
-            </div>
-
-            <!-- SEARCH -->
-            <div class="search-box">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Search for products..."
-              />
-              <i class="fas fa-filter"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- SPECIAL OFFERS -->
-        <h4>Special Offers</h4>
-        <div class="offers">
-          <div class="offer brown">
-            <div>
-              <small>33% OFF</small>
-              <h3>Buy 2 Get 1 Free</h3>
-              <p>On all dog food</p>
-            </div>
-            <button>Shop Now</button>
-          </div>
-
-          <div class="offer blue">
-            <div>
-              <small>SAVE $10</small>
-              <h3>Free Shipping</h3>
-              <p>Orders over $50</p>
-            </div>
-            <button>Shop Now</button>
-          </div>
-        </div>
-
-        <!-- CATEGORY -->
-        <div class="categories">
-          <button class="active" data-filter="all">All</button>
-          <button data-filter="food">Food</button>
-          <button data-filter="toys">Toys</button>
-          <button data-filter="accessories">Accessories</button>
-          <button data-filter="health">Health</button>
-        </div>
-
-        <!-- TITLE -->
-        <div class="product-title">
-          <h4>All Products</h4>
-          <span>6 items</span>
-        </div>
-
-        <!-- PRODUCTS -->
-        <div class="products">
-          <!-- FOOD -->
-          <div class="card" data-category="food">
-            <div class="img">
-              <span class="badge">Best Seller</span>
-              <i class="fa-regular fa-heart"></i>
-              <img src="image/filters_quality(80).avif" alt="" />
-            </div>
-            <h5>Premium Dog Food</h5>
-            <p class="rating">⭐ 4.8 (234)</p>
-            <div class="bottom">
-              <span>$45.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
-
-          <!-- TOYS -->
-          <div class="card" data-category="toys">
-            <div class="img">
-              <i class="fa-regular fa-heart"></i>
-              <img src="image/ball.avif" alt="" />
-            </div>
-            <h5>Interactive Pet Toy</h5>
-            <p class="rating">⭐ 4.5 (128)</p>
-            <div class="bottom">
-              <span>$18.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
-
-          <!-- ACCESSORIES -->
-          <div class="card" data-category="accessories">
-            <div class="img">
-              <span class="badge new">New</span>
-              <i class="fa-regular fa-heart"></i>
-              <img src="image//litterbox.avif" alt="" />
-            </div>
-            <h5>Modern Litter Box</h5>
-            <p class="rating">⭐ 4.7 (89)</p>
-            <div class="bottom">
-              <span>$79.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
-
-          <!-- HEALTH -->
-          <div class="card" data-category="health">
-            <div class="img">
-              <span class="badge out">Out of Stock</span>
-              <img src="image/dog medication.jpg" alt="" />
-            </div>
-            <h5>Dog Medication</h5>
-            <p class="rating">⭐ 4.6 (156)</p>
-            <div class="bottom">
-              <span>$24.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-        const cartContainer = document.querySelector(".cart-items");
-        const badge = document.querySelector(".cart-badge");
-        const subtotalEl = document.querySelector(".cart-footer span");
-
-        // Search Input
-        const searchInput = document.getElementById("searchInput");
-
-        searchInput.addEventListener("keyup", () => {
-          const keyword = searchInput.value.toLowerCase();
-
-          document.querySelectorAll(".products .card").forEach((card) => {
-            const title = card.querySelector("h5").textContent.toLowerCase();
-
-            if (title.includes(keyword)) {
-              card.style.display = "block";
-            } else {
-              card.style.display = "none";
-            }
-          });
-        });
-
-        // =====================
-        // ADD TO CART (DARI PRODUK)
-        // =====================
-        document.querySelectorAll(".fa-cart-plus").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const card = btn.closest(".card");
-
-            // ❌ CEK OUT OF STOCK
-            const isOut = card.querySelector(".badge.out");
-
-            if (isOut) {
-              alert("Produk sedang habis / Out of Stock!");
-              return; // STOP disini
-            }
-
-            const name = card.querySelector("h5").textContent;
-            const price = parseFloat(
-              card.querySelector(".bottom span").textContent.replace("$", ""),
-            );
-            const img = card.querySelector("img").getAttribute("src");
-
-            const existing = cart.find((item) => item.name === name);
-
-            if (existing) {
-              existing.qty++;
-            } else {
-              cart.push({ name, price, img, qty: 1 });
-            }
-
-            saveCart();
-            renderCart();
-          });
-        });
-
-        // =====================
-        // RENDER CART
-        // =====================
-        function renderCart() {
-          cartContainer.innerHTML = "";
-
-          let subtotal = 0;
-          let totalQty = 0;
-
-          cart.forEach((item, index) => {
-            subtotal += item.price * item.qty;
-            totalQty += item.qty;
-
-            const div = document.createElement("div");
-            div.classList.add("cart-item");
-
-            div.innerHTML = `
-        <img src="${item.img}" />
-        <div class="cart-info">
-          <h5>${item.name}</h5>
-          <span>$${item.price}</span>
-
-          <div class="qty-control">
-            <button class="minus" data-index="${index}">-</button>
-            <span class="qty">${item.qty}</span>
-            <button class="plus" data-index="${index}">+</button>
-          </div>
-        </div>
-      `;
-
-            cartContainer.appendChild(div);
-          });
-
-          badge.textContent = totalQty;
-          subtotalEl.textContent = "$" + subtotal.toFixed(2);
-
-          addQtyEvents();
-        }
-
-        function saveCart() {
-          localStorage.setItem("cart", JSON.stringify(cart));
-        }
-
-        // =====================
-        // QTY CONTROL
-        // =====================
-        function addQtyEvents() {
-          document.querySelectorAll(".plus").forEach((btn) => {
-            btn.onclick = () => {
-              const i = btn.dataset.index;
-              cart[i].qty++;
-              saveCart();
-              renderCart();
-            };
-          });
-
-          document.querySelectorAll(".minus").forEach((btn) => {
-            btn.onclick = () => {
-              const i = btn.dataset.index;
-
-              if (cart[i].qty > 1) {
-                cart[i].qty--;
-              } else {
-                cart.splice(i, 1);
-              }
-
-              saveCart();
-              renderCart();
-            };
-          });
-        }
-
-        // =====================
-        // CART SIDEBAR
-        // =====================
-        const cartBtn = document.querySelector(".shop-cart");
-        const cartSidebar = document.getElementById("cartSidebar");
-        const overlay = document.getElementById("cartOverlay");
-        const closeBtn = document.getElementById("closeCart");
-
-        cartBtn.addEventListener("click", () => {
-          cartSidebar.classList.add("active");
-          overlay.classList.add("active");
-        });
-
-        closeBtn.addEventListener("click", () => {
-          cartSidebar.classList.remove("active");
-          overlay.classList.remove("active");
-        });
-
-        overlay.addEventListener("click", () => {
-          cartSidebar.classList.remove("active");
-          overlay.classList.remove("active");
-        });
-
-        // =====================
-        // FILTER CATEGORY
-        // =====================
-        const buttons = document.querySelectorAll(".categories button");
-        const cards = document.querySelectorAll(".products .card");
-
-        buttons.forEach((button) => {
-          button.addEventListener("click", () => {
-            buttons.forEach((btn) => btn.classList.remove("active"));
-            button.classList.add("active");
-
-            const filter = button.dataset.filter;
-
-            cards.forEach((card) => {
-              const category = card.dataset.category;
-
-              if (filter === "all" || filter === category) {
-                card.style.display = "block";
-              } else {
-                card.style.display = "none";
-              }
-            });
-          });
-        });
-
-        // INIT
-        renderCart();
-      });
-      // efek masuk
-      window.addEventListener("pageshow", () => {
-        document.body.classList.remove("fade-out");
-      });
-
-      // klik navbar
-      document.querySelectorAll(".main-nav a").forEach((link) => {
-        link.addEventListener("click", function (e) {
-          const target = this.getAttribute("href");
-
-          if (target && target !== "#") {
-            e.preventDefault();
-
-            document.body.classList.add("fade-out");
-
-            // langsung pindah tanpa delay lama
-            setTimeout(() => {
-              window.location.href = target;
-            }, 150); // lebih cepat
-          }
-        });
-      });
-    </script>
-
-    <!-- OVERLAY -->
-    <div class="cart-overlay" id="cartOverlay"></div>
-
-    <!-- SIDEBAR CART -->
-    <div class="cart-sidebar" id="cartSidebar">
-      <div class="cart-header">
+<!-- CONTENT -->
+<div class="container">
+  <!-- HEADER -->
+  <div class="shop-header-wrapper">
+    <div class="shop-header">
+      <div class="shop-header-top">
         <div>
-          <h4>Shopping Cart</h4>
-          <small>items</small>
+          <h2>Pet Shop</h2>
+          <p>Everything your pet needs in one place</p>
         </div>
-        <i class="fas fa-times close-cart" id="closeCart"></i>
+        <div class="shop-cart">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-badge">{{ cart_map.values() | sum }}</span>
+        </div>
       </div>
-
-      <div class="cart-items"></div>
-
-      <div class="cart-footer">
-        <p>Subtotal <span>$96.96</span></p>
-        <button>Checkout</button>
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search for products..." />
+        <i class="fas fa-filter"></i>
       </div>
     </div>
+  </div>
+
+  <!-- CATEGORY -->
+  <div class="categories">
+    <button class="active" data-filter="all">All</button>
+    <button data-filter="Makanan">Makanan</button>
+    <button data-filter="Mainan">Mainan</button>
+    <button data-filter="Aksesoris">Aksesoris</button>
+    <button data-filter="Obat">Kesehatan</button>
+  </div>
+
+  <!-- TITLE -->
+  <div class="product-title">
+    <h4>All Products</h4>
+    <span>{{ products | length }} items</span>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="products">
+    {% for product in products %}
+    <div class="card"
+         data-category="{{ product.tipe_produk.value }}"
+         data-stok="{{ product.stok }}"
+         data-id-produk="{{ product.id_produk }}"
+         data-nama="{{ product.nama_produk }}"
+         data-harga="{{ product.harga }}">
+      <div class="img">
+        <i class="fa-regular fa-heart"></i>
+        <div class="img-wrapper{{ ' out-of-stock' if product.stok == 0 else '' }}">
+          <img src="{{ product.gambar}}" alt="" />
+        </div>
+      </div>
+      <h5>{{ product.nama_produk }}</h5>
+      {% if product.stok > 0 %}
+        <small style="color:#8c5a3c">Stok: {{ product.stok }}</small>
+      {% else %}
+        <small style="color:#d4183d">Habis</small>
+      {% endif %}
+      <p class="rating">⭐ 4.5 (128)</p>
+      <div class="bottom">
+        <span>Rp {{ product.harga|rupiah }}</span>
+        {% if product.stok > 0 %}
+          <form method="POST" action="/cart/add" style="display:inline">
+            <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
+            <input type="hidden" name="jumlah" value="1" />
+            <button type="submit" style="background:none;border:none;padding:0;cursor:pointer">
+              <i class="fas fa-cart-plus"></i>
+            </button>
+          </form>
+        {% else %}
+          <i class="fas fa-cart-plus" style="cursor:not-allowed; opacity:0.4"></i>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="cart-overlay" id="cartOverlay"></div>
+
+<!-- SIDEBAR CART — rendered server-side -->
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <div>
+      <h4>Shopping Cart</h4>
+      <small>{{ cart_map.values() | sum }} items</small>
+    </div>
+    <i class="fas fa-times close-cart" id="closeCart"></i>
+  </div>
+
+  <div class="cart-items">
+    {% set ns = namespace(subtotal=0) %}
+    {% for product in products %}
+      {% set qty = cart_map.get(product.id_produk, 0) %}
+      {% if qty > 0 %}
+        {% set ns.subtotal = ns.subtotal + (product.harga * qty) %}
+        <div class="cart-item">
+          <img src="{{ product.gambar }}" />
+          <div class="cart-info">
+            <h5>{{ product.nama_produk }}</h5>
+            <span>Rp {{ product.harga|rupiah }}</span>
+            <div class="qty-control">
+              <form method="POST" action="/cart/update" style="display:inline">
+                <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
+                <input type="hidden" name="jumlah" value="{{ qty - 1 }}" />
+                <button type="submit" class="minus"
+                  {% if qty <= 1 %}style="visibility:hidden"{% endif %}>-</button>
+              </form>
+              <span class="qty">{{ qty }}</span>
+              <form method="POST" action="/cart/update" style="display:inline">
+                <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
+                <input type="hidden" name="jumlah" value="{{ qty + 1 }}" />
+                <button type="submit" class="plus"
+                  {% if qty >= product.stok %}disabled title="Max stok"{% endif %}>+</button>
+              </form>
+              <form method="POST" action="/cart/remove" style="display:inline;margin-left:8px">
+                <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
+                <button type="submit" style="background:none;border:none;color:#d4183d;cursor:pointer">🗑</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="cart-footer">
+    <p>Subtotal <span>Rp {{ ns.subtotal|rupiah }}</span></p>
+    <form method="POST" action="/orders/create">
+      <button type="submit" style="width:100%">Checkout</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // CART SIDEBAR TOGGLE
+  const cartBtn    = document.querySelector(".shop-cart");
+  const cartSidebar = document.getElementById("cartSidebar");
+  const overlay    = document.getElementById("cartOverlay");
+  const closeBtn   = document.getElementById("closeCart");
+
+  cartBtn.addEventListener("click", () => {
+    cartSidebar.classList.add("active");
+    overlay.classList.add("active");
+  });
+  closeBtn.addEventListener("click", () => {
+    cartSidebar.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+  overlay.addEventListener("click", () => {
+    cartSidebar.classList.remove("active");
+    overlay.classList.remove("active");
+  });
+
+  // SEARCH
+  document.getElementById("searchInput").addEventListener("keyup", function () {
+    const kw = this.value.toLowerCase();
+    document.querySelectorAll(".products .card").forEach(card => {
+      const t = card.querySelector("h5").textContent.toLowerCase();
+      card.style.display = t.includes(kw) ? "block" : "none";
+    });
+  });
+
+  // CATEGORY FILTER
+  document.querySelectorAll(".categories button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const f = btn.dataset.filter;
+      document.querySelectorAll(".products .card").forEach(card => {
+        card.style.display = (f === "all" || card.dataset.category === f) ? "block" : "none";
+      });
+    });
+  });
+
+  // PAGE FADE
+  window.addEventListener("pageshow", () => document.body.classList.remove("fade-out"));
+  document.querySelectorAll(".main-nav a").forEach(link => {
+    link.addEventListener("click", function (e) {
+      const t = this.getAttribute("href");
+      if (t && t !== "#") {
+        e.preventDefault();
+        document.body.classList.add("fade-out");
+        setTimeout(() => { window.location.href = t; }, 150);
+      }
+    });
+  });
+</script>
 {% endblock %}

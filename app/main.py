@@ -2,13 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.core.database import engine, Base
 from app.api.router import router
 from app.api.router_get import router as get_router
-from fastapi.staticfiles import StaticFiles
 from app.admin import init_admin
+
+# Jinja2Templates is at app/core/templates.py — imported by routers directly, no circular import
 
 
 @asynccontextmanager

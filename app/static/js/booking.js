@@ -1,74 +1,43 @@
-const modal = document.getElementById("bookingModal");
+async function finishBooking() {
+    // Ambil data yang dipilih user dari UI
+    const pet = document.querySelector('#step1 .selection-card.selected');
+    const paket = document.querySelector('#step2 .selection-card.selected');
+    const tgl = document.getElementById('tanggal_booking').value;
+    const jam = document.querySelector('#step4 .time-btn.selected');
 
-function openModal(serviceName) {
-  modal.style.display = "flex";
-  const titleElement = document.getElementById("modalTitle");
-  if (titleElement) titleElement.textContent = `${serviceName} Booking`;
-
-  nextStep(1);
-}
-
-function closeModal() {
-  modal.style.display = "none";
-}
-
-function nextStep(step) {
-  const steps = document.querySelectorAll(".modal-step");
-  steps.forEach((el) => el.classList.remove("active"));
-
-  const target = document.getElementById("step" + step);
-  if (target) target.classList.add("active");
-}
-
-function selectOption(element) {
-  const container = element.parentElement;
-  const items = container.querySelectorAll(".selection-card, .time-btn");
-
-  // 2. Hapus class 'selected' dan reset inline style
-  items.forEach((el) => {
-    el.classList.remove("selected");
-    el.style.backgroundColor = "";
-  });
-
-  // 3. Tambah class selected
-  element.classList.add("selected");
-
-  // 4. Khusus untuk button, gunakan warna highlight
-  if (element.tagName === "BUTTON") {
-    element.style.backgroundColor = "#f0f7f7";
-  }
-}
-
-function finishBooking() {
-  console.log("Processing booking...");
-  alert("Booking Confirmed! Thank you.");
-  closeModal();
-}
-
-// Tutup modal jika klik di area luar
-window.onclick = (event) => {
-  if (event.target === modal) closeModal();
-};
-
-// efek masuk
-window.addEventListener("pageshow", () => {
-  document.body.classList.remove("fade-out");
-});
-
-// klik navbar
-document.querySelectorAll(".main-nav a").forEach((link) => {
-  link.addEventListener("click", function (e) {
-    const target = this.getAttribute("href");
-
-    if (target && target !== "#") {
-      e.preventDefault();
-
-      document.body.classList.add("fade-out");
-
-      // langsung pindah tanpa delay lama
-      setTimeout(() => {
-        window.location.href = target;
-      }, 150); // lebih cepat
+    // Validasi sederhana
+    if (!pet || !paket || !tgl || !jam) {
+        alert("Mohon lengkapi pilihan Hewan, Paket, Tanggal, dan Jam sebelum konfirmasi!");
+        return;
     }
-  });
-});
+
+    // Persiapkan FormData untuk dikirim ke Python
+    const formData = new FormData();
+    formData.append("id_pet", pet.getAttribute('data-pet-id'));
+    formData.append("id_paket_grooming", paket.getAttribute('data-paket-id'));
+    formData.append("tanggal_booking", tgl);
+    formData.append("jam_booking", jam.getAttribute('data-time'));
+
+    try {
+        // Kirim ke route Python /bookings/create
+        const response = await fetch('/bookings/create', {
+            method: 'POST',
+            body: formData
+        });
+
+        // Tangani hasil respon dari Python
+        if (response.redirected) {
+            // Jika Python berhasil redirect ke /appointments.html
+            window.location.href = response.url;
+        } else if (response.ok) {
+            alert("Booking berhasil disimpan!");
+            window.location.href = "/appointments.html";
+        } else {
+            const errorText = await response.text();
+            alert("Gagal menyimpan booking: " + errorText);
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan pada server!");
+    }
+}

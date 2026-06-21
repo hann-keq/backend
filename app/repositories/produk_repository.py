@@ -16,7 +16,9 @@ async def get_product_by_id(db: AsyncSession, product_id: int):
 async def get_all_products(db: AsyncSession):
     result = await db.execute(select(Produk))
     return result.scalars().all()
-
+async def get_all_products_except_deleted(db: AsyncSession):
+    result = await db.execute(select(Produk).where(Produk.status_produk != 'DIHAPUS'))
+    return result.scalars().all()
 async def update_product_by_id_product(db: AsyncSession, product_id: int, product_data: dict):
     result = await db.execute(select(Produk).where(Produk.id_produk == product_id))
     product = result.scalars().one_or_none()

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-from fastapi.templating import Jinja2Templates
 from starlette.responses import HTMLResponse, RedirectResponse
+from app.core.templates import templates
 from app.core.auth import get_current_user, google_authorize, access_token_oauth
 from app.core.database import get_db
 from app.core.security import decode_access_token
@@ -15,6 +15,7 @@ from app.services.user.user_service import get_user_by_id
 from app.repositories import (
     alamat_repository,
     booking_repository,
+    cart_repository,
     favorit_repository,
     membership_repository,
     order_repository,
@@ -26,7 +27,6 @@ from app.repositories import (
 )
 
 
-templates = Jinja2Templates(directory="app/templates")
 router = APIRouter()
 
 
@@ -213,14 +213,25 @@ async def tampilin_address(
 async def tampilin_petshop(
     request: Request,
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    products = await produk_repository.get_all_products(db)
+    products = await produk_repository.get_all_products_except_deleted(db)
+    cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+    cart_items = await cart_repository.get_cart_items(db, cart.id_cart)
+
+    # Build lookup: id_produk -> CartItem
+    cart_map = {}
+    for ci in cart_items:
+        cart_map[ci.id_produk] = ci.jumlah
+
     return templates.TemplateResponse(
         request,
         'petshop.html',
         context={
             "current_page": "shop",
+            "user": current_user,
             "products": products,
+            "cart_map": cart_map,  # {id_produk: jumlah}
         },
     )
 
