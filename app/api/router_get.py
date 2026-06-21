@@ -275,15 +275,15 @@ async def tampilin_orders(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # Get all orders for the user
     orders = await order_repository.get_all_ordered_produk_by_user(db, current_user.id_user)
 
-    # For each order, get its detail items with product name
     orders_with_items = []
     for o in (orders or []):
         details = await order_repository.get_detail_orders_by_order(db, o.id_order_produk)
+        if not details:  # ✅ skip orders with no items
+            continue
         items = []
-        for d in (details or []):
+        for d in details:
             p = await produk_repository.get_product_by_id(db, d.id_produk)
             items.append({
                 "nama_produk": p.nama_produk if p else "Unknown",
@@ -443,6 +443,21 @@ async def tampilin_payment(
         'payment.html',
         context={
             "current_page": "payment",
+            "user": current_user,
+        },
+    )
+
+
+@router.get('/choosepayment.html', response_class=HTMLResponse, name='choosepayment')
+async def tampilin_choosepayment(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+):
+    return templates.TemplateResponse(
+        request,
+        'choosepayment.html',
+        context={
+            "current_page": "shop",
             "user": current_user,
         },
     )
