@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Form
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from app.core.templates import templates
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.auth import get_current_user
@@ -38,7 +38,6 @@ from app.schemas.janji_schema.schema import JanjiTemuCreate
 from app.schemas.membership_schema.schema import MembershipCreate
 
 
-templates = Jinja2Templates(directory="app/templates")
 router = APIRouter()
 
 

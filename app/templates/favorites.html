@@ -16,10 +16,13 @@
       <!-- isi content -->
 
       <div class="row">
+        {%for product in favorite_products%}
         <!-- card 1-->
         <div class="col-sm-4 px-4 py-2 pb-4">
           <div class="card" style="border-radius: 10px">
-            <div class="img-wrapper">
+            <div
+              class="img-wrapper{{ ' out-of-stock' if product.stok == 0 else '' }}"
+            >
               <img
                 src="https://images.unsplash.com/photo-1744608257939-1ecbd90f1320?w=400"
                 alt="Premium Dog Food - Chicken &amp; Rice"
@@ -37,7 +40,7 @@
                   >Food</small
                 >
               </div>
-              <h6 class="card-title py-2">Premium Dog Food - Chicken & Rice</h6>
+              <h6 class="card-title py-2">{{ product.nama_produk }}</h6>
               <p class="text-brown" style="font-size: 11px; word-spacing: 3px">
                 <i
                   class="bi bi-star-fill text-orange"
@@ -50,9 +53,8 @@
                 style="word-spacing: 0.25rem; font-size: 12px"
               >
                 <strong class="text-brown" style="font-size: 1rem"
-                  >Rp.69.000,00</strong
+                  >Rp.{{ "{:,.0f}".format(product.harga) }},00</strong
                 >
-                <del>Rp.100.000,00</del>
               </p>
               <div class="row d-flex justify-content-between align-items-start">
                 <div class="col">
@@ -70,291 +72,15 @@
             </div>
           </div>
         </div>
-
-        <!-- card 2-->
-        <div class="col-sm-4 px-4 py-2 pb-4">
-          <div class="card" style="border-radius: 10px">
-            <div class="img-wrapper">
-              <img
-                src="https://images.unsplash.com/photo-1744608257939-1ecbd90f1320?w=400"
-                alt="Premium Dog Food - Chicken &amp; Rice"
-                class="card-img-top img-settings"
-                data-fg-bet512="11.27:11.6066:/src/app/screens/favorites.tsx:79:15:2657:139:e:img"
-                data-fgid-bet512=":rai:"
-              />
-              <i class="bi bi-heart-fill love-icon"></i>
-            </div>
-            <div class="card-body">
-              <div class="py-3">
-                <small
-                  class="background-brown px-3 py-1 rounded-pill text-white"
-                  style="font-size: 12px"
-                  >Toys</small
-                >
-              </div>
-              <h6 class="card-title py-2">
-                Interactive Pet Toy - Puzzle Feeder
-              </h6>
-              <p class="text-brown" style="font-size: 11px; word-spacing: 3px">
-                <i
-                  class="bi bi-star-fill text-orange"
-                  style="font-size: 12px"
-                ></i>
-                <strong> 4.5</strong>
-              </p>
-              <p
-                class="text-dark-brown"
-                style="word-spacing: 0.25rem; font-size: 12px"
-              >
-                <strong class="text-brown" style="font-size: 1rem"
-                  >Rp.46.000,00</strong
-                >
-                <del>Rp.80.000,00</del>
-              </p>
-              <div class="row d-flex justify-content-between align-items-start">
-                <div class="col">
-                  <div class="btn w-100 rounded-pill button-green font-green">
-                    <i class="bi bi-cart2"></i>
-                    Add to Cart
-                  </div>
-                </div>
-                <div class="col-sm-2">
-                  <div class="btn background-red" style="border-radius: 1rem">
-                    <i class="bi bi-trash3"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {% else %}
+        <div
+          class="w-100 text-center py-4 d-flex justify-content-center align-items-center"
+        >
+          <p class="m-0">Belum ada produk favorit yang ditambahkan.</p>
         </div>
-
-        <!-- card 3-->
-        <div class="col-sm-4 px-4 py-2 pb-4">
-          <div class="card" style="border-radius: 10px">
-            <div class="img-wrapper">
-              <img
-                src="https://images.unsplash.com/photo-1761660306229-8f99a11ef623?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXQlMjB0cmVhdHMlMjBoZWFsdGh5fGVufDF8fHx8MTc3Mzc3Nzk3NHww&amp;ixlib=rb-4.1.0&amp;q=80&amp;w=1080"
-                alt="Healthy Pet Treats - Grain Free"
-                class="card-img-top img-settings"
-                data-fg-bet512="11.27:11.6066:/src/app/screens/favorites.tsx:79:15:2657:139:e:img"
-                data-fgid-bet512=":rc3:"
-              />
-              <i class="bi bi-heart-fill love-icon"></i>
-            </div>
-            <div class="card-body">
-              <div class="py-3">
-                <small
-                  class="background-brown px-3 py-1 rounded-pill text-white"
-                  style="font-size: 12px"
-                  >Accessories</small
-                >
-              </div>
-              <h6 class="card-title py-2">Healthy Pet Treats - Grain Free</h6>
-              <p class="text-brown" style="font-size: 11px; word-spacing: 3px">
-                <i
-                  class="bi bi-star-fill text-orange"
-                  style="font-size: 12px"
-                ></i>
-                <strong> 4.8</strong>
-              </p>
-              <p
-                class="text-dark-brown"
-                style="word-spacing: 0.25rem; font-size: 12px"
-              >
-                <strong class="text-brown" style="font-size: 1rem"
-                  >Rp.69.000,00</strong
-                >
-                <del>Rp.100.000,00</del>
-              </p>
-              <div class="row d-flex justify-content-between align-items-start">
-                <div class="col">
-                  <div class="btn w-100 rounded-pill button-green font-green">
-                    <i class="bi bi-cart2"></i>
-                    Add to Cart
-                  </div>
-                </div>
-                <div class="col-sm-2">
-                  <div class="btn background-red" style="border-radius: 1rem">
-                    <i class="bi bi-trash3"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {% endfor %}
 
         <!-- card 4-->
-        <div class="col-sm-4 px-4 py-2 pb-4">
-          <div class="card" style="border-radius: 10px">
-            <div class="img-wrapper out-of-stock">
-              <img
-                src="https://images.unsplash.com/photo-1583512603806-077998240c7a?w=400"
-                alt="Luxury Pet Bed - Memory Foam"
-                class="card-img-top img-settings"
-                data-fg-bet512="11.27:11.6066:/src/app/screens/favorites.tsx:79:15:2657:139:e:img"
-                data-fgid-bet512=":rcq:"
-              />
-              <i class="bi bi-heart-fill love-icon"></i>
-            </div>
-            <div class="card-body">
-              <div class="py-3">
-                <small
-                  class="background-brown px-3 py-1 rounded-pill text-white"
-                  style="font-size: 12px"
-                  >Accessories</small
-                >
-              </div>
-              <h6 class="card-title py-2">Luxury Pet Bed - Memory Foam</h6>
-              <p class="text-brown" style="font-size: 11px; word-spacing: 3px">
-                <i
-                  class="bi bi-star-fill text-orange"
-                  style="font-size: 12px"
-                ></i>
-                <strong> 4.8</strong>
-              </p>
-              <p
-                class="text-dark-brown"
-                style="word-spacing: 0.25rem; font-size: 12px"
-              >
-                <strong class="text-brown" style="font-size: 1rem"
-                  >Rp.69.000,00</strong
-                >
-                <del>Rp.100.000,00</del>
-              </p>
-              <div class="row d-flex justify-content-between align-items-start">
-                <div class="col">
-                  <div class="btn w-100 rounded-pill button-green font-green">
-                    <i class="bi bi-cart2"></i>
-                    Add to Cart
-                  </div>
-                </div>
-                <div class="col-sm-2">
-                  <div class="btn background-red" style="border-radius: 1rem">
-                    <i class="bi bi-trash3"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- card 5-->
-        <div class="col-sm-4 px-4 py-2 pb-4">
-          <div class="card" style="border-radius: 10px">
-            <div class="img-wrapper">
-              <img
-                src="https://images.unsplash.com/photo-1744608257939-1ecbd90f1320?w=400"
-                alt="Premium Dog Food - Chicken &amp; Rice"
-                class="card-img-top img-settings"
-                data-fg-bet512="11.27:11.6066:/src/app/screens/favorites.tsx:79:15:2657:139:e:img"
-                data-fgid-bet512=":rai:"
-                style="
-                  border-top-left-radius: 10px;
-                  border-top-right-radius: 10px;
-                "
-              />
-              <i class="bi bi-heart-fill love-icon"></i>
-            </div>
-            <div class="card-body">
-              <div class="py-3">
-                <small
-                  class="background-brown px-3 py-1 rounded-pill text-white"
-                  style="font-size: 12px"
-                  >Hygiene</small
-                >
-              </div>
-              <h6 class="card-title py-2">Premium Cat Litter - Odor Control</h6>
-              <p class="text-brown" style="font-size: 11px; word-spacing: 3px">
-                <i
-                  class="bi bi-star-fill text-orange"
-                  style="font-size: 12px"
-                ></i>
-                <strong> 4.8</strong>
-              </p>
-              <p
-                class="text-dark-brown"
-                style="word-spacing: 0.25rem; font-size: 12px"
-              >
-                <strong class="text-brown" style="font-size: 1rem"
-                  >Rp.69.000,00</strong
-                >
-                <del>Rp.100.000,00</del>
-              </p>
-              <div class="row d-flex justify-content-between align-items-start">
-                <div class="col">
-                  <div class="btn w-100 rounded-pill button-green font-green">
-                    <i class="bi bi-cart2"></i>
-                    Add to Cart
-                  </div>
-                </div>
-                <div class="col-sm-2">
-                  <div class="btn background-red" style="border-radius: 1rem">
-                    <i class="bi bi-trash3"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- card 6-->
-        <div class="col-sm-4 px-4 py-2 pb-4">
-          <div class="card" style="border-radius: 10px">
-            <div class="img-wrapper">
-              <img
-                src="https://images.unsplash.com/photo-1744608257939-1ecbd90f1320?w=400"
-                alt="Premium Dog Food - Chicken &amp; Rice"
-                class="card-img-top img-settings"
-                data-fg-bet512="11.27:11.6066:/src/app/screens/favorites.tsx:79:15:2657:139:e:img"
-                data-fgid-bet512=":rai:"
-                style="
-                  border-top-left-radius: 10px;
-                  border-top-right-radius: 10px;
-                "
-              />
-              <i class="bi bi-heart-fill love-icon"></i>
-            </div>
-            <div class="card-body">
-              <div class="py-3">
-                <small
-                  class="background-brown px-3 py-1 rounded-pill text-white"
-                  style="font-size: 12px"
-                  >Grooming</small
-                >
-              </div>
-              <h6 class="card-title py-2">Grooming Kit - Professional</h6>
-              <p class="text-brown" style="font-size: 11px; word-spacing: 3px">
-                <i
-                  class="bi bi-star-fill text-orange"
-                  style="font-size: 12px"
-                ></i>
-                <strong> 4.8</strong>
-              </p>
-              <p
-                class="text-dark-brown"
-                style="word-spacing: 0.25rem; font-size: 12px"
-              >
-                <strong class="text-brown" style="font-size: 1rem"
-                  >Rp.69.000,00</strong
-                >
-                <del>Rp.100.000,00</del>
-              </p>
-              <div class="row d-flex justify-content-between align-items-start">
-                <div class="col">
-                  <div class="btn w-100 rounded-pill button-green font-green">
-                    <i class="bi bi-cart2"></i>
-                    Add to Cart
-                  </div>
-                </div>
-                <div class="col-sm-2">
-                  <div class="btn background-red" style="border-radius: 1rem">
-                    <i class="bi bi-trash3"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </main>

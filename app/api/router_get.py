@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-from fastapi.templating import Jinja2Templates
 from starlette.responses import HTMLResponse, RedirectResponse
+from app.core.templates import templates
 from app.core.auth import get_current_user, google_authorize, access_token_oauth
 from app.core.database import get_db
 from app.core.security import decode_access_token
@@ -26,7 +26,6 @@ from app.repositories import (
 )
 
 
-templates = Jinja2Templates(directory="app/templates")
 router = APIRouter()
 
 
@@ -214,7 +213,8 @@ async def tampilin_petshop(
     request: Request,
     db: AsyncSession = Depends(get_db),
 ):
-    products = await produk_repository.get_all_products(db)
+    products = await produk_repository.get_all_products_except_deleted(db)
+    
     return templates.TemplateResponse(
         request,
         'petshop.html',

@@ -1,197 +1,166 @@
-{% extends 'base.html' %}
-{% block prefetch %}{% endblock %}
-{% block style %}
-<link rel="stylesheet" href="{{ url_for('static', path='css/dashboard.css') }}" />
-{% endblock %}
-{% block content %}
+{% extends 'base.html' %} {% block prefetch %}{% endblock %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', path='css/dashboard.css') }}"
+/>
+{% endblock %} {% block content %}
 
-      <!-- CONTENT -->
-      <div class="container">
-        <!-- HEADER -->
-        <div class="shop-header-wrapper">
-          <div class="shop-header">
-            <!-- BAGIAN ATAS -->
-            <div class="shop-header-top">
-              <div>
-                <h2>Pet Shop</h2>
-                <p>Everything your pet needs in one place</p>
-              </div>
-
-              <!-- CART -->
-              <div class="shop-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge">2</span>
-              </div>
-            </div>
-
-            <!-- SEARCH -->
-            <div class="search-box">
-              <i class="fas fa-search"></i>
-              <input
-                type="text"
-                id="searchInput"
-                placeholder="Search for products..."
-              />
-              <i class="fas fa-filter"></i>
-            </div>
-          </div>
+<!-- CONTENT -->
+<div class="container">
+  <!-- HEADER -->
+  <div class="shop-header-wrapper">
+    <div class="shop-header">
+      <!-- BAGIAN ATAS -->
+      <div class="shop-header-top">
+        <div>
+          <h2>Pet Shop</h2>
+          <p>Everything your pet needs in one place</p>
         </div>
 
-      
-
-        <!-- CATEGORY -->
-        <div class="categories">
-          <button class="active" data-filter="all">All</button>
-          <button data-filter="food">Food</button>
-          <button data-filter="toys">Toys</button>
-          <button data-filter="accessories">Accessories</button>
-          <button data-filter="health">Health</button>
-        </div>
-
-        <!-- TITLE -->
-        <div class="product-title">
-          <h4>All Products</h4>
-          <span>6 items</span>
-        </div>
-
-        <!-- PRODUCTS -->
-        <div class="products">
-          <!-- FOOD -->
-          <div class="card" data-category="food">
-            <div class="img">
-              <span class="badge">Best Seller</span>
-              <i class="fa-regular fa-heart"></i>
-              <img src="image/filters_quality(80).avif" alt="" />
-            </div>
-            <h5>Premium Dog Food</h5>
-            <p class="rating">⭐ 4.8 (234)</p>
-            <div class="bottom">
-              <span>$45.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
-
-          <!-- TOYS -->
-          <div class="card" data-category="toys">
-            <div class="img">
-              <i class="fa-regular fa-heart"></i>
-              <img src="image/ball.avif" alt="" />
-            </div>
-            <h5>Interactive Pet Toy</h5>
-            <p class="rating">⭐ 4.5 (128)</p>
-            <div class="bottom">
-              <span>$18.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
-
-          <!-- ACCESSORIES -->
-          <div class="card" data-category="accessories">
-            <div class="img">
-              <span class="badge new">New</span>
-              <i class="fa-regular fa-heart"></i>
-              <img src="image//litterbox.avif" alt="" />
-            </div>
-            <h5>Modern Litter Box</h5>
-            <p class="rating">⭐ 4.7 (89)</p>
-            <div class="bottom">
-              <span>$79.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
-
-          <!-- HEALTH -->
-          <div class="card" data-category="health">
-            <div class="img">
-              <span class="badge out">Out of Stock</span>
-              <img src="image/dog medication.jpg" alt="" />
-            </div>
-            <h5>Dog Medication</h5>
-            <p class="rating">⭐ 4.6 (156)</p>
-            <div class="bottom">
-              <span>$24.99</span>
-              <i class="fas fa-cart-plus"></i>
-            </div>
-          </div>
+        <!-- CART -->
+        <div class="shop-cart">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-badge">2</span>
         </div>
       </div>
+
+      <!-- SEARCH -->
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search for products..."
+        />
+        <i class="fas fa-filter"></i>
+      </div>
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  </div>
 
-        const cartContainer = document.querySelector(".cart-items");
-        const badge = document.querySelector(".cart-badge");
-        const subtotalEl = document.querySelector(".cart-footer span");
+  <!-- CATEGORY -->
+  <div class="categories">
+    <button class="active" data-filter="all">All</button>
+    <button data-filter="Makanan">Makanan</button>
+    <button data-filter="Mainan">Mainan</button>
+    <button data-filter="Aksesoris">Aksesoris</button>
+    <button data-filter="Obat">Kesehatan</button>
+  </div>
 
-        // Search Input
-        const searchInput = document.getElementById("searchInput");
+  <!-- TITLE -->
+  <div class="product-title">
+    <h4>All Products</h4>
+    <span>{{ products | length }} items</span>
+  </div>
 
-        searchInput.addEventListener("keyup", () => {
-          const keyword = searchInput.value.toLowerCase();
+  <!-- PRODUCTS -->
+  <div class="products">
+    {% for product in products %}
+    <div class="card" data-category="{{ product.tipe_produk.value }}">
+      <div class="img">
+        <i class="fa-regular fa-heart"></i>
+        <div
+          class="img-wrapper{{ ' out-of-stock' if product.stok == 0 else '' }}"
+        >
+          <img src="{{ product.gambar}}" alt="" />
+        </div>
+      </div>
+      <h5>{{ product.nama_produk }}</h5>
+      <p class="rating">⭐ 4.5 (128)</p>
+      <div class="bottom">
+        <span>Rp {{ product.harga|rupiah }}</span>
+        <i class="fas fa-cart-plus"></i>
+      </div>
+    </div>
+    {% endfor %}
+    <!-- FOOD -->
 
-          document.querySelectorAll(".products .card").forEach((card) => {
-            const title = card.querySelector("h5").textContent.toLowerCase();
+    <!-- TOYS -->
 
-            if (title.includes(keyword)) {
-              card.style.display = "block";
-            } else {
-              card.style.display = "none";
-            }
-          });
-        });
+    <!-- ACCESSORIES -->
 
-        // =====================
-        // ADD TO CART (DARI PRODUK)
-        // =====================
-        document.querySelectorAll(".fa-cart-plus").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const card = btn.closest(".card");
+    <!-- HEALTH -->
+  </div>
+</div>
 
-            // ❌ CEK OUT OF STOCK
-            const isOut = card.querySelector(".badge.out");
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-            if (isOut) {
-              alert("Produk sedang habis / Out of Stock!");
-              return; // STOP disini
-            }
+    const cartContainer = document.querySelector(".cart-items");
+    const badge = document.querySelector(".cart-badge");
+    const subtotalEl = document.querySelector(".cart-footer span");
 
-            const name = card.querySelector("h5").textContent;
-            const price = parseFloat(
-              card.querySelector(".bottom span").textContent.replace("$", ""),
-            );
-            const img = card.querySelector("img").getAttribute("src");
+    // Search Input
+    const searchInput = document.getElementById("searchInput");
 
-            const existing = cart.find((item) => item.name === name);
+    searchInput.addEventListener("keyup", () => {
+      const keyword = searchInput.value.toLowerCase();
 
-            if (existing) {
-              existing.qty++;
-            } else {
-              cart.push({ name, price, img, qty: 1 });
-            }
+      document.querySelectorAll(".products .card").forEach((card) => {
+        const title = card.querySelector("h5").textContent.toLowerCase();
 
-            saveCart();
-            renderCart();
-          });
-        });
+        if (title.includes(keyword)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
 
-        // =====================
-        // RENDER CART
-        // =====================
-        function renderCart() {
-          cartContainer.innerHTML = "";
+    // =====================
+    // ADD TO CART (DARI PRODUK)
+    // =====================
+    document.querySelectorAll(".fa-cart-plus").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const card = btn.closest(".card");
 
-          let subtotal = 0;
-          let totalQty = 0;
+        // ❌ CEK OUT OF STOCK
+        const isOut = card.querySelector(".badge.out");
 
-          cart.forEach((item, index) => {
-            subtotal += item.price * item.qty;
-            totalQty += item.qty;
+        if (isOut) {
+          alert("Produk sedang habis / Out of Stock!");
+          return; // STOP disini
+        }
 
-            const div = document.createElement("div");
-            div.classList.add("cart-item");
+        const name = card.querySelector("h5").textContent;
+        const price = parseFloat(
+          card
+            .querySelector(".bottom span")
+            .textContent.replace("Rp. ", "")
+            .replace(",", ""),
+        );
+        const img = card.querySelector("img").getAttribute("src");
 
-            div.innerHTML = `
+        const existing = cart.find((item) => item.name === name);
+
+        if (existing) {
+          existing.qty++;
+        } else {
+          cart.push({ name, price, img, qty: 1 });
+        }
+
+        saveCart();
+        renderCart();
+      });
+    });
+
+    // =====================
+    // RENDER CART
+    // =====================
+    function renderCart() {
+      cartContainer.innerHTML = "";
+
+      let subtotal = 0;
+      let totalQty = 0;
+
+      cart.forEach((item, index) => {
+        subtotal += item.price * item.qty;
+        totalQty += item.qty;
+
+        const div = document.createElement("div");
+        div.classList.add("cart-item");
+
+        div.innerHTML = `
         <img src="${item.img}" />
         <div class="cart-info">
           <h5>${item.name}</h5>
@@ -205,141 +174,141 @@
         </div>
       `;
 
-            cartContainer.appendChild(div);
-          });
-
-          badge.textContent = totalQty;
-          subtotalEl.textContent = "$" + subtotal.toFixed(2);
-
-          addQtyEvents();
-        }
-
-        function saveCart() {
-          localStorage.setItem("cart", JSON.stringify(cart));
-        }
-
-        // =====================
-        // QTY CONTROL
-        // =====================
-        function addQtyEvents() {
-          document.querySelectorAll(".plus").forEach((btn) => {
-            btn.onclick = () => {
-              const i = btn.dataset.index;
-              cart[i].qty++;
-              saveCart();
-              renderCart();
-            };
-          });
-
-          document.querySelectorAll(".minus").forEach((btn) => {
-            btn.onclick = () => {
-              const i = btn.dataset.index;
-
-              if (cart[i].qty > 1) {
-                cart[i].qty--;
-              } else {
-                cart.splice(i, 1);
-              }
-
-              saveCart();
-              renderCart();
-            };
-          });
-        }
-
-        // =====================
-        // CART SIDEBAR
-        // =====================
-        const cartBtn = document.querySelector(".shop-cart");
-        const cartSidebar = document.getElementById("cartSidebar");
-        const overlay = document.getElementById("cartOverlay");
-        const closeBtn = document.getElementById("closeCart");
-
-        cartBtn.addEventListener("click", () => {
-          cartSidebar.classList.add("active");
-          overlay.classList.add("active");
-        });
-
-        closeBtn.addEventListener("click", () => {
-          cartSidebar.classList.remove("active");
-          overlay.classList.remove("active");
-        });
-
-        overlay.addEventListener("click", () => {
-          cartSidebar.classList.remove("active");
-          overlay.classList.remove("active");
-        });
-
-        // =====================
-        // FILTER CATEGORY
-        // =====================
-        const buttons = document.querySelectorAll(".categories button");
-        const cards = document.querySelectorAll(".products .card");
-
-        buttons.forEach((button) => {
-          button.addEventListener("click", () => {
-            buttons.forEach((btn) => btn.classList.remove("active"));
-            button.classList.add("active");
-
-            const filter = button.dataset.filter;
-
-            cards.forEach((card) => {
-              const category = card.dataset.category;
-
-              if (filter === "all" || filter === category) {
-                card.style.display = "block";
-              } else {
-                card.style.display = "none";
-              }
-            });
-          });
-        });
-
-        // INIT
-        renderCart();
-      });
-      // efek masuk
-      window.addEventListener("pageshow", () => {
-        document.body.classList.remove("fade-out");
+        cartContainer.appendChild(div);
       });
 
-      // klik navbar
-      document.querySelectorAll(".main-nav a").forEach((link) => {
-        link.addEventListener("click", function (e) {
-          const target = this.getAttribute("href");
+      badge.textContent = totalQty;
+      subtotalEl.textContent = "$" + subtotal.toFixed(2);
 
-          if (target && target !== "#") {
-            e.preventDefault();
+      addQtyEvents();
+    }
 
-            document.body.classList.add("fade-out");
+    function saveCart() {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
 
-            // langsung pindah tanpa delay lama
-            setTimeout(() => {
-              window.location.href = target;
-            }, 150); // lebih cepat
+    // =====================
+    // QTY CONTROL
+    // =====================
+    function addQtyEvents() {
+      document.querySelectorAll(".plus").forEach((btn) => {
+        btn.onclick = () => {
+          const i = btn.dataset.index;
+          cart[i].qty++;
+          saveCart();
+          renderCart();
+        };
+      });
+
+      document.querySelectorAll(".minus").forEach((btn) => {
+        btn.onclick = () => {
+          const i = btn.dataset.index;
+
+          if (cart[i].qty > 1) {
+            cart[i].qty--;
+          } else {
+            cart.splice(i, 1);
+          }
+
+          saveCart();
+          renderCart();
+        };
+      });
+    }
+
+    // =====================
+    // CART SIDEBAR
+    // =====================
+    const cartBtn = document.querySelector(".shop-cart");
+    const cartSidebar = document.getElementById("cartSidebar");
+    const overlay = document.getElementById("cartOverlay");
+    const closeBtn = document.getElementById("closeCart");
+
+    cartBtn.addEventListener("click", () => {
+      cartSidebar.classList.add("active");
+      overlay.classList.add("active");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      cartSidebar.classList.remove("active");
+      overlay.classList.remove("active");
+    });
+
+    overlay.addEventListener("click", () => {
+      cartSidebar.classList.remove("active");
+      overlay.classList.remove("active");
+    });
+
+    // =====================
+    // FILTER CATEGORY
+    // =====================
+    const buttons = document.querySelectorAll(".categories button");
+    const cards = document.querySelectorAll(".products .card");
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        buttons.forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
+
+        const filter = button.dataset.filter;
+
+        cards.forEach((card) => {
+          const category = card.dataset.category;
+
+          if (filter === "all" || filter === category) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
           }
         });
       });
-    </script>
+    });
 
-    <!-- OVERLAY -->
-    <div class="cart-overlay" id="cartOverlay"></div>
+    // INIT
+    renderCart();
+  });
+  // efek masuk
+  window.addEventListener("pageshow", () => {
+    document.body.classList.remove("fade-out");
+  });
 
-    <!-- SIDEBAR CART -->
-    <div class="cart-sidebar" id="cartSidebar">
-      <div class="cart-header">
-        <div>
-          <h4>Shopping Cart</h4>
-          <small>items</small>
-        </div>
-        <i class="fas fa-times close-cart" id="closeCart"></i>
-      </div>
+  // klik navbar
+  document.querySelectorAll(".main-nav a").forEach((link) => {
+    link.addEventListener("click", function (e) {
+      const target = this.getAttribute("href");
 
-      <div class="cart-items"></div>
+      if (target && target !== "#") {
+        e.preventDefault();
 
-      <div class="cart-footer">
-        <p>Subtotal <span>$96.96</span></p>
-        <button>Checkout</button>
-      </div>
+        document.body.classList.add("fade-out");
+
+        // langsung pindah tanpa delay lama
+        setTimeout(() => {
+          window.location.href = target;
+        }, 150); // lebih cepat
+      }
+    });
+  });
+</script>
+
+<!-- OVERLAY -->
+<div class="cart-overlay" id="cartOverlay"></div>
+
+<!-- SIDEBAR CART -->
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <div>
+      <h4>Shopping Cart</h4>
+      <small>items</small>
     </div>
+    <i class="fas fa-times close-cart" id="closeCart"></i>
+  </div>
+
+  <div class="cart-items"></div>
+
+  <div class="cart-footer">
+    <p>Subtotal <span>$96.96</span></p>
+    <button>Checkout</button>
+  </div>
+</div>
 {% endblock %}
