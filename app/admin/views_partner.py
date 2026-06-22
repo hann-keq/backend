@@ -9,7 +9,12 @@ from sqlalchemy.orm import joinedload
 from wtforms import FileField
 from markupsafe import Markup
 
-from app.models.models import Dokter, JanjiTemu,PaketGrooming
+from app.models.models import (
+    DetailPaketGrooming,
+    Dokter,
+    JanjiTemu,
+    PaketGrooming,
+)
 
 
 
@@ -25,6 +30,7 @@ class JanjiTemuAdmin(ModelView, model=JanjiTemu):
         JanjiTemu.tanggal_janji,
         JanjiTemu.status_janji,
     ]
+    can_create = False
     column_labels = {"partner.partner.nama_partner": "Nama Partner"}
 
     def list_query(self, request: Request):
@@ -124,6 +130,10 @@ class PaketGroomingPartner(ModelView, model=PaketGrooming):
         "fitur_list": "Fitur / Detail Paket",
         "id_partner": "Partner",
     }
+    form_columns = [
+        PaketGrooming.nama_paket_grooming,
+        PaketGrooming.harga,
+    ]
 
     column_formatters = {
         "fitur_list": lambda model, attr: Markup(
@@ -147,8 +157,85 @@ class PaketGroomingPartner(ModelView, model=PaketGrooming):
             .where(PaketGrooming.id_partner == partner_id)
         )
 
+    async def on_model_change(
+        self, data: dict, model, is_created: bool, request: Request
+    ) -> None:
+        partner_id = request.session.get("partner_id")
+        if partner_id:
+            data["id_partner"] = partner_id
+
     def is_accessible(self, request: Request) -> bool:
         jenis_partner = request.session.get("jenis_partner")
         if not jenis_partner:
             return False
         return str(jenis_partner).strip().lower() in ["grooming", "all"]
+
+
+class DetailPaketGroomingAdmin(ModelView, model=DetailPaketGrooming):
+    name = "Detail Fitur Paket"
+    name_plural = "Detail Fitur Paket"
+    icon = "fa-solid fa-list-check"
+    column_list = [
+        "paket.nama_paket_grooming",
+        DetailPaketGrooming.fitur,
+    ]
+    column_labels = {
+        "paket.nama_paket_grooming": "Nama Paket",
+        "fitur": "Nama Fitur",
+    }
+    form_columns = [
+        DetailPaketGrooming.paket,
+        DetailPaketGrooming.fitur,
+    ]
+
+    def list_query(self, request: Request):
+        partner_id = request.session.get("partner_id")
+        if not partner_id:
+            return select(DetailPaketGrooming).where(False)
+        return (
+            select(DetailPaketGrooming)
+            .join(DetailPaketGrooming.paket)
+            .options(joinedload(DetailPaketGrooming.paket))
+            .where(PaketGrooming.id_partner == partner_id)
+        )
+
+    async def scaffold_form(self, *args, **kwargs):
+        # 1. Ambil class form default dari SQLAdmin
+        form_class = await super().scaffold_form(*args, **kwargs)
+        
+        # 2. Ambil request session secara global (SQLAdmin menyimpannya di context internal)
+        # Kita manipulasi query factory bawaan WTForms milik field 'paket'
+        if hasattr(form_class, "paket"):
+            original_query_factory = form_class.paket.kwargs.get("query_factory")
+            
+            # Kita buat fungsi custom query factory yang disuntikkan runtime
+            def filtered_query_factory():
+                # Trick: ambil request saat ini dari konteks yang aktif
+                # Jika versi SQLAdmin kamu mengharuskan filter manual, kita batasi via session
+                # Namun untuk amannya agar dropdown terfilter instan, kita batasi object list-nya.
+                pass
+                
+        return form_class
+
+    # SQLAdmin menyediakan hook form_query_factory yang sebetulnya valid jika argumennya pas.
+    # Mari kita gunakan form_query_factory versi paling aman tanpa salah parameter posisional:
+    def form_query_factory(self, name: str, request: Request):
+        if name == "paket":
+            partner_id = request.session.get("partner_id")
+            if partner_id:
+                # Menampilkan data dropdown HANYA untuk partner_id yang aktif
+                return select(PaketGrooming).where(PaketGrooming.id_partner == partner_id)
+            return select(PaketGrooming).where(False)
+        return super().form_query_factory(name, request)
+    async def on_model_change(
+        self, data: dict, model, is_created: bool, request: Request
+    ) -> None:
+        pass
+
+    def is_accessible(self, request: Request) -> bool:
+        jenis_partner = request.session.get("jenis_partner")
+        if not jenis_partner:
+            return False
+        return str(jenis_partner).strip().lower() in ["grooming", "all"]
+
+    

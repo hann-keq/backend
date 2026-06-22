@@ -134,6 +134,10 @@ class PaketGrooming(Base):
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
 
     detail_paket = relationship("DetailPaketGrooming", back_populates="paket", cascade="all, delete-orphan", lazy="selectin")
+
+    def __str__(self):
+        return self.nama_paket_grooming
+
 class DetailPaketGrooming(Base):
     __tablename__ = 'detail_paket_grooming'
     id_detail_paket : Mapped[int] = mapped_column(Integer,primary_key=True)
@@ -143,8 +147,6 @@ class DetailPaketGrooming(Base):
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
 
     paket: Mapped["PaketGrooming"] = relationship("PaketGrooming", back_populates="detail_paket")
-
-    paket = relationship("PaketGrooming", back_populates="detail_paket")
 class BookingGrooming(Base):
     __tablename__ = 'booking_grooming'
     id_booking_grooming : Mapped[int] = mapped_column(Integer,primary_key=True)
