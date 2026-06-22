@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Form,UploadFile,File
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from app.core.templates import templates
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.auth import get_current_user
 import os
 from app.models.models import User
+from app.schemas.cart_schema.schema import CartSyncRequest
 from app.services.pet.pet_service import add_pet
 from app.exceptions import system_exceptions
 from app.schemas.pet_schema.pet_create import PetCreate
@@ -364,6 +365,94 @@ async def cart_remove(
         return RedirectResponse(url="/petshop.html", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
+
+
+# ================================================================
+#  CART SYNC  (client-side localStorage batch checkout)
+# ================================================================
+
+@router.post("/api/cart/sync")
+async def cart_sync(
+    payload: CartSyncRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Batch checkout from client-side cart (localStorage).
+
+    Accepts a JSON array of {id_produk, jumlah}, validates stock,
+    creates order_produk + detail_order rows in one transaction,
+    and clears the server-side cart.  Returns JSON so the client
+    can redirect on success.
+    """
+    if not payload.items:
+        return JSONResponse(
+            status_code=400,
+            content={"ok": False, "message": "Cart is empty."},
+        )
+
+    cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+
+    # ---------- validate stock & compute totals ----------
+    total_harga = 0.0
+    detail_rows: list[tuple[int, int, float]] = []  # (id_produk, jumlah, subtotal)
+
+    for item in payload.items:
+        produk = await produk_repository.get_product_by_id(db, item.id_produk)
+        if not produk:
+            return JSONResponse(
+                status_code=404,
+                content={"ok": False, "message": f"Product {item.id_produk} not found."},
+            )
+        if produk.stok is None or produk.stok < item.jumlah:
+            return JSONResponse(
+                status_code=409,
+                content={
+                    "ok": False,
+                    "message": (
+                        f"Insufficient stock for '{produk.nama_produk}'."
+                        f" Available: {produk.stok or 0}, requested: {item.jumlah}."
+                    ),
+                },
+            )
+        subtotal = produk.harga * item.jumlah
+        total_harga += subtotal
+        detail_rows.append((item.id_produk, item.jumlah, subtotal))
+
+    # ---------- create order + detail_order in DB ----------
+    new_order = await order_repository.create_order_produk(
+        db,
+        {
+            "id_user": current_user.id_user,
+            "total_harga": total_harga,
+            "status_order": "Menunggu",
+        },
+    )
+
+    for id_produk, jumlah, subtotal in detail_rows:
+        await order_repository.create_detail_order(
+            db,
+            {
+                "id_order_produk": new_order.id_order_produk,
+                "id_produk": id_produk,
+                "jumlah": jumlah,
+                "subtotal": subtotal,
+            },
+        )
+        await produk_repository.reduce_stock_product_by_id_product(db, id_produk, jumlah)
+
+    # ---------- clear both local-side mirror (server cart) ----------
+    await cart_repository.clear_cart(db, cart.id_cart)
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "ok": True,
+            "order_id": new_order.id_order_produk,
+            "total": total_harga,
+            "redirect": "/orders.html",
+        },
+    )
 
 
 # ================================================================

@@ -20,7 +20,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/profile-picture.css') }}"
+    />
     {% block style %} {% endblock %}
   </head>
   <body style="background-color: #fff8f0">
@@ -55,7 +58,9 @@
         <a href="{{ url_for('notification') }}" class="notification-icon">
           <i class="bi bi-bell"></i><span class="notification-dot"></span>
         </a>
-        <div class="profile-avatar">SJ</div>
+        <div class="profile-avatar">
+          <img class="profile-navbar" src="{{user.foto}}" alt="" />
+        </div>
       </div>
     </header>
 
@@ -76,15 +81,22 @@
         flex-direction: column;
         gap: 16px;
       }
-      .petcare-loader.active { display: flex; }
+      .petcare-loader.active {
+        display: flex;
+      }
       .petcare-loader .spinner {
-        width: 48px; height: 48px;
+        width: 48px;
+        height: 48px;
         border: 5px solid #e6d3c3;
         border-top-color: #8c5a3c;
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
       }
-      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
       .petcare-loader .text {
         font-size: 14px;
         color: #4b2e2b;
@@ -100,24 +112,38 @@
     <script>
       const loader = document.getElementById("petcareLoader");
 
-      function showLoading() { loader && loader.classList.add("active"); }
-      function hideLoading() { loader && loader.classList.remove("active"); }
+      function showLoading() {
+        loader && loader.classList.add("active");
+      }
+      function hideLoading() {
+        loader && loader.classList.remove("active");
+      }
 
       // Link clicks
       document.addEventListener("click", function (e) {
         const link = e.target.closest("a");
         if (!link) return;
         const href = link.getAttribute("href");
-        if (!href || href.startsWith("#") || href.startsWith("javascript:") || link.getAttribute("target") === "_blank") return;
+        if (
+          !href ||
+          href.startsWith("#") ||
+          href.startsWith("javascript:") ||
+          link.getAttribute("target") === "_blank"
+        )
+          return;
         if (link.getAttribute("data-no-loader") === "true") return;
         showLoading();
       });
 
       // Form submits
-      document.addEventListener("submit", function () { showLoading(); });
+      document.addEventListener("submit", function () {
+        showLoading();
+      });
 
       // Hide on page show (back/forward)
-      window.addEventListener("pageshow", function () { hideLoading(); });
+      window.addEventListener("pageshow", function () {
+        hideLoading();
+      });
     </script>
   </body>
 </html>
