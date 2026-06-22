@@ -6,9 +6,7 @@
 <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
 {% endblock %} {% block content %}
 
-<!-- CONTENT -->
 <div class="container">
-  <!-- HEADER -->
   <div class="shop-header-wrapper">
     <div class="shop-header">
       <div class="shop-header-top">
@@ -18,18 +16,23 @@
         </div>
         <div class="shop-cart">
           <i class="fas fa-shopping-cart"></i>
-          <span class="cart-badge">{{ cart_map.values() | sum }}</span>
+          <span class="cart-badge" id="cartBadge"
+            >{{ cart_map.values() | sum }}</span
+          >
         </div>
       </div>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search for products..." />
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search for products..."
+        />
         <i class="fas fa-filter"></i>
       </div>
     </div>
   </div>
 
-  <!-- CATEGORY -->
   <div class="categories">
     <button class="active" data-filter="all">All</button>
     <button data-filter="Makanan">Makanan</button>
@@ -38,46 +41,70 @@
     <button data-filter="Obat">Kesehatan</button>
   </div>
 
-  <!-- TITLE -->
   <div class="product-title">
     <h4>All Products</h4>
     <span>{{ products | length }} items</span>
   </div>
 
-  <!-- PRODUCTS -->
   <div class="products">
     {% for product in products %}
-    <div class="card"
-        data-category="{{ product.tipe_produk.value }}"
-        data-stok="{{ product.stok }}"
-        data-id-produk="{{ product.id_produk }}"
-        data-nama="{{ product.nama_produk }}"
-        data-harga="{{ product.harga }}">
+    <div
+      class="card"
+      data-category="{{ product.tipe_produk.value }}"
+      data-stok="{{ product.stok }}"
+      data-id-produk="{{ product.id_produk }}"
+      data-nama="{{ product.nama_produk }}"
+      data-harga="{{ product.harga }}"
+    >
       <div class="img">
         <i class="fa-regular fa-heart"></i>
-        <div class="img-wrapper{{ ' out-of-stock' if product.stok == 0 else '' }}">
+        <div
+          class="img-wrapper{{ ' out-of-stock' if product.stok == 0 else '' }}"
+        >
           <img src="{{ product.gambar}}" alt="" />
         </div>
       </div>
-      <h5 style="margin-bottom: 4px;">{{ product.nama_produk }}</h5>
+      <h5 style="margin-bottom: 4px">{{ product.nama_produk }}</h5>
       {% if product.stok > 0 %}
-      <small style="color:#8c5a3c; display:block; padding: 0 15px; margin-top: 4px; margin-bottom: 2px;">Stok: {{ product.stok }} pcs</small>
+      <small
+        style="
+          color: #8c5a3c;
+          display: block;
+          padding: 0 15px;
+          margin-top: 4px;
+          margin-bottom: 2px;
+        "
+        >Stok: {{ product.stok }} pcs</small
+      >
       {% else %}
-      <small style="color:#d4183d; display:block; padding: 0 15px; margin-top: 4px; margin-bottom: 2px;">Habis</small>
+      <small
+        style="
+          color: #d4183d;
+          display: block;
+          padding: 0 15px;
+          margin-top: 4px;
+          margin-bottom: 2px;
+        "
+        >Habis</small
+      >
       {% endif %}
-      <p class="rating" style="margin-top: 0; margin-bottom: 0;">⭐ 4.5 (128)</p>
+      <p class="rating" style="margin-top: 0; margin-bottom: 0">⭐ 4.5 (128)</p>
       <div class="bottom">
         <span>Rp {{ product.harga|rupiah }}</span>
         {% if product.stok > 0 %}
-          <form method="POST" action="/cart/add" style="display:inline">
-            <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
-            <input type="hidden" name="jumlah" value="1" />
-            <button type="submit" style="background:none;border:none;padding:0;cursor:pointer">
-              <i class="fas fa-cart-plus"></i>
-            </button>
-          </form>
+        <button
+          type="button"
+          class="btn-add-to-cart"
+          data-id-produk="{{ product.id_produk }}"
+          style="background: none; border: none; padding: 0; cursor: pointer"
+        >
+          <i class="fas fa-cart-plus"></i>
+        </button>
         {% else %}
-          <i class="fas fa-cart-plus" style="cursor:not-allowed; opacity:0.4"></i>
+        <i
+          class="fas fa-cart-plus"
+          style="cursor: not-allowed; opacity: 0.4"
+        ></i>
         {% endif %}
       </div>
     </div>
@@ -85,71 +112,249 @@
   </div>
 </div>
 
-<!-- OVERLAY -->
 <div class="cart-overlay" id="cartOverlay"></div>
 
-<!-- SIDEBAR CART — rendered server-side -->
 <div class="cart-sidebar" id="cartSidebar">
   <div class="cart-header">
     <div>
       <h4>Shopping Cart</h4>
-      <small>{{ cart_map.values() | sum }} items</small>
+      <small id="cartItemCount">{{ cart_map.values() | sum }} items</small>
     </div>
     <i class="fas fa-times close-cart" id="closeCart"></i>
   </div>
 
-  <div class="cart-items">
-    {% set ns = namespace(subtotal=0) %}
-    {% for product in products %}
-      {% set qty = cart_map.get(product.id_produk, 0) %}
-      {% if qty > 0 %}
-        {% set ns.subtotal = ns.subtotal + (product.harga * qty) %}
-        <div class="cart-item">
-          <img src="{{ product.gambar }}" />
-          <div class="cart-info">
-            <h5 style="margin-bottom: 4px; font-size: 14px;">{{ product.nama_produk }}</h5>
-            <span style="display: block; color: #c58b5e; font-weight: 600; font-size: 13px;">Rp {{ product.harga|rupiah }}</span>
-
-            <div class="qty-control">
-              <form method="POST" action="/cart/remove" style="display:inline;margin-left:12px">
-                <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
-                <button type="submit" style="background:none;border:none;color:#d4183d;cursor:pointer;font-size:14px">🗑</button>
-              </form>
-              <span class="qty">{{ qty }}</span>
-              <form method="POST" action="/cart/update" style="display:inline">
-                <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
-                <input type="hidden" name="jumlah" value="{{ qty + 1 }}" />
-                <button type="submit" class="plus"
-                {% if qty >= product.stok %}disabled title="Max stok"{% endif %}>+</button>
-              </form>
-              <form method="POST" action="/cart/remove" style="display:inline;margin-left:8px">
-                <input type="hidden" name="id_produk" value="{{ product.id_produk }}" />
-                <button type="submit" style="background:none;border:none;color:#d4183d;cursor:pointer">🗑</button>
-              </form>
-            </div>
-
-          </div>
-        </div>
-      {% endif %}
-    {% endfor %}
-  </div>
+  <div class="cart-items" id="cartItemsContainer"></div>
 
   <div class="cart-footer">
-    <p>Subtotal <span>Rp {{ ns.subtotal|rupiah }}</span></p>
-    <form method="GET" action="{{ url_for('choosepayment') }}">
-    <button type="submit" style="width:100%">Checkout</button>
-    </form>
+    <p>Subtotal <span id="cartSubtotal">Rp 0</span></p>
+    <button type="button" id="btnCheckout" style="width: 100%">Checkout</button>
   </div>
 </div>
 
+<script id="serverCartData" type="application/json">
+  {{ cart_map | tojson }}
+</script>
+
 <script>
-  // CART SIDEBAR TOGGLE
-  const cartBtn    = document.querySelector(".shop-cart");
+  // =============================================================================
+  //  LOCALSTORAGE CART UTILITY
+  // =============================================================================
+  const CART_KEY = "petcare_cart";
+  const SERVER_CART_MAP = JSON.parse(
+    document.getElementById("serverCartData").textContent || "{}",
+  );
+
+  function loadCart() {
+    try {
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveCart(items) {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+  }
+  function clearCart() {
+    localStorage.removeItem(CART_KEY);
+  }
+
+  // ---------------------------------------------------------------------------
+  //  ADD / UPDATE / REMOVE
+  // ---------------------------------------------------------------------------
+  function cartAddItem(idProduk, namaH5, harga, stok, gambarUrl) {
+    const items = loadCart();
+    const existing = items.find((i) => i.id_produk === idProduk);
+    if (existing) {
+      if (existing.jumlah >= stok) return;
+      existing.jumlah += 1;
+    } else {
+      items.push({
+        id_produk: idProduk,
+        nama: namaH5,
+        harga: harga,
+        gambar: gambarUrl,
+        jumlah: 1,
+      });
+    }
+    saveCart(items);
+    renderCartSidebar();
+  }
+
+  function cartUpdateQty(idProduk, newQty, stok) {
+    const items = loadCart();
+    const idx = items.findIndex((i) => i.id_produk === idProduk);
+    if (idx === -1) return;
+    if (newQty <= 0) {
+      items.splice(idx, 1);
+    } else if (newQty > stok) {
+      return;
+    } else {
+      items[idx].jumlah = newQty;
+    }
+    saveCart(items);
+    renderCartSidebar();
+  }
+
+  function cartRemoveItem(idProduk) {
+    const items = loadCart().filter((i) => i.id_produk !== idProduk);
+    saveCart(items);
+    renderCartSidebar();
+  }
+
+  // =============================================================================
+  //  RENDER SIDEBAR FROM localStorage
+  // =============================================================================
+  function rupiah(n) {
+    return Number(n).toLocaleString("id-ID");
+  }
+
+  function renderCartSidebar() {
+    const items = loadCart();
+    const container = document.getElementById("cartItemsContainer");
+    const subtotalSpan = document.getElementById("cartSubtotal");
+    const countSmall = document.getElementById("cartItemCount");
+    const badge = document.getElementById("cartBadge");
+
+    const totalItems = items.reduce((s, i) => s + i.jumlah, 0);
+    if (badge) badge.textContent = totalItems;
+    if (countSmall)
+      countSmall.textContent =
+        totalItems + " item" + (totalItems !== 1 ? "s" : "");
+
+    let subtotal = 0;
+
+    if (items.length === 0) {
+      container.innerHTML =
+        '<div style="padding:30px;text-align:center;color:#999;">Your cart is empty</div>';
+      subtotalSpan.textContent = "Rp 0";
+      return;
+    }
+
+    container.innerHTML = items
+      .map((it) => {
+        const lineTotal = it.harga * it.jumlah;
+        subtotal += lineTotal;
+        return `
+      <div class="cart-item">
+        <img src="${it.gambar}" alt="${it.nama}" />
+        <div class="cart-info">
+          <h5 style="margin-bottom:4px;font-size:14px;">${it.nama}</h5>
+          <span style="display:block;color:#c58b5e;font-weight:600;font-size:13px;">Rp ${rupiah(it.harga)}</span>
+          <div class="qty-control">
+            <button class="btn-qty-dec" data-id="${it.id_produk}" style="background:none;border:none;color:#3e2f22;cursor:pointer;font-size:14px;font-weight:bold">${it.jumlah > 1 ? "-" : "🗑"}</button>
+            <span class="qty">${it.jumlah}</span>
+            <button class="btn-qty-inc plus" data-id="${it.id_produk}"
+                    style="width:25px;height:25px;border:none;border-radius:6px;background:#f1f1f1;cursor:pointer;font-weight:bold;">+</button>
+            <button class="btn-qty-del" data-id="${it.id_produk}" style="background:none;border:none;color:#d4183d;cursor:pointer;margin-left:auto;"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      </div>`;
+      })
+      .join("");
+
+    subtotalSpan.textContent = "Rp " + rupiah(subtotal);
+
+    // ---- bind inline buttons ----
+    container.querySelectorAll(".btn-qty-dec").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = parseInt(btn.dataset.id);
+        const item = loadCart().find((i) => i.id_produk === id);
+        if (!item) return;
+        if (item.jumlah <= 1) {
+          cartRemoveItem(id);
+        } else {
+          cartUpdateQty(id, item.jumlah - 1, 9999);
+        }
+      });
+    });
+
+    container.querySelectorAll(".btn-qty-inc").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = parseInt(btn.dataset.id);
+        const item = loadCart().find((i) => i.id_produk === id);
+        if (!item) return;
+        const card = document.querySelector(
+          '.card[data-id-produk="' + id + '"]',
+        );
+        const stok = card ? parseInt(card.dataset.stok) : 9999;
+        cartUpdateQty(id, item.jumlah + 1, stok);
+      });
+    });
+
+    container.querySelectorAll(".btn-qty-del").forEach((btn) => {
+      btn.addEventListener("click", () =>
+        cartRemoveItem(parseInt(btn.dataset.id)),
+      );
+    });
+  }
+
+  // =============================================================================
+  //  CHECKOUT — batch sync to /api/cart/sync
+  // =============================================================================
+  document.getElementById("btnCheckout").addEventListener("click", async () => {
+    const items = loadCart();
+    if (items.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    const payload = {
+      items: items.map((i) => ({ id_produk: i.id_produk, jumlah: i.jumlah })),
+    };
+
+    try {
+      const resp = await fetch("/api/cart/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await resp.json();
+      if (!data.ok) {
+        alert(data.message || "Checkout failed.");
+        return;
+      }
+
+      clearCart();
+      renderCartSidebar();
+      window.location.href = data.redirect || "/orders.html";
+    } catch (err) {
+      console.error(err);
+      alert("Network error — please try again.");
+    }
+  });
+
+  // =============================================================================
+  //  BIND ADD-TO-CART BUTTONS
+  // =============================================================================
+  document.querySelectorAll(".btn-add-to-cart").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".card");
+      if (!card) return;
+      const idProduk = parseInt(card.dataset.idProduk);
+      const nama = card.querySelector("h5").textContent;
+      const harga = parseInt(card.dataset.harga);
+      const stok = parseInt(card.dataset.stok);
+      const img = card.querySelector(".img-wrapper img");
+      const gambarUrl = img ? img.getAttribute("src") : "";
+
+      cartAddItem(idProduk, nama, harga, stok, gambarUrl);
+
+      document.getElementById("cartSidebar").classList.add("active");
+      document.getElementById("cartOverlay").classList.add("active");
+    });
+  });
+
+  // =============================================================================
+  //  CART SIDEBAR TOGGLE
+  // =============================================================================
+  const cartBtn = document.querySelector(".shop-cart");
   const cartSidebar = document.getElementById("cartSidebar");
-  const overlay    = document.getElementById("cartOverlay");
-  const closeBtn   = document.getElementById("closeCart");
+  const overlay = document.getElementById("cartOverlay");
+  const closeBtn = document.getElementById("closeCart");
 
   cartBtn.addEventListener("click", () => {
+    renderCartSidebar();
     cartSidebar.classList.add("active");
     overlay.classList.add("active");
   });
@@ -162,38 +367,81 @@
     overlay.classList.remove("active");
   });
 
-  // SEARCH
+  // =============================================================================
+  //  SEARCH & CATEGORY FILTER
+  // =============================================================================
   document.getElementById("searchInput").addEventListener("keyup", function () {
     const kw = this.value.toLowerCase();
-    document.querySelectorAll(".products .card").forEach(card => {
+    document.querySelectorAll(".products .card").forEach((card) => {
       const t = card.querySelector("h5").textContent.toLowerCase();
       card.style.display = t.includes(kw) ? "block" : "none";
     });
   });
 
-  // CATEGORY FILTER
-  document.querySelectorAll(".categories button").forEach(btn => {
+  document.querySelectorAll(".categories button").forEach((btn) => {
     btn.addEventListener("click", () => {
-      document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
+      document
+        .querySelectorAll(".categories button")
+        .forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       const f = btn.dataset.filter;
-      document.querySelectorAll(".products .card").forEach(card => {
-        card.style.display = (f === "all" || card.dataset.category === f) ? "block" : "none";
+      document.querySelectorAll(".products .card").forEach((card) => {
+        card.style.display =
+          f === "all" || card.dataset.category === f ? "block" : "none";
       });
     });
   });
 
-  // PAGE FADE
-  window.addEventListener("pageshow", () => document.body.classList.remove("fade-out"));
-  document.querySelectorAll(".main-nav a").forEach(link => {
+  // =============================================================================
+  //  PAGE FADE
+  // =============================================================================
+  window.addEventListener("pageshow", () =>
+    document.body.classList.remove("fade-out"),
+  );
+  document.querySelectorAll(".main-nav a").forEach((link) => {
     link.addEventListener("click", function (e) {
       const t = this.getAttribute("href");
       if (t && t !== "#") {
         e.preventDefault();
         document.body.classList.add("fade-out");
-        setTimeout(() => { window.location.href = t; }, 150);
+        setTimeout(() => {
+          window.location.href = t;
+        }, 150);
       }
     });
   });
+
+  // =============================================================================
+  //  SEED LOCALSTORAGE FROM SERVER ON FIRST LOAD
+  // =============================================================================
+  (function seedFromServer() {
+    if (loadCart().length > 0) {
+      renderCartSidebar();
+      return;
+    }
+    if (Object.keys(SERVER_CART_MAP).length === 0) return;
+    const seedItems = [];
+    document.querySelectorAll(".card[data-id-produk]").forEach((card) => {
+      const id = parseInt(card.dataset.idProduk);
+      const qty = SERVER_CART_MAP[id];
+      if (!qty) return;
+      const nama = card.querySelector("h5").textContent;
+      const harga = parseInt(card.dataset.harga);
+      const stok = parseInt(card.dataset.stok);
+      const img = card.querySelector(".img-wrapper img");
+      const gambar = img ? img.getAttribute("src") : "";
+      seedItems.push({
+        id_produk: id,
+        nama: nama,
+        harga: harga,
+        gambar: gambar,
+        jumlah: Math.min(qty, stok || 9999),
+      });
+    });
+    if (seedItems.length > 0) {
+      saveCart(seedItems);
+      renderCartSidebar();
+    }
+  })();
 </script>
 {% endblock %}

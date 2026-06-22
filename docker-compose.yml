@@ -38,6 +38,7 @@ services:
     depends_on:
       - db
 
+  # Servis User (Membaca/Menampilkan Gambar)
   fastapi-app:
     build:
       context: .
@@ -54,8 +55,11 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+    volumes:
+      # Mount volume bersama di sini (bisa diset :ro jika user hanya membaca)
+      - uploaded_files:/app/static/uploads
 
-  # Servis untuk Aplikasi Admin (Port 8002 di dalam, 8002 di luar)
+  # Servis Admin (Mengunggah Gambar)
   fastapi-admin:
     build:
       context: .
@@ -72,6 +76,11 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
+    volumes:
+      # Mount volume bersama yang sama di sini
+      - uploaded_files:/app/static/uploads
 
+# Definisikan volume baru di bawah sini
 volumes:
   db_data:
+  uploaded_files:
