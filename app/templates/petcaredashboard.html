@@ -41,73 +41,20 @@
           </div>
 
           {% else %}
-          <div
-            class="pet-card dummy-pet"
-            style="opacity: 0.65; border: 2px dashed #cbd5e1"
-          >
-            <i class="far fa-heart heart-icon"></i>
-            <div class="pet-card-main">
-              <img
-                src="{{ url_for('static', path='image/dog.jpg') }}"
-                alt="Sample Dog"
-                class="pet-photo"
-                style="filter: grayscale(20%)"
-              />
-              <div class="pet-info">
-                <h3>
-                  Buddy
-                  <span
-                    style="
-                      font-size: 11px;
-                      color: #64748b;
-                      background: #e2e8f0;
-                      padding: 2px 6px;
-                      border-radius: 4px;
-                    "
-                    >Sample</span
-                  >
-                </h3>
-                <p class="pet-breed">Golden Retriever • 3 years</p>
-                <p class="pet-reminder-summary">
-                  <i class="fas fa-calendar-alt"></i> No schedule yet
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="pet-card dummy-pet"
-            style="opacity: 0.65; border: 2px dashed #cbd5e1"
-          >
-            <i class="far fa-heart heart-icon"></i>
-            <div class="pet-card-main">
-              <img
-                src="{{ url_for('static', path='image/cat.jpg') }}"
-                alt="Sample Cat"
-                class="pet-photo"
-                style="filter: grayscale(20%)"
-              />
-              <div class="pet-info">
-                <h3>
-                  Kitty
-                  <span
-                    style="
-                      font-size: 11px;
-                      color: #64748b;
-                      background: #e2e8f0;
-                      padding: 2px 6px;
-                      border-radius: 4px;
-                    "
-                    >Sample</span
-                  >
-                </h3>
-                <p class="pet-breed">Persian Cat • 1 years</p>
-                <p class="pet-reminder-summary">
-                  <i class="fas fa-calendar-alt"></i> No schedule yet
-                </p>
-              </div>
-            </div>
-          </div>
+          <div class="no-pets-msg" style="text-align: center; padding: 60px 0">
+            <p>You haven't added any pets yet.</p>
+            <a
+              href="{{ url_for('new-pet') }}?next=/petcaredashboard"
+              class="add-pet-link"
+              style="
+                display: inline-block;
+                text-decoration: none;
+                width: auto;
+                padding: 12px 30px;
+              "
+            >
+              Add Your First Pet
+            </a>
           {% endfor %}
         </div>
       </section>

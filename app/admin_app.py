@@ -26,7 +26,12 @@ from app.admin.views_pembayaran import (
 )
 from app.admin.views_user import UserAdmin, PartnerAdmin, PetAdmin
 from app.admin.views_produk import ProductAdmin
-from app.admin.views_partner import JanjiTemuAdmin, DokterPartnerAdmin,PaketGroomingPartner
+from app.admin.views_partner import (
+    DetailPaketGroomingAdmin,
+    DokterPartnerAdmin,
+    JanjiTemuAdmin,
+    PaketGroomingPartner,
+)
 
 
 # =========================================================
@@ -67,6 +72,7 @@ admin.add_view(PembayaranGroomingAdmin)
 admin.add_view(PembayaranJanjiTemuAdmin)
 admin.add_view(DokterPartnerAdmin)
 admin.add_view(PaketGroomingPartner)
+admin.add_view(DetailPaketGroomingAdmin)
 
 @admin_app.get("/health")
 async def health():
