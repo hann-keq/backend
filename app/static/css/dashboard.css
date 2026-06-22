@@ -694,3 +694,265 @@ body.fade-in {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ================= DASHBOARD LAYOUT ================= */
+
+.dashboard-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  padding: 30px 0;
+  margin-top: 0;
+}
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.section-container {
+  margin-bottom: 35px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  margin-bottom: 0;
+}
+
+.add-pet-link {
+  color: #a3ccca;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* PETS GRID */
+.pets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.pet-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(62, 47, 34, 0.04);
+  border: 1px solid #f0e8e0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.pet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 45px rgba(62, 47, 34, 0.08);
+}
+
+.heart-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #7b6f63;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.pet-card-main {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0e8e0;
+}
+
+.pet-photo {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.pet-info h3 {
+  font-size: 1.2rem;
+  margin-bottom: 3px;
+  font-weight: 600;
+  color: #3e2f22;
+}
+
+.pet-breed {
+  color: #7b6f63;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.pet-reminder-summary {
+  color: #7b6f63;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pet-reminder-summary i {
+  color: #c09f80;
+}
+
+/* QUICK ACTIONS */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.action-btn {
+  padding: 25px 15px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(62, 47, 34, 0.12);
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.3s ease;
+  text-decoration: none;
+}
+
+.action-btn i {
+  font-size: 1.8rem;
+  color: #ffffff;
+}
+
+.action-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(62, 47, 34, 0.12);
+}
+
+.action-btn:active {
+  transform: scale(0.97);
+}
+
+.action-booking {
+  background-color: #ba8558;
+}
+.action-shop {
+  background-color: #82b1b4;
+}
+.action-reminders {
+  background-color: #8b5e3c;
+}
+
+.action-favorites {
+  background-color: white;
+  color: #4a3f35;
+  border: 2px solid #ba8558;
+}
+.action-favorites i {
+  color: #ba8558;
+}
+
+/* SIDEBAR */
+.sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.sidebar-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+
+/* REMINDER CARDS */
+.reminder-card {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(62, 47, 34, 0.04);
+  border: 1px solid #f0e8e0;
+  transition: transform 0.2s ease;
+}
+
+.reminder-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 45px rgba(62, 47, 34, 0.08);
+}
+
+.reminder-card.active-reminder {
+  border: 2px solid #82b1b4;
+}
+
+.reminder-icon {
+  width: 30px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.reminder-icon-teal {
+  color: #55a8a4 !important;
+}
+.reminder-icon-brown {
+  color: #ba8558 !important;
+}
+
+.reminder-text p {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: #3e2f22;
+}
+
+.reminder-text span {
+  color: #9a9187;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.reminder-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #e6f1f1;
+  color: #55a8a4;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(85, 168, 164, 0.2);
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pets-grid {
+    grid-template-columns: 1fr;
+  }
+}
