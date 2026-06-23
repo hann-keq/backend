@@ -441,7 +441,8 @@ async def tampilin_new_pet(
     request: Request,
     current_user: User = Depends(get_current_user),
 ):
-    return templates.TemplateResponse(request, 'new-pet.html')
+    
+    return templates.TemplateResponse(request,'new-pet.html',context={"user":current_user, "current_page": "new-pet"})
 
 
 
