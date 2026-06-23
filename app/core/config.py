@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
+import os
 
 class Settings(BaseSettings):
     DB_HOST: str
@@ -25,3 +26,8 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 settings = Settings()
+
+# Absolute path to app/static/uploads — works regardless of cwd
+# (local dev vs Docker WORKDIR)
+_STATIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "static")
+UPLOAD_ROOT = os.path.join(_STATIC_DIR, "uploads")

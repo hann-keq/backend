@@ -15,6 +15,7 @@ from app.models.models import (
     JanjiTemu,
     PaketGrooming,
 )
+from app.core.config import UPLOAD_ROOT
 
 
 
@@ -87,7 +88,7 @@ class DokterPartnerAdmin(ModelView, model=Dokter):
         if "foto" in data and data["foto"]:
             file_data = data["foto"]
             if hasattr(file_data, 'filename') and file_data.filename:
-                upload_dir = "app/static/uploads/dokter"
+                upload_dir = os.path.join(UPLOAD_ROOT, "dokter")
                 os.makedirs(upload_dir, exist_ok=True)
                 clean_nama = data.get("nama_dokter", "dokter").replace(" ", "_")
                 filename = f"{clean_nama}_{file_data.filename}"

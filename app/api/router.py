@@ -5,6 +5,7 @@ from app.core.templates import templates
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.auth import get_current_user
+from app.core.config import UPLOAD_ROOT
 import os
 from app.models.models import User
 from app.schemas.cart_schema.schema import CartSyncRequest
@@ -134,7 +135,7 @@ async def add_user_new_pet(
     try:
         file_url = None
         if foto_hewan and foto_hewan.filename:
-            upload_dir = "app/static/uploads/pets"
+            upload_dir = os.path.join(UPLOAD_ROOT, "pets")
             os.makedirs(upload_dir, exist_ok=True)
             file_path = os.path.join(upload_dir, foto_hewan.filename)
             with open(file_path, "wb") as buffer:
@@ -186,7 +187,7 @@ async def edit_pet(
         }
 
         if pet_gambar and pet_gambar.filename:
-            upload_dir = "app/static/uploads/pets"
+            upload_dir = os.path.join(UPLOAD_ROOT, "pets")
             os.makedirs(upload_dir, exist_ok=True)
             file_path = os.path.join(upload_dir, pet_gambar.filename)
             with open(file_path, "wb") as buffer:
