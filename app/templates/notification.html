@@ -26,6 +26,10 @@
       rel="stylesheet"
       href="{{ url_for('static', path='css/notification.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/profile-picture.css') }}"
+    />
   </head>
 
   <body>
@@ -61,14 +65,14 @@
 
         <!-- RIGHT SIDE (BIAR SAMA) -->
         <div class="top-right-actions">
-          <i class="bi bi-search"></i>
-
-          <div class="notification-icon">
+          <a href="{{ url_for('notification') }}" class="notification-icon">
             <i class="bi bi-bell"></i>
             <span class="notification-dot"></span>
-          </div>
+          </a>
 
-          <div class="profile-avatar">SJ</div>
+          <div class="profile-avatar">
+            <img class="profile-navbar" src="{{ user.foto or 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}" alt="" />
+          </div>
         </div>
       </header>
 
@@ -91,49 +95,26 @@
 
           <!-- LIST -->
           <div class="notification-list">
+            {% for notif in notifications %}
             <div
-              class="notif-card notif-urgent notif-unread"
-              data-type="reminder"
+              class="notif-card{% if notif.is_urgent %} notif-urgent{% endif %}{% if notif.is_unread %} notif-unread{% endif %}"
+              data-type="{{ notif.type }}"
             >
-              <div class="icon">💉</div>
+              <div class="icon">{{ notif.icon }}</div>
               <div class="content">
-                <h4>Luna's vaccination</h4>
-                <p>Tomorrow, 2:00 PM</p>
+                <h4>{{ notif.title }}</h4>
+                <p>{{ notif.desc }}</p>
               </div>
+              {% if notif.is_urgent %}
               <span class="notif-badge">Urgent</span>
+              {% endif %}
             </div>
-
-            <div class="notif-card notif-unread" data-type="reminder">
-              <div class="icon">✂️</div>
-              <div class="content">
-                <h4>Max's grooming session</h4>
-                <p>Mar 20, 10:00 AM</p>
-              </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-bell-slash fs-2 d-block mb-3"></i>
+              No notifications yet.
             </div>
-
-            <div class="notif-card" data-type="system">
-              <div class="icon">🍖</div>
-              <div class="content">
-                <h4>Refill Max's food</h4>
-                <p>Mar 22</p>
-              </div>
-            </div>
-
-            <div class="notif-card" data-type="activity">
-              <div class="icon">🚶</div>
-              <div class="content">
-                <h4>Max completed walk</h4>
-                <p>2 hours ago</p>
-              </div>
-            </div>
-
-            <div class="notif-card" data-type="activity">
-              <div class="icon">🍽️</div>
-              <div class="content">
-                <h4>Luna meal recorded</h4>
-                <p>4 hours ago</p>
-              </div>
-            </div>
+            {% endfor %}
           </div>
         </div>
 

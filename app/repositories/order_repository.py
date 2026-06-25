@@ -73,3 +73,5 @@ async def kurangi_stok_produk(db: AsyncSession, id_produk: int, jumlah: int):
             await db.refresh(detail)
             return detail
     return None
+
+get_order_by_id = get_ordered_produk_by_id

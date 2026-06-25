@@ -1,0 +1,147 @@
+{% extends 'base.html' %} {% block style %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', path='css/order_detail.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="d-flex min-vh-100">
+  {% include 'sidebar.html' %}
+
+  <main class="main-content flex-grow-1 p-4" style="background-color: #faf8f6">
+    <div class="container" style="max-width: 750px">
+      <div class="mb-4">
+        <a
+          href="/orders"
+          class="text-decoration-none text-muted fw-medium small d-inline-flex align-items-center gap-1"
+        >
+          <i class="bi bi-arrow-left fs-6"></i> Kembali ke Pesanan
+        </a>
+      </div>
+
+      <div class="card invoice-card p-4 p-md-5 border-0">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <span
+              class="text-uppercase tracking-wider text-muted small d-block mb-1"
+              >Nota Pembelian</span
+            >
+            <h3
+              class="fw-bold mb-0"
+              style="color: #4b2e2b; letter-spacing: -0.5px"
+            >
+              Order Invoice
+            </h3>
+          </div>
+          <div
+            class="p-3 rounded-circle"
+            style="background-color: #fef1e3; color: #8c5a3c"
+          >
+            <i class="bi bi-receipt-cutoff fs-3 lh-1"></i>
+          </div>
+        </div>
+
+        <div class="invoice-header-box mb-4">
+          <div class="row g-3">
+            <div class="col-sm-4">
+              <span class="text-muted d-block small mb-1">ID Pesanan</span>
+              <strong class="text-dark fs-6"
+                >#{{ order.id_order_produk }}</strong
+              >
+            </div>
+            <div class="col-sm-4">
+              <span class="text-muted d-block small mb-1"
+                >Tanggal Transaksi</span
+              >
+              <strong class="text-dark small"
+                >{{ order.created_at.strftime('%B %d, %Y - %H:%M') }}</strong
+              >
+            </div>
+            <div class="col-sm-4 text-sm-end">
+              <span class="text-muted d-block small mb-1 text-sm-end"
+                >Status</span
+              >
+              {% if order.status_order.value == 'Menunggu' %}
+              <span
+                class="badge badge-status text-white"
+                style="background-color: #c58b5e"
+                >Menunggu Pembayaran</span
+              >
+              {% elif order.status_order.value == 'Diproses' %}
+              <span
+                class="badge badge-status text-white"
+                style="background-color: #7fb7be"
+                >Diproses</span
+              >
+              {% elif order.status_order.value == 'Selesai' %}
+              <span class="badge badge-status bg-secondary text-white"
+                >Selesai</span
+              >
+              {% elif order.status_order.value == 'Dibatalkan' %}
+              <span
+                class="badge badge-status text-white"
+                style="background-color: #d4183d"
+                >Dibatalkan</span
+              >
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-3" style="color: #4b2e2b; font-size: 15px">
+          Rincian Produk
+        </h6>
+        <div class="table-responsive">
+          <table class="table table-invoice align-middle mb-0">
+            <thead>
+              <tr>
+                <th style="min-width: 250px">Nama Produk</th>
+                <th class="text-center" style="width: 80px">Jumlah</th>
+                <th class="text-end" style="width: 120px">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in items %}
+              <tr>
+                <td>
+                  <div class="fw-bold" style="color: #4b2e2b">
+                    {{ item['nama_produk'] }}
+                  </div>
+                </td>
+                <td class="text-center fw-medium text-muted">
+                  x{{ item['jumlah'] }}
+                </td>
+                <td class="text-end fw-bold" style="color: #4b2e2b">
+                  ${{ "%.2f"|format(item['subtotal']) }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="total-section">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="text-muted d-block small fw-medium"
+                >Total Pembayaran</span
+              >
+              <small class="text-muted" style="font-size: 11px"
+                >Sudah termasuk pajak & biaya layanan</small
+              >
+            </div>
+            <div class="text-end">
+              <h2
+                class="fw-black mb-0"
+                style="color: #8c5a3c; font-weight: 800; letter-spacing: -1px"
+              >
+                ${{ "%.2f"|format(order.total_harga) }}
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

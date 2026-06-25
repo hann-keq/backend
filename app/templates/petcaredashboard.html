@@ -22,7 +22,6 @@
         <div class="pets-grid">
           {% for pet in pets %}
           <div class="pet-card">
-            <i class="far fa-heart heart-icon"></i>
             <div class="pet-card-main">
               <img
                 src="{{pet.foto or url_for('static', path='img/default-pet.png')}}"
@@ -94,27 +93,37 @@
     <aside class="sidebar-column">
       <section class="sidebar-section">
         <h2>Upcoming Reminders</h2>
-        {% for janji in janji_temu %}
-        <div class="reminder-card active-reminder">
-          <i class="fas fa-pills reminder-icon reminder-icon-teal"></i>
-          <div class="reminder-text">
-            <p>{{ janji.keluhan }}</p>
-            <span>{{ janji.tanggal_janji }} , {{ janji.jam_janji }}</span>
+        {% for r in reminders %}
+          {% if r.type == 'vet' %}
+          <div class="reminder-card active-reminder" onclick="window.location.href='/booking.html'" style="cursor: pointer;">
+            <i class="fas fa-stethoscope reminder-icon reminder-icon-teal"></i>
+            <div class="reminder-text">
+              <p>{{ r.title }}</p>
+              <span>{{ r.date }} , {{ r.time }}</span>
+            </div>
+            <span class="reminder-badge">Vet Visit</span>
           </div>
-          <span class="reminder-badge">Urgent</span>
-        </div>
-        {% endfor %}
-        {% for entry in orders %}
-        {% for item in entry['items'] %}
-        <div class="reminder-card">
-          <i class="fas fa-shopping-bag reminder-icon reminder-icon-brown"></i>
-          <div class="reminder-text">
-            <p>{{ item['nama_produk'] }} (x{{ item['jumlah'] }})</p>
-            <span>Rp {{ item['subtotal']|rupiah }}</span>
+          
+          {% elif r.type == 'grooming' %}
+          <div class="reminder-card active-reminder" onclick="window.location.href='/booking.html'" style="cursor: pointer;">
+            <i class="fas fa-shower reminder-icon" style="color: #ba8558;"></i>
+            <div class="reminder-text">
+              <p>{{ r.title }}</p>
+              <span>{{ r.date }} , {{ r.time }}</span>
+            </div>
+            <span class="reminder-badge" style="background-color: #f7ede2; color: #ba8558;">Upcoming</span>
           </div>
-        </div>
-        {% endfor %}
-        {%else%}
+          
+          {% elif r.type == 'order' %}
+          <div class="reminder-card">
+            <i class="fas fa-shopping-bag reminder-icon reminder-icon-brown"></i>
+            <div class="reminder-text">
+              <p>{{ r.title }}</p>
+              <span>Rp {{ r.subtotal|rupiah }}</span>
+            </div>
+          </div>
+          {% endif %}
+        {% else %}
         <div class="no-reminder">
           <p>No upcoming reminders.</p>
         </div>

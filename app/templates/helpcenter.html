@@ -4,86 +4,192 @@
   href="{{ url_for('static', path='css/helpcenter.css') }}"
 />
 <link rel="stylesheet" href="{{ url_for('static', path='css/profile.css') }}" />
+<style>
+  .faq-card {
+    border: 1px solid rgba(140, 90, 60, 0.1);
+    border-radius: 16px !important;
+    background-color: #ffffff;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .faq-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(140, 90, 60, 0.08) !important;
+    border-color: rgba(140, 90, 60, 0.25);
+  }
+  .icon-wrapper {
+    width: 44px;
+    height: 44px;
+    background-color: #fdf6f0;
+    color: #8c5a3c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+  .contact-section {
+    background: linear-gradient(135deg, #fdf6f0 0%, #f9ebe0 100%);
+    border: 1px solid rgba(140, 90, 60, 0.15);
+    border-radius: 16px;
+  }
+</style>
 {% endblock %} {% block content %}
 
 <!-- LAYOUT DENGAN SIDEBAR DAN MAIN CONTENT -->
-<div class="d-flex min-vh-100">
+<div class="d-flex min-vh-100" style="background-color: #faf8f6">
   <!-- SIDEBAR (copy dari profile.html) -->
   {% include 'sidebar.html' %}
 
   <!-- MAIN CONTENT -->
-  <main class="main-content flex-grow-1 px-3">
-    <div class="container py-4">
-      <h2 class="mb-1" style="color: #4b2e2b">Help Center</h2>
-      <p style="color: #8c5a3c; font-size: 14px">
-        Find answers to frequently asked questions
-      </p>
+  <main class="main-content flex-grow-1 px-4 py-4">
+    <div class="container" style="max-width: 960px">
+      <!-- Header Section -->
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div
+          class="p-3 rounded-circle"
+          style="background-color: #fdf6f0; color: #8c5a3c"
+        >
+          <i class="bi bi-patch-question fs-3 lh-1"></i>
+        </div>
+        <div>
+          <h2
+            class="fw-bold mb-1"
+            style="color: #4b2e2b; letter-spacing: -0.5px"
+          >
+            Help Center
+          </h2>
+          <p class="text-muted mb-0" style="font-size: 14px">
+            Find answers to frequently asked questions about managing your pets
+          </p>
+        </div>
+      </div>
 
-      <!-- Modern FAQ Cards -->
-      <div class="row g-3 mt-3">
+      <!-- Modern FAQ Cards Grid -->
+      <div class="row g-4 mt-1">
         <!-- Card 1 -->
         <div class="col-md-6">
-          <div
-            class="card shadow-sm faq-card h-100"
-            style="border-radius: 12px; transition: transform 0.2s"
-          >
-            <div class="card-body">
-              <h5 class="card-title">How do I add a new pet?</h5>
-              <p class="card-text" style="font-size: 14px">
-                You can add a new pet by clicking the "Add Pet" button in your
-                profile under "My Pets".
-              </p>
+          <div class="card shadow-sm faq-card h-100">
+            <div class="card-body p-4 d-flex gap-3">
+              <div class="icon-wrapper flex-shrink-0">
+                <i class="bi bi-plus-circle-fill fs-5"></i>
+              </div>
+              <div>
+                <h5
+                  class="card-title fw-bold mb-2"
+                  style="color: #4b2e2b; font-size: 16px"
+                >
+                  How do I add a new pet?
+                </h5>
+                <p
+                  class="card-text text-muted mb-0"
+                  style="font-size: 14px; line-height: 1.5"
+                >
+                  You can add a new pet by clicking the "Add Pet" button in your
+                  profile under "My Pets" section.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Card 2 -->
         <div class="col-md-6">
-          <div
-            class="card shadow-sm faq-card h-100"
-            style="border-radius: 12px; transition: transform 0.2s"
-          >
-            <div class="card-body">
-              <h5 class="card-title">How do I update my profile?</h5>
-              <p class="card-text" style="font-size: 14px">
-                Go to your profile page and click "Edit Profile" to update your
-                personal information.
-              </p>
+          <div class="card shadow-sm faq-card h-100">
+            <div class="card-body p-4 d-flex gap-3">
+              <div class="icon-wrapper flex-shrink-0">
+                <i class="bi bi-person-bounding-box fs-5"></i>
+              </div>
+              <div>
+                <h5
+                  class="card-title fw-bold mb-2"
+                  style="color: #4b2e2b; font-size: 16px"
+                >
+                  How do I update my profile?
+                </h5>
+                <p
+                  class="card-text text-muted mb-0"
+                  style="font-size: 14px; line-height: 1.5"
+                >
+                  Go to your profile page and click "Edit Profile" to quickly
+                  update your personal information and profile picture.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Card 3 -->
         <div class="col-md-6">
-          <div
-            class="card shadow-sm faq-card h-100"
-            style="border-radius: 12px; transition: transform 0.2s"
-          >
-            <div class="card-body">
-              <h5 class="card-title">How do I manage my bookings?</h5>
-              <p class="card-text" style="font-size: 14px">
-                You can manage your bookings under the "Booking" section from
-                the main navigation.
-              </p>
+          <div class="card shadow-sm faq-card h-100">
+            <div class="card-body p-4 d-flex gap-3">
+              <div class="icon-wrapper flex-shrink-0">
+                <i class="bi bi-calendar-check-fill fs-5"></i>
+              </div>
+              <div>
+                <h5
+                  class="card-title fw-bold mb-2"
+                  style="color: #4b2e2b; font-size: 16px"
+                >
+                  How do I manage my bookings?
+                </h5>
+                <p
+                  class="card-text text-muted mb-0"
+                  style="font-size: 14px; line-height: 1.5"
+                >
+                  You can track, reschedule, or manage your grooming
+                  appointments under the "Booking" section from the navigation.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Card 4 (Optional) -->
+        <!-- Card 4 -->
         <div class="col-md-6">
-          <div
-            class="card shadow-sm faq-card h-100"
-            style="border-radius: 12px; transition: transform 0.2s"
-          >
-            <div class="card-body">
-              <h5 class="card-title">How do I contact support?</h5>
-              <p class="card-text" style="font-size: 14px">
-                You can contact our support team through the "Help Center" link
-                or the chat option on the dashboard.
-              </p>
+          <div class="card shadow-sm faq-card h-100">
+            <div class="card-body p-4 d-flex gap-3">
+              <div class="icon-wrapper flex-shrink-0">
+                <i class="bi bi-chat-dots-fill fs-5"></i>
+              </div>
+              <div>
+                <h5
+                  class="card-title fw-bold mb-2"
+                  style="color: #4b2e2b; font-size: 16px"
+                >
+                  How do I contact support?
+                </h5>
+                <p
+                  class="card-text text-muted mb-0"
+                  style="font-size: 14px; line-height: 1.5"
+                >
+                  You can contact our live support team through the WhatsApp
+                  channel or use the active chat option available on your
+                  dashboard.
+                </p>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Additional Contact Section -->
+      <div class="contact-section p-4 text-center mt-5 shadow-sm">
+        <h5 class="fw-bold mb-2" style="color: #4b2e2b">Still need help?</h5>
+        <p class="text-muted small mb-3">
+          Our customer support is available to assist you with any advanced
+          technical or ordering issues.
+        </p>
+        <a
+          href="https://wa.me/628123456789"
+          target="_blank"
+          class="btn btn-sm text-white px-4 py-2"
+          style="
+            background-color: #8c5a3c;
+            border-radius: 8px;
+            font-weight: 500;
+          "
+        >
+          <i class="bi bi-whatsapp me-2"></i>Contact Customer Support
+        </a>
       </div>
     </div>
   </main>

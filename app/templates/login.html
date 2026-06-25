@@ -76,12 +76,13 @@
               </div>
               {% endif %}
 
-              <form action="/login" method="POST">
+              <form action="/login" method="POST" id="loginForm">
                 <div class="mb-3 input-group-custom">
                   <i class="bi bi-envelope input-icon"></i>
                   <input
                     type="email"
                     name="email"
+                    id="email"
                     class="form-control custom-input"
                     placeholder="your@email.com"
                     required
@@ -108,8 +109,13 @@
                   class="d-flex justify-content-between align-items-center mb-3"
                 >
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" />
-                    <label class="form-check-label text-soft"
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="rememberMe"
+                      name="remember_me"
+                    />
+                    <label class="form-check-label text-soft" for="rememberMe"
                       >Remember me</label
                     >
                   </div>
@@ -152,6 +158,37 @@
           el.classList.replace("bi-eye-slash", "bi-eye");
         }
       }
+
+      // --- LOGIC FITUR REMEMBER ME (AUTOFILL) VIA JAVASCRIPT ---
+      const loginForm = document.getElementById("loginForm");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const rememberMeCheckbox = document.getElementById("rememberMe");
+
+      // 1. Cek saat halaman dimuat: Apakah ada data kredensial yang tersimpan di browser?
+      document.addEventListener("DOMContentLoaded", function () {
+        const savedEmail = localStorage.getItem("remembered_email");
+        const savedPassword = localStorage.getItem("remembered_password");
+
+        if (savedEmail && savedPassword) {
+          emailInput.value = savedEmail;
+          passwordInput.value = savedPassword;
+          rememberMeCheckbox.checked = true;
+        }
+      });
+
+      // 2. Saat user menekan tombol submit / Sign In
+      loginForm.addEventListener("submit", function () {
+        if (rememberMeCheckbox.checked) {
+          // Jika dicentang, simpan email dan password ke dalam memori lokal browser
+          localStorage.setItem("remembered_email", emailInput.value);
+          localStorage.setItem("remembered_password", passwordInput.value);
+        } else {
+          // Jika tidak dicentang, hapus ingatan data login lama dari browser
+          localStorage.removeItem("remembered_email");
+          localStorage.removeItem("remembered_password");
+        }
+      });
     </script>
   </body>
 </html>

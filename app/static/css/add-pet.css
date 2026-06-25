@@ -1,20 +1,208 @@
-.icon-circle-big{
-  width: 120px;
-  height: 120px;
+/* ==========================================================================
+   PREMIUM ADD PET FORM STYLES
+   ========================================================================== */
+
+/* Layout Utama */
+.add-pet-container {
+  max-width: 850px;
+  margin: 30px auto 60px;
+  padding: 0 15px;
+}
+
+.header-title {
+  color: #4b2e2b;
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -0.5px;
+}
+
+/* Tombol Kembali ke Dashboard */
+.btn-back-dashboard {
+  color: #8c5a3c;
+  background: #ffffff;
+  border: 1px solid #ebdccd;
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-back-dashboard:hover {
+  background: #fdfaf7;
+  color: #4b2e2b;
+  transform: translateX(-3px);
+  box-shadow: 0 4px 12px rgba(140, 90, 60, 0.08);
+}
+
+/* Pembungkus Form (Card Premium) */
+.premium-form-card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(235, 220, 205, 0.6);
+  box-shadow: 0 15px 40px rgba(75, 46, 43, 0.05);
+  padding: 35px;
+  margin-top: 25px;
+}
+
+/* Judul Bagian Form */
+.form-group-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #4b2e2b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid #fcf8f5;
+  padding-bottom: 8px;
+}
+
+/* Lingkaran Tempat Upload Foto Hewan */
+.icon-circle-big {
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
-    background-color: #fef1e3;
+  border: 2.5px dashed #ebdccd;
+  background-color: #faf8f5;
+  margin: 0 auto 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.icon-circle-big:hover {
+  border-color: #8c5a3c;
+  background-color: #fdfaf7;
+  transform: scale(1.03);
+}
+
+/* Ukuran Icon Upload di Dalam Lingkaran */
 .icon-size {
-    font-size: 20px;
-    font-weight:200;
+  font-size: 24px;
+  color: #bfaea2;
+  transition: color 0.3s;
 }
 
-.form-control{
-    padding: 7px 15px;
+.icon-circle-big:hover .icon-size {
+  color: #8c5a3c;
 }
 
-.form-control::placeholder{
-    font-size: 12px;
+/* Label Custom */
+.form-label-custom {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b2e2b;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+/* Pengepalan Kolom Input (Wrapper) */
+.input-field-wrapper {
+  position: relative;
+}
+
+/* Icon Dekoratif di Dalam Input Field */
+.input-field-wrapper .field-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bfaea2;
+  font-size: 16px;
+  pointer-events: none;
+  z-index: 5;
+  transition: color 0.3s;
+}
+
+.input-field-wrapper:focus-within .field-icon {
+  color: #8c5a3c;
+}
+
+/* Pengaturan Utama Input Form Control */
+.form-control {
+  border-radius: 14px !important;
+  border: 1.5px solid #ebdccd !important;
+  padding: 12px 16px 12px 48px !important; /* Jarak kiri agar teks tidak menabrak icon */
+  font-size: 14px;
+  color: #4b2e2b;
+  background-color: #faf8f5;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #8c5a3c !important;
+  background-color: #ffffff;
+  box-shadow: 0 8px 20px rgba(140, 90, 60, 0.05) !important;
+  outline: none;
+}
+
+/* Placeholder Teks */
+.form-control::placeholder {
+  font-size: 13px;
+  color: #bfaea2;
+  font-weight: 400;
+}
+
+/* Garis Pembatas Tombol Aksi */
+.actions-row {
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid #fcf8f5;
+}
+
+/* Tombol Simpan / Add Pet */
+.btn-premium-save {
+  background: linear-gradient(135deg, #82b1b4, #6ca7ad);
+  color: white !important;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: 0 6px 18px rgba(130, 177, 180, 0.25);
+  transition: all 0.3s ease;
+}
+
+.btn-premium-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(130, 177, 180, 0.35);
+  background: linear-gradient(135deg, #6fa0a3, #5a9196);
+}
+
+/* Tombol Cancel */
+.btn-premium-cancel {
+  background: #faf8f5;
+  color: #8c5a3c !important;
+  border: 1.5px solid #ebdccd;
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.btn-premium-cancel:hover {
+  background: #fff0f0;
+  border-color: #d4183d;
+  color: #d4183d !important;
+  transform: translateY(-2px);
+}

@@ -293,6 +293,7 @@ async def edit_profile(
     nama: str = Form(...),
     email: str = Form(...),
     no_telepon: str = Form(...),
+    foto: UploadFile = File(None),
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -309,8 +310,19 @@ async def edit_profile(
                     "error": "Email already used by another account",
                 },
             )
+        
+        update_dict = {"nama": nama, "email": email, "no_telepon": no_telepon}
+        if foto and foto.filename:
+            upload_dir = os.path.join(UPLOAD_ROOT, "user")
+            os.makedirs(upload_dir, exist_ok=True)
+            filename = f"user_{current_user.id_user}_{foto.filename}"
+            file_path = os.path.join(upload_dir, filename)
+            with open(file_path, "wb") as buffer:
+                buffer.write(await foto.read())
+            update_dict["foto"] = f"/static/uploads/user/{filename}"
+
         await user_repository.update_user(
-            db, current_user.id_user, {"nama": nama, "email": email, "no_telepon": no_telepon}
+            db, current_user.id_user, update_dict
         )
         return RedirectResponse(url="/profile", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
@@ -565,7 +577,7 @@ async def create_booking(
         booking_dict["status_booking"] = "Menunggu"
         await booking_repository.create_booking_grooming(db, booking_dict)
 
-        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/booking.html", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
@@ -581,7 +593,7 @@ async def cancel_booking(
         if not existing or existing.id_user != current_user.id_user:
             raise HTTPException(status_code=404, detail="Booking not found")
         await booking_repository.update_booking_grooming(db, booking_id, "Dibatalkan")
-        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/booking.html", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
@@ -615,7 +627,7 @@ async def create_janji_temu(
         janji_dict["status_janji"] = "Menunggu"
         await janji_temu_repository.create_janji_temu(db, janji_dict)
 
-        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/booking.html", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
@@ -631,7 +643,7 @@ async def cancel_janji_temu(
         if not existing or existing.id_user != current_user.id_user:
             raise HTTPException(status_code=404, detail="Janji Temu not found")
         await janji_temu_repository.update_status_janji_temu(db, janji_id, "Dibatalkan")
-        return RedirectResponse(url="/appointments.html", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/booking.html", status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
