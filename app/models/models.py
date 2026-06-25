@@ -1,8 +1,8 @@
 
-from typing import Optional
+from typing import Optional,List
 
 
-from sqlalchemy import Column, Float, Integer, String, ForeignKey, MetaData,Enum,Date,DateTime,Time
+from sqlalchemy import Column, Float, Integer, String, ForeignKey, MetaData,Enum,Date,DateTime,Time,JSON
 from sqlalchemy.orm import DeclarativeBase,mapped_column,Mapped, relationship
 from datetime import datetime,time,date
 import pytz
@@ -130,6 +130,7 @@ class PaketGrooming(Base):
     nama_paket_grooming : Mapped[str] = mapped_column(String(255),nullable=False)
     # deskripsi : Mapped[str] = mapped_column(String(255),nullable=False)
     harga : Mapped[float] = mapped_column(Float,nullable=False)
+    jam_tersedia : Mapped[Optional[List[str]]] = mapped_column(JSON,nullable=True,default=list)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
 
@@ -155,6 +156,7 @@ class BookingGrooming(Base):
     id_paket_grooming : Mapped[int] = mapped_column(Integer,ForeignKey('paket_grooming.id_paket_grooming'),nullable=False)
     tanggal_booking : Mapped[date] = mapped_column(Date,nullable=False)
     jam_booking : Mapped[time] = mapped_column(Time,nullable=False)
+
     status_booking : Mapped[StatusBooking] = mapped_column(Enum(StatusBooking),nullable=False,default=StatusBooking.MENUNGGU.value)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
