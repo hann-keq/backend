@@ -28,6 +28,7 @@ from app.repositories import (
     pet_repository,
     produk_repository,
     janji_temu_repository,
+    dokter_repository,
 )
 
 
@@ -130,6 +131,38 @@ async def tampilin_dashboard(
         
         all_janji = await janji_temu_repository.get_all_janji_temu_by_user(db, uid)
 
+        # Get Grooming Bookings
+        upcoming_groomings = await booking_repository.get_booking_groomings_by_user(db, uid)
+        packages = await paket_grooming.get_all_paket_grooming(db)
+        paket_map = {p.id_paket_grooming: p.nama_paket_grooming for p in packages}
+
+        # Calculate next appointment for each pet
+        from datetime import date, datetime
+        today = date.today()
+        for pet in (all_pet or []):
+            pet_appointments = []
+            
+            # Grooming bookings
+            for bg in (upcoming_groomings or []):
+                if bg.id_pet == pet.id_pet and bg.status_booking.value != "Dibatalkan":
+                    if bg.tanggal_booking >= today:
+                        dt = datetime.combine(bg.tanggal_booking, bg.jam_booking)
+                        pkg_name = paket_map.get(bg.id_paket_grooming, "Grooming")
+                        pet_appointments.append((dt, f"Grooming ({pkg_name}): {bg.tanggal_booking.strftime('%d %b %Y')} @ {bg.jam_booking.strftime('%I:%M %p')}"))
+            
+            # Vet bookings (Janji Temu)
+            for janji in (all_janji or []):
+                if janji.id_pet == pet.id_pet and janji.status_janji.value != "Dibatalkan":
+                    if janji.tanggal_janji >= today:
+                        dt = datetime.combine(janji.tanggal_janji, janji.jam_janji)
+                        pet_appointments.append((dt, f"Vet Visit: {janji.tanggal_janji.strftime('%d %b %Y')} @ {janji.jam_janji.strftime('%I:%M %p')}"))
+            
+            if pet_appointments:
+                pet_appointments.sort(key=lambda x: x[0])
+                pet.next_appointment = pet_appointments[0][1]
+            else:
+                pet.next_appointment = None
+
         orders = await order_repository.get_all_ordered_produk_by_user(db, current_user.id_user)
 
         orders_with_items = []
@@ -150,7 +183,55 @@ async def tampilin_dashboard(
                 "items": items,
                 "item_count": len(items),
             })
-            print(f"order items {orders_with_items[-1]['items']}")
+
+        # Combine all reminders and limit to 5
+        from datetime import datetime
+        reminders_list = []
+
+        for janji in (all_janji or []):
+            if janji.status_janji.value != "Dibatalkan":
+                dt = datetime.combine(janji.tanggal_janji, janji.jam_janji) if janji.tanggal_janji and janji.jam_janji else datetime.max
+                reminders_list.append({
+                    "type": "vet",
+                    "title": janji.keluhan,
+                    "date": janji.tanggal_janji,
+                    "time": janji.jam_janji,
+                    "dt": dt,
+                })
+
+        for bg in (upcoming_groomings or []):
+            if bg.status_booking.value != "Dibatalkan":
+                dt = datetime.combine(bg.tanggal_booking, bg.jam_booking) if bg.tanggal_booking and bg.jam_booking else datetime.max
+                pkg_name = paket_map.get(bg.id_paket_grooming, "Grooming")
+                reminders_list.append({
+                    "type": "grooming",
+                    "title": f"Grooming: {pkg_name}",
+                    "date": bg.tanggal_booking,
+                    "time": bg.jam_booking,
+                    "dt": dt,
+                })
+
+        for entry in orders_with_items:
+            o = entry["order"]
+            dt = o.created_at if o.created_at else datetime.min
+            for item in entry["items"]:
+                reminders_list.append({
+                    "type": "order",
+                    "title": f"{item['nama_produk']} (x{item['jumlah']})",
+                    "subtotal": item['subtotal'],
+                    "dt": dt,
+                })
+
+        # Sort: Future reminders (vet & grooming) ascending (closest first), orders and past reminders descending (newest first)
+        now = datetime.now()
+        future_reminders = [r for r in reminders_list if r["type"] in ("vet", "grooming") and r["dt"] >= now]
+        past_reminders = [r for r in reminders_list if r["type"] == "order" or r["dt"] < now]
+
+        future_reminders.sort(key=lambda x: x["dt"])
+        past_reminders.sort(key=lambda x: x["dt"], reverse=True)
+
+        reminders = (future_reminders + past_reminders)[:5]
+
     except Exception as e:
         system_exceptions.handle_system_error(e)
 
@@ -161,10 +242,9 @@ async def tampilin_dashboard(
             "current_page": "home",
             "user": current_user,
             "pets": all_pet,
-            "janji_temu": all_janji,
+            "reminders": reminders,
             "orders": orders_with_items,
         },
-
     )
 
 
@@ -254,6 +334,10 @@ async def tampilin_petshop(
     for ci in cart_items:
         cart_map[ci.id_produk] = ci.jumlah
     
+    # Get user's favorites
+    favs = await favorit_repository.get_all_user_favorits(db, current_user.id_user)
+    favorite_ids = [f.id_produk for f in favs]
+    
     return templates.TemplateResponse(
         request,
         'petshop.html',
@@ -262,6 +346,7 @@ async def tampilin_petshop(
             "user": current_user,
             "products": products,
             "cart_map": cart_map,  # {id_produk: jumlah}
+            "favorite_ids": favorite_ids,
         },
     )
 
@@ -350,7 +435,55 @@ async def tampilin_booking(
     user_pets = await pet_repository.get_all_user_pets(db, current_user.id_user)
     packages = await paket_grooming.get_all_paket_grooming(db)
     partners = await partner_repository.get_all_partners(db)
-    upcoming = await booking_repository.get_booking_groomings_by_user(db, current_user.id_user)
+    upcoming_grooming = await booking_repository.get_booking_groomings_by_user(db, current_user.id_user)
+    upcoming_vet = await janji_temu_repository.get_all_janji_temu_by_user(db, current_user.id_user)
+    dokters = await dokter_repository.get_all_dokters(db)
+
+    paket_map = {p.id_paket_grooming: p for p in packages}
+    pet_map = {p.id_pet: p for p in user_pets}
+    partner_map = {p.id_partner: p for p in partners}
+    dokter_map = {d.id_dokter: d for d in dokters}
+
+    upcoming_with_info = []
+
+    # Add grooming bookings
+    for b in (upcoming_grooming or []):
+        pet_obj = pet_map.get(b.id_pet)
+        paket_obj = paket_map.get(b.id_paket_grooming)
+        partner_obj = partner_map.get(paket_obj.id_partner) if paket_obj else None
+        
+        upcoming_with_info.append({
+            "type": "grooming",
+            "booking": b,
+            "id": b.id_booking_grooming,
+            "status": b.status_booking.value,
+            "nama_paket": paket_obj.nama_paket_grooming if paket_obj else "Grooming",
+            "paket": paket_obj,
+            "pet": pet_obj,
+            "partner": partner_obj,
+            "formatted_date": b.tanggal_booking.strftime("%A, %d %B %Y") if hasattr(b.tanggal_booking, "strftime") else str(b.tanggal_booking),
+            "formatted_time": b.jam_booking.strftime("%I:%M %p") if hasattr(b.jam_booking, "strftime") else str(b.jam_booking),
+        })
+
+    # Add veterinary bookings
+    for j in (upcoming_vet or []):
+        pet_obj = pet_map.get(j.id_pet)
+        dokter_obj = dokter_map.get(j.id_dokter)
+        partner_obj = dokter_obj.partner if dokter_obj else None
+        
+        upcoming_with_info.append({
+            "type": "veterinary",
+            "booking": j,
+            "id": j.id_janji_temu,
+            "status": j.status_janji.value,
+            "nama_paket": f"Konsultasi dr. {dokter_obj.nama_dokter}" if dokter_obj else "Veterinary",
+            "paket": None,
+            "pet": pet_obj,
+            "partner": partner_obj,
+            "dokter": dokter_obj,
+            "formatted_date": j.tanggal_janji.strftime("%A, %d %B %Y") if hasattr(j.tanggal_janji, "strftime") else str(j.tanggal_janji),
+            "formatted_time": j.jam_janji.strftime("%I:%M %p") if hasattr(j.jam_janji, "strftime") else str(j.jam_janji),
+        })
 
     return templates.TemplateResponse(
         request,
@@ -361,7 +494,8 @@ async def tampilin_booking(
             "pets": user_pets,
             "grooming_packages": packages,
             "partners": partners,
-            "upcoming_bookings": upcoming,
+            "upcoming_bookings": upcoming_with_info,
+            "dokters": dokters,
         },
     )
 
@@ -441,7 +575,14 @@ async def tampilin_new_pet(
     request: Request,
     current_user: User = Depends(get_current_user),
 ):
-    return templates.TemplateResponse(request, 'new-pet.html')
+    return templates.TemplateResponse(
+        request,
+        'new-pet.html',
+        context={
+            "user": current_user,
+            "current_page": "profile",
+        },
+    )
 
 
 
@@ -450,18 +591,145 @@ async def tampilin_new_pet(
 # ================================================================
 
 @router.get('/notification', response_class=HTMLResponse, name='notification')
-async def tampilin_notification(request: Request):
+async def tampilin_notification(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        uid = current_user.id_user
+        all_pet = await pet_repository.get_all_user_pets(db, uid)
+        pet_map = {p.id_pet: p for p in all_pet}
+
+        all_janji = await janji_temu_repository.get_all_janji_temu_by_user(db, uid)
+
+        upcoming_groomings = await booking_repository.get_booking_groomings_by_user(db, uid)
+        packages = await paket_grooming.get_all_paket_grooming(db)
+        paket_map = {p.id_paket_grooming: p.nama_paket_grooming for p in packages}
+
+        orders = await order_repository.get_all_ordered_produk_by_user(db, uid)
+        orders_with_items = []
+        for o in (orders or []):
+            details = await order_repository.get_detail_orders_by_order(db, o.id_order_produk)
+            if not details:
+                continue
+            items = []
+            for d in details:
+                p = await produk_repository.get_product_by_id(db, d.id_produk)
+                items.append({
+                    "nama_produk": p.nama_produk if p else "Unknown",
+                    "jumlah": d.jumlah,
+                    "subtotal": d.subtotal,
+                })
+            orders_with_items.append({
+                "order": o,
+                "items": items,
+            })
+
+        # Combine into notifications list
+        notifications = []
+        from datetime import datetime
+
+        # 1. Vet appointments
+        for janji in (all_janji or []):
+            dt = datetime.combine(janji.tanggal_janji, janji.jam_janji) if janji.tanggal_janji and janji.jam_janji else datetime.max
+            pet_obj = pet_map.get(janji.id_pet)
+            pet_name = pet_obj.nama_hewan if pet_obj else "your pet"
+            
+            status_val = janji.status_janji.value
+            is_unread = status_val == "Menunggu"
+            is_urgent = status_val == "Menunggu" and (dt - datetime.now()).days <= 1
+
+            notifications.append({
+                "type": "reminder",
+                "icon": "💉",
+                "title": f"Vet Checkup: {janji.keluhan} for {pet_name}",
+                "desc": f"Scheduled for {janji.tanggal_janji} at {janji.jam_janji}. Status: {status_val}",
+                "is_unread": is_unread,
+                "is_urgent": is_urgent,
+                "dt": dt,
+            })
+
+        # 2. Grooming bookings
+        for bg in (upcoming_groomings or []):
+            dt = datetime.combine(bg.tanggal_booking, bg.jam_booking) if bg.tanggal_booking and bg.jam_booking else datetime.max
+            pet_obj = pet_map.get(bg.id_pet)
+            pet_name = pet_obj.nama_hewan if pet_obj else "your pet"
+            pkg_name = paket_map.get(bg.id_paket_grooming, "Grooming")
+
+            status_val = bg.status_booking.value
+            is_unread = status_val == "Menunggu"
+            is_urgent = status_val == "Menunggu" and (dt - datetime.now()).days <= 1
+
+            notifications.append({
+                "type": "reminder",
+                "icon": "✂️",
+                "title": f"{pet_name}'s grooming: {pkg_name}",
+                "desc": f"Scheduled for {bg.tanggal_booking} at {bg.jam_booking}. Status: {status_val}",
+                "is_unread": is_unread,
+                "is_urgent": is_urgent,
+                "dt": dt,
+            })
+
+        # 3. Orders / Products bought
+        for entry in orders_with_items:
+            o = entry["order"]
+            dt = o.created_at if o.created_at else datetime.min
+            status_val = o.status_order.value
+            
+            for item in entry["items"]:
+                formatted_price = f"Rp {int(item['subtotal']):,}".replace(",", ".")
+                notifications.append({
+                    "type": "activity",
+                    "icon": "📦",
+                    "title": f"Purchased {item['nama_produk']} (x{item['jumlah']})",
+                    "desc": f"Order #{o.id_order_produk} is {status_val}. Total: {formatted_price}",
+                    "is_unread": False,
+                    "is_urgent": False,
+                    "dt": dt,
+                })
+
+        # Add a default system welcome notification
+        notifications.append({
+            "type": "system",
+            "icon": "🐾",
+            "title": "Welcome to PetCare!",
+            "desc": "Check here for reminders about vaccinations, grooming schedules, and purchases.",
+            "is_unread": False,
+            "is_urgent": False,
+            "dt": datetime.min,
+        })
+
+        # Sort notifications (unread and urgent first, then by date descending)
+        notifications.sort(key=lambda x: (x["is_unread"], x["is_urgent"], x["dt"]), reverse=True)
+
+    except Exception as e:
+        system_exceptions.handle_system_error(e)
+
     return templates.TemplateResponse(
-        request, 'notification.html', context={"current_page": "notification"}
+        request,
+        'notification.html',
+        context={
+            "current_page": "notification",
+            "user": current_user,
+            "notifications": notifications,
+        },
     )
 
 
 @router.get('/helpcenter', response_class=HTMLResponse, name='helpcenter')
-async def tampilin_helpcenter(request: Request):
+async def tampilin_helpcenter(
+    request: Request,
+    current_user: User = Depends(get_current_user),
+):
     return templates.TemplateResponse(
-        request, 'helpcenter.html', context={"current_page": "helpcenter"}
+        request, 
+        'helpcenter.html', 
+        context={
+            "current_page": "helpcenter",
+            "user": current_user,
+        }
     )
-
 
 @router.get('/payment.html', response_class=HTMLResponse, name='payment')
 async def tampilin_payment(
@@ -536,4 +804,46 @@ async def tampilin_choosepayment(
             "snap_token": snap_token,
 
         },
+    )
+
+@router.get('/berita', response_class=HTMLResponse, name='berita')
+async def tampilin_berita(request: Request):
+    return templates.TemplateResponse(request, 'berita.html')
+
+# -----------------------------------------------------------------
+# ORDER DETAIL (Wajib ditambahkan agar tidak 404)
+# -----------------------------------------------------------------
+
+@router.get('/orders/{id_order}', response_class=HTMLResponse, name='order_detail')
+async def detail_order(
+    request: Request,
+    id_order: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # 1. Ambil data order dari database berdasarkan ID
+    order = await order_repository.get_order_by_id(db, id_order)
+    if not order or order.id_user != current_user.id_user:
+        raise HTTPException(status_code=404, detail="Order tidak ditemukan")
+
+    # 2. Ambil produk yang ada di dalam order tersebut
+    details = await order_repository.get_detail_orders_by_order(db, id_order)
+    items = []
+    for d in (details or []):
+        p = await produk_repository.get_product_by_id(db, d.id_produk)
+        items.append({
+            "nama_produk": p.nama_produk if p else "Unknown",
+            "jumlah": d.jumlah,
+            "subtotal": d.subtotal,
+        })
+
+    # 3. Lempar ke halaman order_detail.html
+    return templates.TemplateResponse(
+        request,
+        'order_detail.html',
+        context={
+            "user": current_user,
+            "order": order,
+            "items": items,
+        }
     )

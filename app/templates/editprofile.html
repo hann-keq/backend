@@ -30,82 +30,133 @@
     />
   </head>
   <body>
-    <div class="main-container">
+    <div class="edit-profile-container">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="header-text">Edit Profile</h2>
-        <a href="{{ url_for('profile') }}" class="btn btn-cancel">Back</a>
+        <div>
+          <h2 class="header-text">Profile Settings</h2>
+          <p class="subheader-text">
+            Update your personal information and profile photo
+          </p>
+        </div>
+        <a href="{{ url_for('profile') }}" class="btn-back">
+          <i class="bi bi-arrow-left"></i> Back to Profile
+        </a>
       </div>
 
       <div class="profile-card">
-        <div class="profile-header">
-          <div class="profile-img-container">
-            <img
-              src="{{ user.foto or url_for('static', path='img/default-profile.png') }}"
-              class="profile-edit-img"
-              alt="Profile"
-            />
-            <div class="upload-btn" title="Change Photo">
-              <i class="bi bi-camera"></i>
+        <div class="profile-banner"></div>
+
+        <div class="profile-card-body">
+          <div class="profile-avatar-overlap">
+            <div class="profile-img-container">
+              <img
+                src="{{ user.foto or 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}"
+                class="profile-edit-img"
+                alt="Profile"
+              />
+              <div class="upload-btn" title="Change Photo">
+                <i class="bi bi-camera"></i>
+              </div>
             </div>
-            <input type="file" id="profilePhoto" style="display: none" />
+
+            <div class="profile-meta-info">
+              <h4>{{ user.nama }}</h4>
+            </div>
           </div>
 
-          <div class="profile-info">
-            <h4>{{ user.nama }}</h4>
-            <p>{{ user.email }}</p>
+          <div class="settings-split-layout">
+            <div class="settings-sidebar">
+              <ul class="settings-menu">
+                <li>
+                  <a href="#" class="settings-menu-item active">
+                    <i class="bi bi-person-gear"></i> Personal Info
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="form-content-area">
+              <h5 class="form-section-title">
+                <i class="bi bi-sliders"></i> Personal Details
+              </h5>
+
+              <form
+                action="/profile/edit"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                <input
+                  type="file"
+                  id="profilePhoto"
+                  name="foto"
+                  style="display: none"
+                />
+                <div class="mb-4">
+                  <label for="name" class="form-label">Full Name</label>
+                  <div class="input-wrapper">
+                    <i class="bi bi-person input-icon"></i>
+                    <input
+                      type="text"
+                      name="nama"
+                      class="form-control"
+                      id="name"
+                      value="{{ user.nama }}"
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label for="email" class="form-label">Email Address</label>
+                  <div class="input-wrapper">
+                    <i class="bi bi-envelope input-icon"></i>
+                    <input
+                      type="email"
+                      name="email"
+                      class="form-control"
+                      id="email"
+                      value="{{ user.email }}"
+                      placeholder="name@example.com"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-4">
+                  <label for="phone" class="form-label">Phone Number</label>
+                  <div class="input-wrapper">
+                    <i class="bi bi-telephone input-icon"></i>
+                    <input
+                      type="text"
+                      name="no_telepon"
+                      class="form-control"
+                      id="phone"
+                      value="{{ user.no_telepon or '' }}"
+                      placeholder="e.g. +62812345678"
+                    />
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 actions-footer">
+                  <button
+                    type="button"
+                    class="btn-cancel"
+                    onclick="window.location.href = '/profile'"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn-save">
+                    <i class="bi bi-check2-circle"></i> Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-
-        <form action="/profile/edit" method="POST">
-          <div class="mb-3">
-            <label for="name" class="form-label">Full Name</label>
-            <input
-              type="text"
-              name="nama"
-              class="form-control"
-              id="name"
-              value="{{ user.nama }}"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input
-              type="email"
-              name="email"
-              class="form-control"
-              id="email"
-              value="{{ user.email }}"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label for="phone" class="form-label">Phone</label>
-            <input
-              type="text"
-              name="no_telepon"
-              class="form-control"
-              id="phone"
-              value="{{ user.no_telepon or '' }}"
-            />
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-4">
-            <button
-              type="button"
-              class="btn btn-cancel"
-              onclick="window.location.href = '/profile'"
-            >
-              Cancel
-            </button>
-            <button type="submit" class="btn btn-save">Save Changes</button>
-          </div>
-        </form>
       </div>
     </div>
-
     <script>
-      // Upload photo preview
       document.querySelector(".upload-btn").addEventListener("click", () => {
         document.getElementById("profilePhoto").click();
       });

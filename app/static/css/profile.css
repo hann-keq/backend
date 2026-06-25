@@ -387,8 +387,8 @@ body.fade-in {
 
 /* overlay modal fullscreen lebih gelap */
 .modal-backdrop.show {
-  background-color: #000 !important; /* hitam pekat */
-  opacity: 0.8 !important; /* bisa diubah 0.7-0.9 sesuai selera */
+  background-color: #929292 !important; /* hitam pekat */
+  opacity: 0.3 !important; /* bisa diubah 0.7-0.9 sesuai selera */
   width: 100vw !important; /* full viewport width */
   height: 400vh !important; /* full viewport height */
 }

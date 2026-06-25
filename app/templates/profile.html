@@ -1,7 +1,6 @@
-{% extends "base.html" %} {% block prefetch %} {%endblock %} {% block style %}
+{% extends "base.html" %} {% block prefetch %} {% endblock %} {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/profile.css') }}" />
 {% endblock %} {% block content %}
-
 <div class="d-flex min-vh-100">
   {% include "sidebar.html" %}
 
@@ -17,7 +16,6 @@
       </div>
 
       <div class="profile-wrapper">
-        <!-- PROFILE CARD -->
         <div class="profile-card">
           <div class="profile-left">
             {% if user.foto %}
@@ -41,11 +39,7 @@
             <div>
               <h3>{{ user.nama }}</h3>
               <p>{{ user.email }}</p>
-              {% if membership %}
-              <span class="badge"
-                >⭐ {{ membership.tipe_membership.value }} Member</span
-              >
-              {% else %} {% endif %}
+              {% if membership %} {% endif %}
             </div>
           </div>
           <button
@@ -56,7 +50,6 @@
           </button>
         </div>
 
-        <!-- PETS -->
         <div
           class="section-header d-flex justify-content-between align-items-center"
         >
@@ -73,12 +66,33 @@
           <div class="pet-card">
             <div class="pet-left">
               <div
-                class="pet-img d-flex align-items-center justify-content-center"
-                style="background: #fef1e3; font-size: 20px"
+                class="pet-img-container"
+                style="
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 50%;
+                  overflow: hidden;
+                  margin-right: 15px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  background: #fef1e3;
+                "
               >
-                {% if pet.jenis_hewan.value == 'Kucing' %}🐱{% else %}🐶{% endif
-                %}
+                {% if pet.foto %}
+                <img
+                  src="{{ pet.foto }}"
+                  alt="{{ pet.nama_hewan }}"
+                  style="width: 100%; height: 100%; object-fit: cover"
+                />
+                {% else %}
+                <span style="font-size: 20px">
+                  {% if pet.jenis_hewan.value|upper == 'KUCING' %}🐱{% else
+                  %}🐶{% endif %}
+                </span>
+                {% endif %}
               </div>
+
               <div>
                 <h4>{{ pet.nama_hewan }}</h4>
                 <p>
@@ -94,12 +108,13 @@
               data-bs-toggle="modal"
               data-bs-target="#editPetModal"
               data-id="{{ pet.id_pet }}"
+              data-id-alt="{{ pet.id }}"
               data-nama="{{ pet.nama_hewan }}"
-              data-ras="{{ pet.jenis_hewan.value }}"
+              data-ras="{{ pet.jenis_hewan.value|upper }}"
               data-umur="{{ pet.umur }}"
               data-berat="{{ pet.berat }}"
-              data-gambar="{{ pet.foto or url_for('static', path='image/default.jpg') }}"
-              data-gender="{{ pet.gender_hewan.value }}"
+              data-gambar="{{ pet.foto or '' }}"
+              data-gender="{{ pet.gender_hewan.value|upper }}"
             >
               <i class="fas fa-pen" style="color: #8c5a3c"></i>
             </button>
@@ -113,7 +128,6 @@
           {% endfor %}
         </div>
 
-        <!-- ACCOUNT INFO -->
         <div class="section-header">
           <h3>Account Information</h3>
         </div>
@@ -141,7 +155,6 @@
           </div>
         </div>
 
-        <!-- LOGOUT -->
         <button
           class="logout-btn"
           data-bs-toggle="modal"
@@ -169,6 +182,7 @@
         <div class="modal-body">
           <input type="hidden" name="pet_id" id="modal-pet-id" />
           <input type="hidden" name="existing_foto" id="modal-pet-foto-lama" />
+
           <div class="mb-3">
             <label class="form-label">Pet Name</label>
             <input
@@ -228,8 +242,8 @@
           <div class="mb-3">
             <label class="form-label">Gender</label>
             <select name="gender" id="modal-pet-gender" class="form-select">
-              <option value="Jantan">Jantan</option>
-              <option value="Betina">Betina</option>
+              <option value="JANTAN">Jantan</option>
+              <option value="BETINA">Betina</option>
             </select>
           </div>
         </div>
@@ -293,6 +307,7 @@
   window.addEventListener("pageshow", () =>
     document.body.classList.remove("fade-out"),
   );
+
   document.querySelectorAll(".main-nav a").forEach((link) => {
     link.addEventListener("click", function (e) {
       const target = this.getAttribute("href");
@@ -306,38 +321,19 @@
     });
   });
 
-  // Logout — POST to /logout agar cookie terhapus server-side
-  document
-    .getElementById("confirmLogout")
-    .addEventListener("click", async function () {
-      document.body.classList.add("fade-out");
-
-      try {
-        await fetch("/logout", { method: "POST" });
-      } catch (_) {
-        // ignore network errors
-      }
-
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 200);
-    });
-
-  document
-    .getElementById("openEditProfile")
-    .addEventListener("click", function () {
-      window.location.href = "{{ url_for('editprofile') }}";
-    });
-
   const editPetModal = document.getElementById("editPetModal");
   editPetModal.addEventListener("show.bs.modal", function (event) {
     const button = event.relatedTarget;
 
-    document.getElementById("modal-pet-id").value =
-      button.getAttribute("data-id");
+    // PERBAIKAN DI SINI: Cek data-id murni dulu, kalau string "None", kosong, atau "id_pet" ga kebaca, pake data-id-alt
+    let petId = button.getAttribute("data-id");
+    if (!petId || petId === "None" || petId === "") {
+      petId = button.getAttribute("data-id-alt");
+    }
+
+    document.getElementById("modal-pet-id").value = petId;
     document.getElementById("modal-pet-name").value =
       button.getAttribute("data-nama");
-    // Store existing photo URL in hidden field (kept if no new file chosen)
     document.getElementById("modal-pet-foto-lama").value =
       button.getAttribute("data-gambar") || "";
     document.getElementById("modal-pet-jenis").value =

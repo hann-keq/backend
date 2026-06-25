@@ -1,9 +1,7 @@
-<!-- SIDEBAR -->
 <div
   class="bg-white border-end position-sticky"
   style="width: 250px; top: 56px; height: calc(100vh - 56px)"
 >
-  <!---->
   <div class="p-3 mt-3">
     <i class="fa-solid fa-angle-left me-2"> </i>
     <small class="text-muted" style="font-size: small"
@@ -14,7 +12,10 @@
         class="nav-item d-flex align-items-center {% if current_page != 'orders' %} item-transition {% endif %} {%- if current_page == 'orders' %} menu-active item-focused {% endif %}"
       >
         <i class="bi bi-box-seam ms-2"></i>
-        <a class="nav-link sidebar-text-color" aria-current="page" href="orders"
+        <a
+          class="nav-link sidebar-text-color"
+          aria-current="page"
+          href="/orders"
           >My Orders</a
         >
       </li>
@@ -24,7 +25,7 @@
         <i class="bi bi-heart ms-2"></i>
         <a
           class="nav-link {%- if current_page == 'favorites' %} item-focused menu-active {% endif %} sidebar-text-color"
-          href="favorites.html"
+          href="{{ url_for('favorites') }}"
           >Favorites</a
         >
       </li>
@@ -40,11 +41,7 @@
         class="nav-item d-flex align-items-center {% if current_page != 'payment' %} item-transition {% endif %} {%- if current_page == 'payment' %} menu-active item-focused {% endif %}"
       >
         <i class="bi bi-credit-card ms-2"></i>
-        <a
-          class="nav-link sidebar-text-color"
-          href="payment.html"
-          tabindex="-1"
-          aria-disabled="true"
+        <a class="nav-link sidebar-text-color" href="{{ url_for('payment') }}"
           >Payment Methods</a
         >
       </li>
@@ -72,7 +69,7 @@
         <a
           class="nav-link sidebar-text-color"
           style="font-size: 14px"
-          href="{{ url_for('helpcenter') }}"
+          href="/helpcenter"
           >Help Center</a
         >
       </li>

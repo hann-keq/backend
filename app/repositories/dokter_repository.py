@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.models.models import Dokter
 
 async def create_dokter(db: AsyncSession, dokter_data: dict):
@@ -44,3 +45,7 @@ async def delete_dokter(db: AsyncSession, dokter_id: int):
     await db.delete(dokter)
     await db.commit()
     return dokter
+
+async def get_all_dokters(db: AsyncSession):
+    result = await db.execute(select(Dokter).options(selectinload(Dokter.partner)))
+    return result.scalars().all()

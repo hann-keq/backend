@@ -1,60 +1,102 @@
 {% extends 'base.html' %} {% block prefetch %} {%endblock %} {% block style %}
 <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+<style>
+  /* Tambahan style agar tombol filter interaktif saat diarahkan kursor */
+  .filter-item {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+</style>
 {% endblock %} {% block content %}
 <div class="d-flex min-vh-100">
   {% include 'sidebar.html' %}
   <main class="main-content flex-grow-1">
     <div class="container">
       <h2 style="color: #4b2e2b">My Orders</h2>
-      <p style="color: #8c5a3c; font-size: 14px">Track and manage your orders</p>
+      <p style="color: #8c5a3c; font-size: 14px">
+        Track and manage your orders
+      </p>
 
       <div class="d-flex gap-2" style="padding-top: 10px; padding-bottom: 20px">
-        <div class="filter-item filter-menu-active">All Orders</div>
-        <div class="filter-item">Menunggu</div>
-        <div class="filter-item">Diproses</div>
-        <div class="filter-item">Selesai</div>
-        <div class="filter-item">Dibatalkan</div>
+        <div class="filter-item filter-menu-active" data-filter="all">
+          All Orders
+        </div>
+        <div class="filter-item" data-filter="Menunggu">Menunggu</div>
+        <div class="filter-item" data-filter="Diproses">Diproses</div>
+        <div class="filter-item" data-filter="Selesai">Selesai</div>
+        <div class="filter-item" data-filter="Dibatalkan">Dibatalkan</div>
       </div>
 
-      {% for entry in orders_with_items %}
-      {% set o = entry['order'] %}
-      <div class="card p-4 rounded-3 shadow-sm mb-4">
-        <div class="d-flex justify-content-between align-items-start" style="padding-bottom: 10px">
-          <div class="d-flex gap-3">
-            <i class="bi bi-box fs-4"></i>
-            <div>
-              <h6 class="mb-0 fw-bold">Order #{{ o.id_order_produk }}</h6>
-              <small class="text-muted">{{ o.created_at.strftime('%b %d, %Y') }}</small>
+      <div id="orders-container">
+        {% for entry in orders_with_items %} {% set o = entry['order'] %}
+
+        <div
+          class="card p-4 rounded-3 shadow-sm mb-4 order-card"
+          data-status="{{ o.status_order.value }}"
+        >
+          <div
+            class="d-flex justify-content-between align-items-start"
+            style="padding-bottom: 10px"
+          >
+            <div class="d-flex gap-3">
+              <i class="bi bi-box fs-4"></i>
+              <div>
+                <h6 class="mb-0 fw-bold">Order #{{ o.id_order_produk }}</h6>
+                <small class="text-muted"
+                  >{{ o.created_at.strftime('%b %d, %Y') }}</small
+                >
+              </div>
             </div>
+            {% if o.status_order.value == 'Menunggu' %}
+            <span class="badge" style="background-color: #c58b5e"
+              >Menunggu</span
+            >
+            {% elif o.status_order.value == 'Diproses' %}
+            <span class="badge" style="background-color: #7fb7be"
+              >Diproses</span
+            >
+            {% elif o.status_order.value == 'Selesai' %}
+            <span class="badge bg-secondary">Selesai</span>
+            {% elif o.status_order.value == 'Dibatalkan' %}
+            <span class="badge" style="background-color: #d4183d"
+              >Dibatalkan</span
+            >
+            {% endif %}
           </div>
-          {% if o.status_order.value == 'Menunggu' %}
-          <span class="badge" style="background-color: #c58b5e">Menunggu</span>
-          {% elif o.status_order.value == 'Diproses' %}
-          <span class="badge" style="background-color: #7fb7be">Diproses</span>
-          {% elif o.status_order.value == 'Selesai' %}
-          <span class="badge bg-secondary">Selesai</span>
-          {% elif o.status_order.value == 'Dibatalkan' %}
-          <span class="badge" style="background-color: #d4183d">Dibatalkan</span>
-          {% endif %}
-        </div>
 
-        <div class="mt-3" style="padding-bottom: 20px">
-          <p class="mb-1">Items:</p>
-          <ul class="mb-0">
-            {% for item in entry['items'] %}
-            <li>{{ item['nama_produk'] }} x{{ item['jumlah'] }} — ${{ "%.2f"|format(item['subtotal']) }}</li>
-            {% endfor %}
-          </ul>
-        </div>
+          <div class="mt-3" style="padding-bottom: 20px">
+            <p class="mb-1">Items:</p>
+            <ul class="mb-0">
+              {% for item in entry['items'] %}
+              <li>
+                {{ item['nama_produk'] }} x{{ item['jumlah'] }} — ${{
+                "%.2f"|format(item['subtotal']) }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
 
-        <div class="border-top pt-3 mt-3 d-flex justify-content-between">
-          <small>{{ entry['item_count'] }} items • <strong>${{ "%.2f"|format(o.total_harga) }}</strong></small>
-          <a href="#">View Details →</a>
+          <div class="border-top pt-3 mt-3 d-flex justify-content-between">
+            <small
+              >{{ entry['item_count'] }} items •
+              <strong>${{ "%.2f"|format(o.total_harga) }}</strong></small
+            >
+
+            <a href="/orders/{{ o.id_order_produk }}">View Details →</a>
+          </div>
+        </div>
+        {% else %}
+        <div class="text-muted mt-4">No orders yet.</div>
+        {% endfor %}
+
+        <div
+          id="no-orders-message"
+          class="text-muted mt-4"
+          style="display: none"
+        >
+          No orders found in this category.
         </div>
       </div>
-      {% else %}
-      <div class="text-muted mt-4">No orders yet.</div>
-      {% endfor %}
     </div>
   </main>
 </div>
@@ -64,4 +106,44 @@
   integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
   crossorigin="anonymous"
 ></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const filterItems = document.querySelectorAll(".filter-item");
+    const orderCards = document.querySelectorAll(".order-card");
+    const noOrdersMessage = document.getElementById("no-orders-message");
+
+    filterItems.forEach((item) => {
+      item.addEventListener("click", function () {
+        // 1. Ubah menu yang aktif secara visual
+        filterItems.forEach((btn) =>
+          btn.classList.remove("filter-menu-active"),
+        );
+        this.classList.add("filter-menu-active");
+
+        const targetFilter = this.getAttribute("data-filter");
+        let visibleCount = 0;
+
+        // 2. Saring kartu order berdasarkan atribut data-status
+        orderCards.forEach((card) => {
+          const orderStatus = card.getAttribute("data-status");
+
+          if (targetFilter === "all" || orderStatus === targetFilter) {
+            card.style.setProperty("display", "block", "important");
+            visibleCount++;
+          } else {
+            card.style.setProperty("display", "none", "important");
+          }
+        });
+
+        // 3. Tampilkan pesan jika tidak ada data order yang cocok dengan filter
+        if (visibleCount === 0 && orderCards.length > 0) {
+          noOrdersMessage.style.display = "block";
+        } else {
+          noOrdersMessage.style.display = "none";
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}

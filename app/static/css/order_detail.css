@@ -1,0 +1,39 @@
+.invoice-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f1ece7;
+}
+.invoice-header-box {
+  background-color: #fdfbf9;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #f5ede5;
+}
+.table-invoice thead th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: #a08471;
+  border-bottom: 2px solid #f1ece7;
+  padding-bottom: 12px;
+}
+.table-invoice tbody td {
+  padding: 16px 0;
+  border-bottom: 1px solid #f8f5f2;
+  color: #4b2e2b;
+}
+.badge-status {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 6px 16px;
+  border-radius: 30px;
+}
+.total-section {
+  background-color: #fdfbf9;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #f5ede5;
+}
