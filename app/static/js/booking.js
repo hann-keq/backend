@@ -68,6 +68,47 @@ function goBackFromStep4() {
   }
 }
 
+// --- FILTER PACKAGES BY SELECTED PROVIDER ---
+const PARTNER_PACKAGES = JSON.parse(
+  document.getElementById("partnerPackagesData")?.textContent || "{}"
+);
+
+function goToStep3Grooming() {
+  const selectedProvider = document.querySelector("#step2_grooming .selection-card.selected");
+  if (!selectedProvider) {
+    alert("Mohon pilih provider terlebih dahulu!");
+    return;
+  }
+
+  const partnerId = selectedProvider.getAttribute("data-partner-id");
+  const packages = PARTNER_PACKAGES[partnerId] || [];
+  const container = document.getElementById("packageListContainer");
+
+  if (packages.length === 0) {
+    container.innerHTML =
+      '<p class="text-muted" style="padding:20px;text-align:center;">No packages available for this provider.</p>';
+  } else {
+    container.innerHTML = packages
+      .map(
+        (pkg) => `
+      <div class="selection-card" onclick="selectOption(this)" data-paket-id="${pkg.id}">
+        <div class="card-content-wrapper align-start">
+          <div class="package-icon-circle grooming-bg">
+            <i class="fas fa-scissors"></i>
+          </div>
+          <div class="card-info">
+            <span class="package-name">${pkg.nama}</span>
+            <span class="package-price">Rp ${Number(pkg.harga).toLocaleString("id-ID")}</span>
+          </div>
+        </div>
+      </div>`
+      )
+      .join("");
+  }
+
+  goToStep("step3_grooming");
+}
+
 // --- FUNGSI SELEKSI UI ---
 function selectOption(element) {
   const parent = element.parentElement;

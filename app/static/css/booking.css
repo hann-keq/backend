@@ -463,7 +463,8 @@ ul {
 }
 
 /* --- Doctor List (scrollable column, max 5 visible) --- */
-.doctor-grid {
+.doctor-grid,
+.provider-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -472,7 +473,8 @@ ul {
   padding-right: 6px;
 }
 
-.doctor-grid .doctor-card {
+.doctor-grid .doctor-card,
+.provider-list .selection-card {
   margin-bottom: 0;
   padding: 14px 16px;
   flex-shrink: 0;
@@ -507,17 +509,20 @@ ul {
   display: block;
 }
 
-/* Scrollbar styling for doctor list */
-.doctor-grid::-webkit-scrollbar {
+/* Scrollbar styling for scrollable lists */
+.doctor-grid::-webkit-scrollbar,
+.provider-list::-webkit-scrollbar {
   width: 5px;
 }
 
-.doctor-grid::-webkit-scrollbar-track {
+.doctor-grid::-webkit-scrollbar-track,
+.provider-list::-webkit-scrollbar-track {
   background: #f7f3ef;
   border-radius: 10px;
 }
 
-.doctor-grid::-webkit-scrollbar-thumb {
+.doctor-grid::-webkit-scrollbar-thumb,
+.provider-list::-webkit-scrollbar-thumb {
   background: #c4b5a8;
   border-radius: 10px;
 }

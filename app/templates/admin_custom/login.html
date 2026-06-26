@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PetCare Admin — Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <style>
+      :root {
+        --clr-brown-900: #3e2f22; --clr-brown-500: #ba8558;
+        --clr-teal: #82b1b4; --clr-bg: #fffbf7;
+      }
+      body { background: var(--clr-bg); }
+      .login-wrapper {
+        min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        padding: 24px;
+      }
+      .login-card {
+        background: #fff; border-radius: 24px; padding: 40px 36px;
+        width: 100%; max-width: 420px;
+        box-shadow: 0 12px 40px rgba(62,47,34,.08);
+        border: 1px solid #f0e8e0;
+      }
+      .login-card .logo { text-align: center; font-size: 2.5rem; margin-bottom: 8px; }
+      .login-card h1 {
+        text-align: center; font-size: 1.35rem; font-weight: 700;
+        color: var(--clr-brown-900); margin-bottom: 4px;
+      }
+      .login-card .sub {
+        text-align: center; color: var(--clr-brown-500); font-size: 0.88rem; margin-bottom: 28px;
+      }
+      .login-error {
+        background: #fff0f0; border: 1px solid #f5c6cb; border-radius: 10px;
+        padding: 10px 14px; margin-bottom: 18px; color: #a94442; font-size: 0.85rem;
+        text-align: center;
+      }
+      .login-label {
+        font-weight: 600; font-size: 0.85rem; color: var(--clr-brown-900);
+        display: block; margin-bottom: 5px;
+      }
+      .login-input {
+        width: 100%; padding: 12px 14px; border: 2px solid #f0e8e0;
+        border-radius: 10px; font-family: inherit; font-size: 0.92rem;
+        color: var(--clr-brown-900); background: #fff; box-sizing: border-box;
+        transition: border-color .2s;
+      }
+      .login-input:focus {
+        outline: none; border-color: var(--clr-teal);
+        box-shadow: 0 0 0 3px rgba(130,177,180,.12);
+      }
+      .form-group { margin-bottom: 16px; }
+      .btn-login {
+        width: 100%; padding: 14px; border: none; border-radius: 12px;
+        background: var(--clr-teal); color: #fff; font-weight: 700;
+        font-size: 0.95rem; cursor: pointer; transition: background .2s; margin-top: 8px;
+      }
+      .btn-login:hover { background: #6da1a4; }
+    </style>
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="login-card">
+        <div class="logo">🐾</div>
+        <h1>PetCare Admin</h1>
+        <p class="sub">Login untuk Admin atau Partner</p>
+
+        {% if error %}
+        <div class="login-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/login">
+          <div class="form-group">
+            <label class="login-label">Email</label>
+            <input type="email" name="username" class="login-input" required autofocus
+                   value="{{ email or '' }}" placeholder="email@contoh.com">
+          </div>
+          <div class="form-group">
+            <label class="login-label">Password</label>
+            <input type="password" name="password" class="login-input" required
+                   placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn-login">
+            <i class="fa-solid fa-right-to-bracket"></i> Masuk
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

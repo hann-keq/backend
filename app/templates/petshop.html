@@ -4,6 +4,11 @@
   href="{{ url_for('static', path='css/dashboard.css') }}"
 />
 <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+<script
+  type="text/javascript"
+  src="https://app.sandbox.midtrans.com/snap/snap.js"
+  data-client-key="{{ midtrans_client_key }}"
+></script>
 {% endblock %} {% block content %}
 
 <div class="container">
@@ -326,7 +331,7 @@
   }
 
   // =============================================================================
-  //  CHECKOUT — batch sync to /api/cart/sync
+  //  CHECKOUT — batch sync to /api/cart/sync, then open Snap popup directly
   // =============================================================================
   document.getElementById("btnCheckout").addEventListener("click", async () => {
     const items = loadCart();
@@ -353,7 +358,38 @@
 
       clearCart();
       renderCartSidebar();
-      window.location.href = data.redirect || "/orders.html";
+
+      // --- Open Midtrans Snap popup directly ---
+      if (!data.snap_token) {
+        alert("Payment token unavailable. Please try again.");
+        return;
+      }
+      window.snap.pay(data.snap_token, {
+        onSuccess: async function (result) {
+          const form = new FormData();
+          form.append("order_id", result.order_id);
+          form.append("payment_type", result.payment_type || "QRIS");
+
+          try {
+            await fetch("/midtrans/callback", { method: "POST", body: form });
+          } catch (err) {
+            console.error("Callback failed:", err);
+          }
+
+          window.location.href = "/orders";
+        },
+        onPending: function (result) {
+          alert("Waiting for your payment to complete.");
+          console.log(result);
+        },
+        onError: function (result) {
+          alert("Payment was cancelled or failed.");
+          console.log(result);
+        },
+        onClose: function () {
+          alert("You closed the payment panel before completing the transaction.");
+        },
+      });
     } catch (err) {
       console.error(err);
       alert("Network error — please try again.");
@@ -482,7 +518,7 @@
 
   // Auto-open cart sidebar if requested
   const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('open_cart') === 'true') {
+  if (urlParams.get("open_cart") === "true") {
     renderCartSidebar();
     document.getElementById("cartSidebar").classList.add("active");
     document.getElementById("cartOverlay").classList.add("active");

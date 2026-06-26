@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block admin_head_title %}PetCare Admin{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+    {% block style %}{% endblock %}
+    <style>
+      :root {
+        --clr-brown-900: #3e2f22; --clr-brown-700: #4b2e2b;
+        --clr-brown-500: #ba8558; --clr-brown-200: #f0e8e0;
+        --clr-teal: #82b1b4; --clr-teal-light: #e8f5f5;
+        --clr-bg: #fffbf7; --clr-danger: #d85c5c; --clr-danger-bg: #fcebeb;
+        --clr-success: #2e7d32; --clr-success-bg: #e8f5e9;
+        --radius: 14px; --radius-sm: 10px;
+      }
+
+      body { background: var(--clr-bg); margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+      .admin-wrapper { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; }
+
+      .admin-page-title {
+        font-size: 1.7rem; font-weight: 700; color: var(--clr-brown-900); margin-bottom: 4px;
+      }
+      .admin-page-sub { color: var(--clr-brown-500); font-size: 0.92rem; margin-bottom: 28px; }
+
+      .admin-card {
+        background: #fff; border: 1px solid var(--clr-brown-200);
+        border-radius: var(--radius); padding: 24px 28px; margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(62,47,34,.04);
+      }
+      .admin-card h3 {
+        font-size: 1.1rem; font-weight: 700; color: var(--clr-brown-900);
+        margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+      }
+      .admin-card h3 i { color: var(--clr-teal); }
+
+      .admin-label {
+        font-weight: 600; font-size: 0.85rem; color: var(--clr-brown-700);
+        display: block; margin-bottom: 5px;
+      }
+      .admin-input, .admin-select {
+        width: 100%; padding: 11px 13px; border: 2px solid var(--clr-brown-200);
+        border-radius: var(--radius-sm); font-family: inherit; font-size: 0.9rem;
+        color: var(--clr-brown-900); background: #fff; box-sizing: border-box;
+        transition: border-color .2s;
+      }
+      .admin-input:focus, .admin-select:focus {
+        outline: none; border-color: var(--clr-teal);
+        box-shadow: 0 0 0 3px rgba(130,177,180,.12);
+      }
+      .form-group { margin-bottom: 16px; }
+
+      .admin-errors {
+        background: #fff0f0; border: 1px solid #f5c6cb; border-radius: var(--radius-sm);
+        padding: 10px 16px; margin-bottom: 18px; color: #a94442; font-size: 0.85rem;
+      }
+      .admin-errors ul { margin: 0; padding-left: 18px; }
+
+      .btn-admin {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 10px 20px; border: none; border-radius: var(--radius-sm);
+        font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all .2s;
+        text-decoration: none;
+      }
+      .btn-admin-primary { background: var(--clr-teal); color: #fff; }
+      .btn-admin-primary:hover { background: #6da1a4; transform: translateY(-1px); }
+      .btn-admin-outline { background: #fff; color: var(--clr-brown-500); border: 1.5px solid var(--clr-brown-500); }
+      .btn-admin-outline:hover { background: #fef9f5; }
+      .btn-admin-danger { background: var(--clr-danger-bg); color: var(--clr-danger); }
+      .btn-admin-danger:hover { background: #f9dede; }
+      .btn-admin-success { background: var(--clr-success-bg); color: var(--clr-success); }
+      .btn-admin-success:hover { background: #d4edd6; }
+      .btn-admin-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+      .admin-table { width: 100%; border-collapse: collapse; }
+      .admin-table th {
+        text-align: left; font-size: 0.78rem; font-weight: 700;
+        color: var(--clr-brown-500); text-transform: uppercase;
+        letter-spacing: .5px; padding: 10px 12px; border-bottom: 2px solid var(--clr-brown-200);
+      }
+      .admin-table td {
+        padding: 11px 12px; border-bottom: 1px solid var(--clr-brown-200);
+        font-size: 0.88rem; color: var(--clr-brown-900); vertical-align: middle;
+      }
+      .admin-table tr:last-child td { border-bottom: none; }
+      .admin-table tbody tr:hover { background: #fdf8f4; }
+
+      .admin-table img.admin-thumb {
+        width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+        border: 2px solid var(--clr-brown-200);
+      }
+
+      .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+      .badge-teal { background: var(--clr-teal-light); color: #3a7a7e; }
+      .badge-warm { background: #fef3e7; color: #ba8558; }
+      .badge-green { background: var(--clr-success-bg); color: var(--clr-success); }
+      .badge-red { background: var(--clr-danger-bg); color: var(--clr-danger); }
+      .badge-gray { background: #f5f3f0; color: #9a9187; }
+
+      .empty-state { text-align: center; padding: 40px 20px; color: #9a9187; }
+      .empty-state i { font-size: 2.5rem; color: var(--clr-brown-200); margin-bottom: 10px; display: block; }
+
+      .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+      .admin-nav {
+        display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 24px;
+        padding: 6px; background: #fff; border-radius: var(--radius);
+        border: 1px solid var(--clr-brown-200);
+      }
+      .admin-nav a {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 16px; border-radius: 10px; font-size: 0.82rem;
+        font-weight: 600; color: var(--clr-brown-700); text-decoration: none;
+        transition: all .2s;
+      }
+      .admin-nav a:hover { background: #fdf8f4; }
+      .admin-nav a.active { background: var(--clr-teal); color: #fff; }
+      .admin-nav a i { font-size: 0.85rem; }
+
+      .admin-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+      .admin-header-row h3 { margin-bottom: 0; }
+
+      .admin-top-bar {
+        display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+        padding: 0 0 16px 0; border-bottom: 1px solid var(--clr-brown-200);
+      }
+      .admin-top-bar .logo-icon { color: var(--clr-brown-500); font-size: 1.5rem; }
+      .admin-top-bar .logo-text { font-size: 1.3rem; font-weight: 700; color: var(--clr-brown-900); }
+      .admin-top-bar .logout-link { margin-left: auto; color: var(--clr-danger); font-weight: 600; font-size: 0.85rem; text-decoration: none; }
+      .admin-top-bar .logout-link:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="admin-wrapper">
+
+      <div class="admin-top-bar">
+        <span class="logo-icon">🐾</span>
+        <span class="logo-text">PetCare Admin</span>
+        <a href="/logout" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </div>
+
+      <!-- Navigation -->
+      <div class="admin-nav">
+        {% set current = request.url.path %}
+        {% if request.session.get('user_role') == 'admin' %}
+        <a href="/dashboard-admin/users"              class="{% if '/users' in current     %}active{% endif %}"><i class="fa-solid fa-users"></i> Users</a>
+        <a href="/dashboard-admin/partners"           class="{% if '/partners' in current  %}active{% endif %}"><i class="fa-solid fa-handshake"></i> Partners</a>
+        <a href="/dashboard-admin/pets"               class="{% if '/pets' in current      %}active{% endif %}"><i class="fa-solid fa-paw"></i> Pets</a>
+        <a href="/dashboard-admin/products"           class="{% if '/products' in current  %}active{% endif %}"><i class="fa-solid fa-box-open"></i> Produk</a>
+        <a href="/dashboard-admin/pembayaran/produk"    class="{% if '/pembayaran/produk' in current     %}active{% endif %}"><i class="fa-solid fa-box"></i> Bayar Produk</a>
+        <a href="/dashboard-admin/pembayaran/grooming"  class="{% if '/pembayaran/grooming' in current   %}active{% endif %}"><i class="fa-solid fa-dog"></i> Bayar Grooming</a>
+        <a href="/dashboard-admin/pembayaran/janji-temu" class="{% if '/pembayaran/janji-temu' in current %}active{% endif %}"><i class="fa-solid fa-calendar-check"></i> Bayar Janji</a>
+        {% elif request.session.get('user_role') == 'partner' %}
+          {% if request.session.get('jenis_partner')|string|lower|trim in ['grooming', 'all'] %}
+          <a href="/dashboard-admin/paket"         class="{% if '/paket' in current and 'detail' not in current %}active{% endif %}"><i class="fa-solid fa-cut"></i> Paket</a>
+          <a href="/dashboard-admin/detail-paket"  class="{% if '/detail-paket' in current %}active{% endif %}"><i class="fa-solid fa-list-check"></i> Fitur</a>
+          {% endif %}
+          {% if request.session.get('jenis_partner')|string|lower|trim in ['klinik', 'all'] %}
+          <a href="/dashboard-admin/dokter"       class="{% if '/dokter' in current %}active{% endif %}"><i class="fa-solid fa-user-md"></i> Dokter</a>
+          {% endif %}
+          <a href="/dashboard-admin/janji-temu"   class="{% if '/janji-temu' in current %}active{% endif %}"><i class="fa-solid fa-calendar"></i> Janji Temu</a>
+        {% endif %}
+      </div>
+
+      <h1 class="admin-page-title">🐾 {% block admin_title %}Dashboard Admin{% endblock %}</h1>
+      <p class="admin-page-sub">{% block admin_subtitle %}Kelola data aplikasi PetCare.{% endblock %}</p>
+
+      {% block admin_content %}{% endblock %}
+    </div>
+  </body>
+</html>

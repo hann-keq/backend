@@ -1,38 +1,20 @@
 """
-Standalone FastAPI app for the SQLAdmin dashboard — runs on port 8002.
-Same database engine as the main app (port 8000), no shared state needed.
+Standalone FastAPI app for the admin dashboard — runs on port 8002.
 
-Split into:
-  app/admin/auth.py           — AdminAuth backend
-  app/admin/models_proxy.py   — Proxy models for pembayaran
-  app/admin/views_pembayaran.py — Pembayaran views
-  app/admin/views_user.py     — User, Partner, Pet views
-  app/admin/views_produk.py   — Produk view
-  app/admin/views_partner.py  — JanjiTemu, Dokter views
+Replaced SQLAdmin with custom FastAPI + Jinja2 + HTMX routers under
+``admin_custom/``.  Session cookie: ``admin_session`` (separate from the
+main app on port 8000).
 """
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
-from sqladmin import Admin
 
 from app.core.config import settings
-from app.core.database import engine
 
-from app.admin.auth import AdminAuth
-from app.admin.views_pembayaran import (
-    PembayaranProdukAdmin,
-    PembayaranGroomingAdmin,
-    PembayaranJanjiTemuAdmin,
-)
-from app.admin.views_user import UserAdmin, PartnerAdmin, PetAdmin
-from app.admin.views_produk import ProductAdmin
-from app.admin.views_partner import (
-    DetailPaketGroomingAdmin,
-    DokterPartnerAdmin,
-    JanjiTemuAdmin,
-    PaketGroomingPartner,
-)
-
+# --- custom router imports ---
+from app.admin_custom.auth_router import router as auth_router
+from app.admin_custom.router import router as partner_router
+from app.admin_custom.routers_admin import router as admin_router
 
 # =========================================================
 # STANDALONE FASTAPI APP (port 8002)
@@ -52,28 +34,12 @@ admin_app.add_middleware(
 
 admin_app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-auth_backend = AdminAuth(secret_key=settings.SECRET_KEY_GOOGLE)
+# --- custom routers (replace SQLAdmin) ---
+admin_app.include_router(auth_router)       # /login, /logout
+admin_app.include_router(admin_router)      # /dashboard-admin/users, /partners, /pets, /products, /pembayaran/*
+admin_app.include_router(partner_router)    # /dashboard-admin/paket, /dokter, /janji-temu, /detail-paket
 
-admin = Admin(
-    app=admin_app,
-    engine=engine,
-    title="PetCare Dashboard",
-    base_url="/",
-    authentication_backend=auth_backend,
-)
-
-admin.add_view(UserAdmin)
-admin.add_view(PartnerAdmin)
-admin.add_view(PetAdmin)
-admin.add_view(JanjiTemuAdmin)
-admin.add_view(ProductAdmin)
-admin.add_view(PembayaranProdukAdmin)
-admin.add_view(PembayaranGroomingAdmin)
-admin.add_view(PembayaranJanjiTemuAdmin)
-admin.add_view(DokterPartnerAdmin)
-admin.add_view(PaketGroomingPartner)
-admin.add_view(DetailPaketGroomingAdmin)
 
 @admin_app.get("/health")
 async def health():
-    return {"status": "ok", "service": "admin"}
+    return {"status": "ok", "service": "admin_custom"}

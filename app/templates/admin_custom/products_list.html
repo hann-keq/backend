@@ -1,0 +1,62 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Daftar Produk{% endblock %}
+{% block admin_title %}Daftar Produk{% endblock %}
+{% block admin_subtitle %}CRUD produk — soft delete + restore.{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <div class="admin-header-row">
+    <h3><i class="fa-solid fa-box-open"></i> Daftar Produk</h3>
+    <a href="/dashboard-admin/products/create" class="btn-admin btn-admin-primary btn-admin-sm">
+      <i class="fa-solid fa-plus"></i> Tambah
+    </a>
+  </div>
+
+  {% if products %}
+  <div style="overflow-x: auto; margin-top: 14px;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Gambar</th><th>Nama</th><th>Harga</th><th>Stok</th><th>Tipe</th><th>Status</th><th style="width:130px">Aksi</th></tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>
+            {% if p.gambar %}<img src="{{ p.gambar }}" class="admin-thumb" alt="">
+            {% else %}<i class="fa-solid fa-box-open fa-lg" style="color:#b0a59b"></i>{% endif %}
+          </td>
+          <td><strong>{{ p.nama_produk }}</strong></td>
+          <td>Rp {{ (p.harga | int) | rupiah if p.harga else '0' }}</td>
+          <td>{{ p.stok }}</td>
+          <td><span class="badge badge-teal">{{ p.tipe_produk.value }}</span></td>
+          <td>
+            {% if p.status_produk.value == 'Tersedia' %}
+            <span class="badge badge-green">Tersedia</span>
+            {% elif p.status_produk.value == 'Habis' %}
+            <span class="badge badge-red">Habis</span>
+            {% else %}
+            <span class="badge badge-gray">{{ p.status_produk.value }}</span>
+            {% endif %}
+          </td>
+          <td>
+            <div class="action-btns">
+              <a href="/dashboard-admin/products/edit/{{ p.id_produk }}" class="btn-admin btn-admin-outline btn-admin-sm"><i class="fa-solid fa-pen"></i></a>
+              <form method="POST" action="/dashboard-admin/products/soft-delete/{{ p.id_produk }}"
+                    onsubmit="return confirm('Hapus produk {{ p.nama_produk }}?')" style="display:contents">
+                <button class="btn-admin btn-admin-danger btn-admin-sm"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada produk.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}

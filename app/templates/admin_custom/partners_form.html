@@ -1,0 +1,61 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}{% if is_edit %}Edit Partner{% else %}Tambah Partner{% endif %}{% endblock %}
+{% block admin_title %}{% if is_edit %}Edit Partner{% else %}Tambah Partner{% endif %}{% endblock %}
+{% block admin_subtitle %}{% if is_edit %}Edit data partner #{{ partner_data.id_partner }}{% else %}Buat partner baru.{% endif %}{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <h3><i class="fa-solid {% if is_edit %}fa-pen-to-square{% else %}fa-plus-circle{% endif %}"></i>
+    {% if is_edit %}Edit Partner{% else %}Tambah Partner{% endif %}
+  </h3>
+
+  {% if form_errors %}
+  <div class="admin-errors"><strong>Mohon perbaiki:</strong><ul>{% for e in form_errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+  {% endif %}
+
+  <form method="POST"
+        action="{% if is_edit %}/dashboard-admin/partners/edit/{{ partner_data.id_partner }}{% else %}/dashboard-admin/partners/create{% endif %}">
+
+    <div class="form-group">
+      <label class="admin-label">Nama Partner</label>
+      <input type="text" name="nama_partner" class="admin-input" required
+             value="{{ old_nama or (partner_data.nama_partner if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Jenis Partner</label>
+      <select name="jenis_partner" class="admin-select">
+        {% set current = old_jenis or (partner_data.jenis_partner.value if partner_data.jenis_partner is defined and partner_data.jenis_partner else 'All') %}
+        <option value="Grooming" {% if current == 'Grooming' %}selected{% endif %}>Grooming</option>
+        <option value="Klinik"   {% if current == 'Klinik' %}selected{% endif %}>Klinik</option>
+        <option value="All"      {% if current == 'All' %}selected{% endif %}>All</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Email</label>
+      <input type="email" name="email" class="admin-input" required
+             value="{{ old_email or (partner_data.email or '' if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">No Telepon</label>
+      <input type="text" name="no_telepon" class="admin-input"
+             value="{{ old_telp or (partner_data.no_telepon if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Alamat</label>
+      <input type="text" name="alamat" class="admin-input"
+             value="{{ old_alamat or (partner_data.alamat if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Password {% if is_edit %}(kosongkan jika tidak diganti){% endif %}</label>
+      <input type="password" name="password" class="admin-input" {% if not is_edit %}required{% endif %}>
+    </div>
+
+    <div style="margin-top:22px;display:flex;gap:10px">
+      <button type="submit" class="btn-admin btn-admin-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+      <a href="/dashboard-admin/partners" class="btn-admin btn-admin-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Detail Fitur Paket{% endblock %}
+{% block admin_title %}Detail Fitur Paket{% endblock %}
+{% block admin_subtitle %}Kelola fitur / deskripsi tiap paket grooming.{% endblock %}
+
+{% block admin_content %}
+
+<!-- Add form -->
+<div class="admin-card">
+  <h3><i class="fa-solid fa-plus-circle"></i> Tambah Fitur</h3>
+
+  <form method="POST" action="/dashboard-admin/detail-paket/create">
+    <div class="form-group">
+      <label class="admin-label">Pilih Paket</label>
+      <select name="paket_id" class="admin-select" required>
+        <option value="">-- Pilih Paket --</option>
+        {% for pkg in packages %}
+        <option value="{{ pkg.id_paket_grooming }}">{{ pkg.nama_paket_grooming }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Nama Fitur</label>
+      <input type="text" name="fitur" class="admin-input" required placeholder="Contoh: Cuci + Potong Kuku">
+    </div>
+    <button type="submit" class="btn-admin btn-admin-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+  </form>
+</div>
+
+<!-- List -->
+<div class="admin-card">
+  <h3><i class="fa-solid fa-list-check"></i> Daftar Fitur</h3>
+
+  {% if details %}
+  <div style="overflow-x: auto;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Paket</th><th>Fitur</th><th style="width:80px">Aksi</th></tr>
+      </thead>
+      <tbody>
+        {% for d in details %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td><strong>{{ d.paket.nama_paket_grooming if d.paket else '-' }}</strong></td>
+          <td>{{ d.fitur }}</td>
+          <td>
+            <form method="POST" action="/dashboard-admin/detail-paket/delete/{{ d.id_detail_paket }}"
+                  onsubmit="return confirm('Yakin hapus fitur ini?')" style="display:contents">
+              <button class="btn-admin btn-admin-danger btn-admin-sm"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada fitur paket.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}

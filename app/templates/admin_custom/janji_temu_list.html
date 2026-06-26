@@ -1,0 +1,46 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Data Janji Temu{% endblock %}
+{% block admin_title %}Data Janji Temu{% endblock %}
+{% block admin_subtitle %}Read-only — pantau janji temu dengan dokter Anda.{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <h3><i class="fa-solid fa-calendar"></i> Daftar Janji Temu</h3>
+
+  {% if janjis %}
+  <div style="overflow-x: auto;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>ID</th><th>User</th><th>Partner</th><th>Tanggal</th><th>Jam</th><th>Status</th><th>Keluhan</th></tr>
+      </thead>
+      <tbody>
+        {% for j in janjis %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ j.id_janji_temu }}</td>
+          <td>{{ j.id_user }}</td>
+          <td>{{ j.Dokter.partner.nama_partner if j.Dokter and j.Dokter.partner else '-' }}</td>
+          <td>{{ j.tanggal_janji }}</td>
+          <td>{{ j.jam_janji }}</td>
+          <td>
+            {% if j.status_janji.value == 'Selesai' %}
+            <span class="badge badge-green">Selesai</span>
+            {% elif j.status_janji.value == 'Dibatalkan' %}
+            <span class="badge badge-red">Dibatalkan</span>
+            {% else %}
+            <span class="badge badge-warm">Menunggu</span>
+            {% endif %}
+          </td>
+          <td>{{ j.keluhan[:60] }}{% if j.keluhan|length > 60 %}...{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada janji temu.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}

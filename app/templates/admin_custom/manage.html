@@ -1,0 +1,93 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Paket Grooming Saya{% endblock %}
+{% block admin_title %}Paket Grooming Saya{% endblock %}
+{% block admin_subtitle %}Kelola paket grooming milik partner Anda.{% endblock %}
+
+{% block admin_content %}
+
+<!-- Create form -->
+<div class="admin-card" id="form-card">
+  <h3><i class="fa-solid {% if is_edit %}fa-pen-to-square{% else %}fa-plus-circle{% endif %}"></i>
+    {% if is_edit %}Edit Paket{% else %}Buat Paket Baru{% endif %}
+  </h3>
+
+  {% if form_errors %}
+  <div class="admin-errors"><strong>Mohon perbaiki:</strong><ul>{% for e in form_errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+  {% endif %}
+
+  <form id="paket-form"
+        action="/dashboard-admin/paket/create"
+        method="POST">
+
+    <div class="form-group">
+      <label class="admin-label" for="nama_paket">Nama Paket</label>
+      <input type="text" id="nama_paket" name="nama_paket" class="admin-input"
+             placeholder="Contoh: Grooming Basic" value="{{ old_nama or '' }}" required>
+    </div>
+
+    <div class="form-group">
+      <label class="admin-label" for="harga">Harga (Rp)</label>
+      <input type="number" id="harga" name="harga" class="admin-input"
+             placeholder="Contoh: 75000" min="1" step="1" value="{{ old_harga or '' }}" required>
+    </div>
+
+    <!-- Dynamic jam (HTMX partial) -->
+    <div class="form-group">
+      <label class="admin-label"><i class="fa-regular fa-clock"></i> Jam Tersedia</label>
+      {% include 'admin_custom/_form_jam.html' %}
+    </div>
+
+    <div style="margin-top:22px;display:flex;gap:10px">
+      <button type="submit" class="btn-admin btn-admin-primary">
+        <i class="fa-solid fa-floppy-disk"></i> Simpan Paket
+      </button>
+      <a href="/dashboard-admin/paket" class="btn-admin btn-admin-outline">
+        <i class="fa-solid fa-arrow-left"></i> Kembali
+      </a>
+    </div>
+  </form>
+</div>
+
+<!-- List -->
+<div class="admin-card">
+  <div class="admin-header-row">
+    <h3><i class="fa-solid fa-list-ul"></i> Daftar Paket</h3>
+    <a href="/dashboard-admin/paket/create" class="btn-admin btn-admin-primary btn-admin-sm">
+      <i class="fa-solid fa-plus"></i> Tambah
+    </a>
+  </div>
+
+  {% if pakets %}
+  <div style="overflow-x: auto; margin-top: 14px;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Nama Paket</th><th>Harga</th><th>Jam Tersedia</th><th style="width:80px">Aksi</th></tr>
+      </thead>
+      <tbody>
+        {% for p in pakets %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td><strong>{{ p.nama_paket_grooming }}</strong></td>
+          <td>Rp {{ (p.harga | int) | rupiah if p.harga else '0' }}</td>
+          <td>
+            {% if p.jam_tersedia %}
+              {% for j in p.jam_tersedia %}<span class="badge badge-teal" style="margin:1px 3px 1px 0">{{ j }}</span>{% endfor %}
+            {% else %}<span style="color:#b0a59b;font-style:italic;font-size:.85rem">—</span>{% endif %}
+          </td>
+          <td>
+            <form action="/dashboard-admin/paket/delete/{{ p.id_paket_grooming }}" method="POST"
+                  onsubmit="return confirm('Yakin hapus paket &quot;{{ p.nama_paket_grooming }}&quot;?')" style="display:contents">
+              <button class="btn-admin btn-admin-danger btn-admin-sm"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada paket. Klik <strong>Tambah</strong> untuk mulai.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}

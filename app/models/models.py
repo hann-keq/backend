@@ -194,6 +194,7 @@ class OrderProduk(Base):
     id_user : Mapped[int] = mapped_column(Integer,ForeignKey('users.id_user'),nullable=False)
     total_harga : Mapped[float] = mapped_column(Float,nullable=False)
     status_order : Mapped[OrderStatus] = mapped_column(Enum(OrderStatus),nullable=False,default=OrderStatus.MENUNGGU.value)
+    midtrans_order_id : Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  # for webhook lookup
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now,onupdate=datetime.now, nullable=True)
 
@@ -246,6 +247,7 @@ class Pembayaran(Base):
     jumlah_bayar : Mapped[float] = mapped_column(Float, nullable=False)
     metode_pembayaran : Mapped[MetodePembayaran] = mapped_column(Enum(MetodePembayaran), nullable=False, default=MetodePembayaran.QRIS.value)
     status_pembayaran : Mapped[StatusPembayaran] = mapped_column(Enum(StatusPembayaran), nullable=False, default=StatusPembayaran.MENUNGGU.value)
+    midtrans_order_id : Mapped[Optional[str]] = mapped_column(String(255), nullable=True)  # for webhook lookup
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
 

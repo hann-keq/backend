@@ -1,0 +1,37 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Daftar Hewan{% endblock %}
+{% block admin_title %}Daftar Hewan{% endblock %}
+{% block admin_subtitle %}Read-only list — semua pets terdaftar.{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <h3><i class="fa-solid fa-paw"></i> Daftar Hewan</h3>
+
+  {% if pets %}
+  <div style="overflow-x: auto;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Nama</th><th>Jenis</th><th>Gender</th><th>Umur (thn)</th><th>Berat (kg)</th><th>Owner ID</th></tr>
+      </thead>
+      <tbody>
+        {% for p in pets %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td><strong>{{ p.nama_hewan }}</strong></td>
+          <td><span class="badge {% if p.jenis_hewan.value == 'Kucing' %}badge-warm{% else %}badge-teal{% endif %}">{{ p.jenis_hewan.value }}</span></td>
+          <td>{{ p.gender_hewan.value }}</td>
+          <td>{{ p.umur }}</td>
+          <td>{{ p.berat }}</td>
+          <td>{{ p.id_user }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada hewan terdaftar.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}
