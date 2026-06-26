@@ -245,6 +245,7 @@
           class="selection-card doctor-card"
           onclick="selectOption(this)"
           data-dokter-id="{{ dokter.id_dokter }}"
+          data-partner-id="{{ dokter.partner.id_partner if dokter.partner else '' }}"
         >
           <div class="doctor-card-inner">
             <div class="package-icon-circle vet-bg">
@@ -378,6 +379,9 @@
 {% include 'detail_booking.html' %}
 <script id="partnerPackagesData" type="application/json">
   {{ partner_packages | tojson }}
+</script>
+<script id="partnerScheduleData" type="application/json">
+  {{ partner_schedule | tojson }}
 </script>
 <script src="{{ url_for('static', path='js/booking.js') }}"></script>
 <script src="{{ url_for('static', path='js/detail_booking.js') }}"></script>

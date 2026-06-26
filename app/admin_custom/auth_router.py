@@ -56,7 +56,11 @@ async def login(request: Request):
                 "partner_id": partner.id_partner,
                 "jenis_partner": partner.jenis_partner.value,
             })
-            return RedirectResponse(url="/dashboard-admin/paket", status_code=303)
+            if partner.jenis_partner.value.lower() == "klinik":
+                redirect_url = "/dashboard-admin/janji-temu"
+            else:
+                redirect_url = "/dashboard-admin/paket"
+            return RedirectResponse(url=redirect_url, status_code=303)
 
     return templates.TemplateResponse(request, 
         f"{_T}/login.html", {"request": request, "error": error, "email": email},

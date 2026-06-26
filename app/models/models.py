@@ -107,6 +107,7 @@ class Partner(Base):
     alamat : Mapped[str] = mapped_column(String(255),nullable=False)
     no_telepon : Mapped[str] = mapped_column(String(20),nullable=False)
     foto : Mapped[str] = mapped_column(String(255),nullable=True)
+    jam_operasional : Mapped[Optional[dict]] = mapped_column(JSON, nullable=True, default=dict)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
     updated_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=True)
 

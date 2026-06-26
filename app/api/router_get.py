@@ -496,6 +496,11 @@ async def tampilin_booking(
             "formatted_time": j.jam_janji.strftime("%I:%M %p") if hasattr(j.jam_janji, "strftime") else str(j.jam_janji),
         })
 
+    # Build partner schedule map for frontend date/time filtering
+    partner_schedule = {}
+    for p in partners:
+        partner_schedule[p.id_partner] = p.jam_operasional or {}
+
     return templates.TemplateResponse(
         request,
         'booking.html',
@@ -507,6 +512,7 @@ async def tampilin_booking(
             "partners": partners,
             "upcoming_bookings": upcoming_with_info,
             "dokters": dokters,
+            "partner_schedule": partner_schedule,
         },
     )
 

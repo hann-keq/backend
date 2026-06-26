@@ -21,6 +21,7 @@ from app.models.models import (
     JanjiTemu,
     PaketGrooming,
     DetailPaketGrooming,
+    Partner,
 )
 from app.admin_custom.deps import (
     require_partner,
@@ -294,6 +295,52 @@ async def janji_temu_list(request: Request, db: AsyncSession = Depends(get_db)):
         .order_by(JanjiTemu.tanggal_janji.desc(), JanjiTemu.jam_janji.desc())
     )
     janjis = result.scalars().all()
-    return templates.TemplateResponse(request, 
+    return templates.TemplateResponse(request,
         f"{_T}/janji_temu_list.html", {"request": request, "janjis": janjis},
+    )
+
+
+# ======================================================================
+#              JAM OPERASIONAL  (all partners)
+# ======================================================================
+
+@router.get("/jam-operasional", response_class=HTMLResponse, dependencies=[Depends(require_partner)])
+async def jam_operasional_form(request: Request, db: AsyncSession = Depends(get_db)):
+    partner_id = request.session.get("partner_id")
+    result = await db.execute(select(Partner).where(Partner.id_partner == partner_id))
+    partner = result.scalar_one_or_none()
+    jam_data = partner.jam_operasional if partner and partner.jam_operasional else {}
+    return templates.TemplateResponse(request,
+        f"{_T}/jam_operasional.html",
+        {"request": request, "jam_data": jam_data},
+    )
+
+
+@router.post("/jam-operasional/save", dependencies=[Depends(require_partner)])
+async def jam_operasional_save(request: Request, db: AsyncSession = Depends(get_db)):
+    partner_id = request.session.get("partner_id")
+    form = await request.form()
+
+    days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]
+    jam_data: dict = {}
+
+    for day in days:
+        aktif = form.get(f"{day}_aktif")
+        if aktif == "on":
+            buka = (form.get(f"{day}_buka") or "").strip()
+            tutup = (form.get(f"{day}_tutup") or "").strip()
+            if buka and tutup:
+                jam_data[day] = {"jam_buka": buka, "jam_tutup": tutup}
+
+    result = await db.execute(select(Partner).where(Partner.id_partner == partner_id))
+    partner = result.scalar_one_or_none()
+    if not partner:
+        raise HTTPException(status_code=404, detail="Partner not found")
+
+    partner.jam_operasional = jam_data if jam_data else None
+    await db.commit()
+
+    return templates.TemplateResponse(request,
+        f"{_T}/jam_operasional.html",
+        {"request": request, "jam_data": jam_data, "saved": True},
     )
