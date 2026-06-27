@@ -57,7 +57,7 @@ services:
       DB_NAME: ${DB_NAME}
     volumes:
       # Shared volume for uploaded files (admin writes, user reads)
-      - uploaded_files:/app/static/uploads
+      - uploaded_files:/app/app/static/uploads
 
   # Servis Admin (Mengunggah Gambar)
   fastapi-admin:
@@ -77,7 +77,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
     volumes:
-      - uploaded_files:/app/static/uploads
+      - uploaded_files:/app/app/static/uploads
 
 # Definisikan volume baru di bawah sini
 volumes:
