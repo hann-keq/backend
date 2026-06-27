@@ -15,7 +15,7 @@ router = APIRouter(tags=["admin_auth"])
 _T = "admin_custom"
 
 
-@router.get("/login", response_class=HTMLResponse)
+@router.get("/", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse(request, f"{_T}/login.html", {"request": request})
 
