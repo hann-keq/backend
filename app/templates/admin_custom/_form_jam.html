@@ -1,0 +1,57 @@
+<!-- _form_jam.html — HTMX partial + wrapper container for repeated swaps -->
+<div id="jam-container" class="raw-jam-row">
+  <div id="jam-rows" style="display: flex; flex-direction: column; gap: 8px">
+    {% for jam in jam_tersedia %}
+    <div
+      class="jam-row-item"
+      style="display: flex; align-items: center; gap: 10px"
+    >
+      <input
+        type="time"
+        name="jam_tersedia[]"
+        class="admin-input jam-time-input"
+        style="flex: 1"
+        value="{{ jam }}"
+        placeholder="HH:MM"
+        pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
+        title="Format 24 jam, contoh: 09:00 atau 14:30"
+      />
+      <button
+        type="button"
+        class="btn-admin btn-admin-danger btn-admin-sm"
+        style="flex-shrink: 0"
+        hx-post="/dashboard-admin/paket/action/remove-jam/{{ loop.index0 }}"
+        hx-include=".raw-jam-row input"
+        hx-target="#jam-container"
+        hx-swap="outerHTML"
+        title="Hapus jam ini"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Time gap warning -->
+  <div
+    id="jam-gap-warning"
+    style="display: none; color: #d85c5c; font-size: 0.82rem; margin-top: 8px"
+  >
+    <i class="fa-solid fa-triangle-exclamation"></i> Jarak antar jam minimal
+    <strong>30 menit</strong>.
+  </div>
+
+  <!-- Add button -->
+  <button
+    type="button"
+    class="btn-admin btn-admin-outline btn-admin-sm"
+    style="margin-top: 12px"
+    hx-post="/dashboard-admin/paket/action/add-jam"
+    hx-include=".raw-jam-row input"
+    hx-target="#jam-container"
+    hx-swap="outerHTML"
+  >
+    <i class="fa-solid fa-plus"></i> Tambah Jam
+  </button>
+</div>
+<!-- /#jam-container -->

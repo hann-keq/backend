@@ -47,8 +47,8 @@
         ></a>
       </div>
       <div class="appointments-grid">
-        {% for entry in upcoming_bookings %}
-        {% if entry['status'] != 'Dibatalkan' %}
+        {% for entry in upcoming_bookings %} {% if entry['status'] !=
+        'Dibatalkan' %}
         <div class="appointment-card">
           <div class="card-header">
             <div class="pet-info">
@@ -66,21 +66,23 @@
             <p><i class="far fa-clock"></i> {{ entry['formatted_time'] }}</p>
           </div>
           <div class="card-actions">
-            <button class="btn-details view-details-btn"
-                    data-id="{{ entry['id'] }}"
-                    data-package="{{ entry['nama_paket'] }}"
-                    data-date="{{ entry['formatted_date'] }}"
-                    data-time="{{ entry['formatted_time'] }}"
-                    data-status="{{ entry['status'] }}"
-                    data-pet-name="{{ entry['pet'].nama_hewan if entry['pet'] else 'Your Pet' }}"
-                    data-pet-breed="{{ entry['pet'].jenis_hewan.value if entry['pet'] else 'Pet' }}"
-                    data-pet-age="{{ entry['pet'].umur if entry['pet'] else '?' }} years"
-                    data-pet-image="{{ entry['pet'].foto or 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}"
-                    data-location-name="{{ entry['partner'].nama_partner if entry['partner'] else 'PetCare Clinic' }}"
-                    data-location-address="{{ entry['partner'].alamat if entry['partner'] else 'Care Street No. 5' }}"
-                    data-contact="{{ entry['partner'].no_telepon if entry['partner'] else '+62 812-3456-7890' }}"
-                    data-features="{% if entry['type'] == 'grooming' and entry['paket'] %}{% for detail in entry['paket'].detail_paket %}{{ detail.fitur }}{% if not loop.last %}|{% endif %}{% endfor %}{% elif entry['type'] == 'veterinary' %}Konsultasi Dokter|Cek Kesehatan Peliharaan{% endif %}"
-                    data-notes="{% if entry['type'] == 'grooming' %}Grooming booking for {{ entry['pet'].nama_hewan if entry['pet'] else 'your pet' }}. Please arrive 15 minutes before scheduled time.{% else %}Keluhan: {{ entry['booking'].keluhan }}{% endif %}">
+            <button
+              class="btn-details view-details-btn"
+              data-id="{{ entry['id'] }}"
+              data-package="{{ entry['nama_paket'] }}"
+              data-date="{{ entry['formatted_date'] }}"
+              data-time="{{ entry['formatted_time'] }}"
+              data-status="{{ entry['status'] }}"
+              data-pet-name="{{ entry['pet'].nama_hewan if entry['pet'] else 'Your Pet' }}"
+              data-pet-breed="{{ entry['pet'].jenis_hewan.value if entry['pet'] else 'Pet' }}"
+              data-pet-age="{{ entry['pet'].umur if entry['pet'] else '?' }} years"
+              data-pet-image="{{ entry['pet'].foto or 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}"
+              data-location-name="{{ entry['partner'].nama_partner if entry['partner'] else 'PetCare Clinic' }}"
+              data-location-address="{{ entry['partner'].alamat if entry['partner'] else 'Care Street No. 5' }}"
+              data-contact="{{ entry['partner'].no_telepon if entry['partner'] else '+62 812-3456-7890' }}"
+              data-features="{% if entry['type'] == 'grooming' and entry['paket'] %}{% for detail in entry['paket'].detail_paket %}{{ detail.fitur }}{% if not loop.last %}|{% endif %}{% endfor %}{% elif entry['type'] == 'veterinary' %}Konsultasi Dokter|Cek Kesehatan Peliharaan{% endif %}"
+              data-notes="{% if entry['type'] == 'grooming' %}Grooming booking for {{ entry['pet'].nama_hewan if entry['pet'] else 'your pet' }}. Please arrive 15 minutes before scheduled time.{% else %}Keluhan: {{ entry['booking'].keluhan }}{% endif %}"
+            >
               Details
             </button>
             <form
@@ -97,8 +99,7 @@
             </form>
           </div>
         </div>
-        {% endif %}
-        {% else %}
+        {% endif %} {% else %}
         <div class="appointment-card">
           <div class="card-header">
             <div class="pet-info">
@@ -120,7 +121,9 @@
     <button class="close-modal" onclick="closeModal()">&times;</button>
 
     <div class="modal-step active" id="step1">
-      <h2 class="modal-title"><span class="service-title-text">Grooming</span> Booking</h2>
+      <h2 class="modal-title">
+        <span class="service-title-text">Grooming</span> Booking
+      </h2>
       <p class="step-indicator">Step 1 of 4</p>
       <h3 class="step-subtitle">Select Your Pet</h3>
       <div class="selection-list">
@@ -162,42 +165,12 @@
       </div>
     </div>
 
-    <!-- Grooming Step 2 -->
-    <div class="modal-step" id="step2_grooming" style="display: none;">
-      <h2 class="modal-title"><span class="service-title-text">Grooming</span> Booking</h2>
+    <!-- Grooming Step 2: Choose Provider (SWAPPED — provider FIRST) -->
+    <div class="modal-step" id="step2_grooming" style="display: none">
+      <h2 class="modal-title">
+        <span class="service-title-text">Grooming</span> Booking
+      </h2>
       <p class="step-indicator">Step 2 of 4</p>
-      <h3 class="step-subtitle">Choose Package</h3>
-      <div class="package-list">
-        {% for paket in grooming_packages %}
-        <div
-          class="selection-card"
-          onclick="selectOption(this)"
-          data-paket-id="{{ paket.id_paket_grooming }}"
-        >
-          <div class="card-content-wrapper align-start">
-            <div class="package-icon-circle grooming-bg">
-              <i class="fas fa-scissors"></i>
-            </div>
-            <div class="card-info">
-              <span class="package-name">{{ paket.nama_paket_grooming }}</span>
-              <span class="package-price">Rp {{ paket.harga|int }}</span>
-            </div>
-          </div>
-        </div>
-        {% else %}
-        <p class="text-muted">Belum ada paket tersedia.</p>
-        {% endfor %}
-      </div>
-      <div class="modal-footer">
-        <button class="btn-back" onclick="goToStep('step1')">Back</button>
-        <button class="btn-continue" onclick="goToStep('step3_grooming')">Continue</button>
-      </div>
-    </div>
-
-    <!-- Grooming Step 3 -->
-    <div class="modal-step" id="step3_grooming" style="display: none;">
-      <h2 class="modal-title"><span class="service-title-text">Grooming</span> Booking</h2>
-      <p class="step-indicator">Step 3 of 4</p>
       <h3 class="step-subtitle">Choose Provider</h3>
       <div class="provider-list">
         {% for partner in partners %}
@@ -230,31 +203,71 @@
         {% endfor %}
       </div>
       <div class="modal-footer">
-        <button class="btn-back" onclick="goToStep('step2_grooming')">Back</button>
-        <button class="btn-continue" onclick="goToStep('step4')">Continue</button>
+        <button class="btn-back" onclick="goToStep('step1')">Back</button>
+        <button class="btn-continue" onclick="goToStep3Grooming()">
+          Continue
+        </button>
+      </div>
+    </div>
+
+    <!-- Grooming Step 3: Choose Package (SWAPPED — package AFTER provider, filtered) -->
+    <div class="modal-step" id="step3_grooming" style="display: none">
+      <h2 class="modal-title">
+        <span class="service-title-text">Grooming</span> Booking
+      </h2>
+      <p class="step-indicator">Step 3 of 4</p>
+      <h3 class="step-subtitle">Choose Package</h3>
+      <div class="package-list" id="packageListContainer">
+        <p class="text-muted" style="padding: 20px; text-align: center;">
+          Select a provider first to see available packages.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-back" onclick="goToStep('step2_grooming')">
+          Back
+        </button>
+        <button class="btn-continue" onclick="goToStep('step4')">
+          Continue
+        </button>
       </div>
     </div>
 
     <!-- Veterinary Step 2: Choose Doctor -->
-    <div class="modal-step" id="step2_vet" style="display: none;">
-      <h2 class="modal-title"><span class="service-title-text">Veterinary</span> Booking</h2>
+    <div class="modal-step" id="step2_vet" style="display: none">
+      <h2 class="modal-title">
+        <span class="service-title-text">Veterinary</span> Booking
+      </h2>
       <p class="step-indicator">Step 2 of 4</p>
       <h3 class="step-subtitle">Choose Doctor</h3>
-      <div class="package-list">
+      <div class="doctor-grid">
         {% for dokter in dokters %}
         <div
-          class="selection-card"
+          class="selection-card doctor-card"
           onclick="selectOption(this)"
           data-dokter-id="{{ dokter.id_dokter }}"
+          data-partner-id="{{ dokter.partner.id_partner if dokter.partner else '' }}"
         >
-          <div class="card-content-wrapper align-start">
+          <div class="doctor-card-inner">
             <div class="package-icon-circle vet-bg">
               <i class="fas fa-user-md"></i>
             </div>
             <div class="card-info">
               <span class="package-name">dr. {{ dokter.nama_dokter }}</span>
-              <span class="package-price" style="font-size: 13px; color: #8c5a3c; display: block; margin-top: 2px;">{{ dokter.spesialis }}</span>
-              <small class="text-muted" style="display: block; margin-top: 4px;">🏪 {{ dokter.partner.nama_partner }}</small>
+              <span
+                class="package-price"
+                style="
+                  font-size: 12px;
+                  color: #8c5a3c;
+                  display: block;
+                  margin-top: 2px;
+                "
+                >{{ dokter.spesialis }}</span
+              >
+              <small
+                class="text-muted"
+                style="display: block; margin-top: 3px; font-size: 12px"
+                >🏪 {{ dokter.partner.nama_partner }}</small
+              >
             </div>
           </div>
         </div>
@@ -264,28 +277,56 @@
       </div>
       <div class="modal-footer">
         <button class="btn-back" onclick="goToStep('step1')">Back</button>
-        <button class="btn-continue" onclick="goToStep('step3_vet')">Continue</button>
+        <button class="btn-continue" onclick="goToStep('step3_vet')">
+          Continue
+        </button>
       </div>
     </div>
 
     <!-- Veterinary Step 3: Keluhan -->
-    <div class="modal-step" id="step3_vet" style="display: none;">
-      <h2 class="modal-title"><span class="service-title-text">Veterinary</span> Booking</h2>
+    <div class="modal-step" id="step3_vet" style="display: none">
+      <h2 class="modal-title">
+        <span class="service-title-text">Veterinary</span> Booking
+      </h2>
       <p class="step-indicator">Step 3 of 4</p>
       <h3 class="step-subtitle">Pet Health Complaint</h3>
       <div class="input-group">
-        <label for="keluhan_input" style="color: #4b2e2b; font-weight: 600;"><i class="fas fa-clipboard-list"></i> What is your pet experiencing? (Keluhan)</label>
-        <textarea id="keluhan_input" placeholder="e.g., Lemas, tidak mau makan, muntah sejak kemarin..." class="date-input" style="height: 120px; padding: 12px; resize: none; border-radius: 8px; border: 1px solid #ddd; width: 100%; margin-top: 10px; font-family: inherit; font-size: 14px; box-sizing: border-box; background: #fff;"></textarea>
+        <label for="keluhan_input" style="color: #4b2e2b; font-weight: 600"
+          ><i class="fas fa-clipboard-list"></i> What is your pet experiencing?
+          (Keluhan)</label
+        >
+        <textarea
+          id="keluhan_input"
+          placeholder="e.g., Lemas, tidak mau makan, muntah sejak kemarin..."
+          class="date-input"
+          style="
+            height: 120px;
+            padding: 12px;
+            resize: none;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            margin-top: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: #fff;
+          "
+        ></textarea>
       </div>
       <div class="modal-footer">
         <button class="btn-back" onclick="goToStep('step2_vet')">Back</button>
-        <button class="btn-continue" onclick="goToStep('step4')">Continue</button>
+        <button class="btn-continue" onclick="goToStep('step4')">
+          Continue
+        </button>
       </div>
     </div>
 
     <!-- Shared Step 4: Date & Time -->
-    <div class="modal-step" id="step4" style="display: none;">
-      <h2 class="modal-title"><span class="service-title-text">Grooming</span> Booking</h2>
+    <div class="modal-step" id="step4" style="display: none">
+      <h2 class="modal-title">
+        <span class="service-title-text">Grooming</span> Booking
+      </h2>
       <p class="step-indicator">Step 4 of 4</p>
       <h3 class="step-subtitle">Select Date & Time</h3>
       <div class="input-group">
@@ -336,6 +377,12 @@
 </div>
 
 {% include 'detail_booking.html' %}
+<script id="partnerPackagesData" type="application/json">
+  {{ partner_packages | tojson }}
+</script>
+<script id="partnerScheduleData" type="application/json">
+  {{ partner_schedule | tojson }}
+</script>
 <script src="{{ url_for('static', path='js/booking.js') }}"></script>
 <script src="{{ url_for('static', path='js/detail_booking.js') }}"></script>
 {% endblock %}

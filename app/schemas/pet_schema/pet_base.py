@@ -20,5 +20,5 @@ class PetBase(BaseModel):
     gender_hewan: GenderHewan
     umur: int
     berat: int
-    foto_hewan: Optional[str] = None
+    foto: Optional[str] = None
 

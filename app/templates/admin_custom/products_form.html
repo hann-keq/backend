@@ -1,0 +1,61 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}{% if is_edit %}Edit Produk{% else %}Tambah Produk{% endif %}{% endblock %}
+{% block admin_title %}{% if is_edit %}Edit Produk{% else %}Tambah Produk{% endif %}{% endblock %}
+{% block admin_subtitle %}{% if is_edit %}Edit produk #{{ product_data.id_produk }}{% else %}Buat produk baru.{% endif %}{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <h3><i class="fa-solid {% if is_edit %}fa-pen-to-square{% else %}fa-plus-circle{% endif %}"></i>
+    {% if is_edit %}Edit Produk{% else %}Tambah Produk{% endif %}
+  </h3>
+
+  {% if form_errors %}
+  <div class="admin-errors"><strong>Mohon perbaiki:</strong><ul>{% for e in form_errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+  {% endif %}
+
+  <form method="POST"
+        action="{% if is_edit %}/dashboard-admin/products/edit/{{ product_data.id_produk }}{% else %}/dashboard-admin/products/create{% endif %}"
+        enctype="multipart/form-data">
+
+    <div class="form-group">
+      <label class="admin-label">Nama Produk</label>
+      <input type="text" name="nama_produk" class="admin-input" required
+             value="{{ old_nama or (product_data.nama_produk if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Harga (Rp)</label>
+      <input type="number" name="harga" class="admin-input" required min="1"
+             value="{{ old_harga or (product_data.harga | int if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Stok</label>
+      <input type="number" name="stok" class="admin-input" required min="0"
+             value="{{ old_stok or (product_data.stok if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Tipe Produk</label>
+      <select name="tipe_produk" class="admin-select">
+        {% set current = old_tipe or (product_data.tipe_produk.value if product_data.tipe_produk is defined and product_data.tipe_produk else 'Makanan') %}
+        <option value="Makanan"    {% if current == 'Makanan' %}selected{% endif %}>Makanan</option>
+        <option value="Mainan"     {% if current == 'Mainan' %}selected{% endif %}>Mainan</option>
+        <option value="Obat"       {% if current == 'Obat' %}selected{% endif %}>Obat</option>
+        <option value="Aksesoris"  {% if current == 'Aksesoris' %}selected{% endif %}>Aksesoris</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Gambar</label>
+      <input type="file" name="gambar" class="admin-input" accept="image/*">
+      {% if is_edit and product_data.gambar %}
+      <div style="margin-top:8px"><img src="{{ product_data.gambar }}" style="width:60px;height:60px;border-radius:10px;object-fit:cover;border:2px solid var(--clr-brown-200)"></div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:22px;display:flex;gap:10px">
+      <button type="submit" class="btn-admin btn-admin-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+      <a href="/dashboard-admin/products" class="btn-admin btn-admin-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Pembayaran Produk{% endblock %}
+{% block admin_title %}Pembayaran Produk{% endblock %}
+{% block admin_subtitle %}Daftar pembayaran order produk.{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <h3><i class="fa-solid fa-box"></i> Pembayaran Produk</h3>
+
+  {% if payments %}
+  <div style="overflow-x: auto;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>ID</th><th>User</th><th>Order</th><th>Jumlah</th><th>Metode</th><th>Status</th><th style="width:120px">Aksi</th></tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ p.id_pembayaran }}</td>
+          <td>{{ p.user.nama if p.user else '-' }}</td>
+          <td>#{{ p.id_order_produk }}</td>
+          <td>Rp {{ (p.jumlah_bayar | int) | rupiah if p.jumlah_bayar else '0' }}</td>
+          <td><span class="badge badge-teal">{{ p.metode_pembayaran.value }}</span></td>
+          <td>
+            {% if p.status_pembayaran.value == 'DIBAYAR' %}
+            <span class="badge badge-green">Dibayar</span>
+            {% elif p.status_pembayaran.value == 'DIBATALKAN' %}
+            <span class="badge badge-red">Dibatalkan</span>
+            {% else %}
+            <span class="badge badge-warm">Menunggu</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.status_pembayaran.value == 'MENUNGGU' %}
+            <form method="POST" action="/dashboard-admin/pembayaran/produk/mark-dibayar/{{ p.id_pembayaran }}"
+                  onsubmit="return confirm('Tandai DIBAYAR?')" style="display:contents">
+              <button class="btn-admin btn-admin-success btn-admin-sm"><i class="fa-solid fa-check"></i> Dibayar</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada pembayaran produk.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}

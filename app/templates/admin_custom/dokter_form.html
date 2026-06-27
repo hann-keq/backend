@@ -1,0 +1,38 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Tambah Dokter{% endblock %}
+{% block admin_title %}Tambah Dokter{% endblock %}
+{% block admin_subtitle %}Daftarkan dokter baru ke partner Anda.{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <h3><i class="fa-solid fa-plus-circle"></i> Tambah Dokter</h3>
+
+  {% if form_errors %}
+  <div class="admin-errors"><strong>Mohon perbaiki:</strong><ul>{% for e in form_errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+  {% endif %}
+
+  <form method="POST" action="/dashboard-admin/dokter/create" enctype="multipart/form-data">
+    <div class="form-group">
+      <label class="admin-label">Nama Dokter</label>
+      <input type="text" name="nama_dokter" class="admin-input" required
+             value="{{ old_nama or '' }}" placeholder="Contoh: Drh. Andi">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Spesialis</label>
+      <input type="text" name="spesialis" class="admin-input" required
+             value="{{ old_spesialis or '' }}" placeholder="Contoh: Hewan Kecil">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Foto</label>
+      <input type="file" name="foto" class="admin-input" accept="image/*">
+    </div>
+
+    <div style="margin-top:22px;display:flex;gap:10px">
+      <button type="submit" class="btn-admin btn-admin-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+      <a href="/dashboard-admin/dokter" class="btn-admin btn-admin-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

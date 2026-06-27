@@ -68,6 +68,143 @@ function goBackFromStep4() {
   }
 }
 
+// --- FILTER PACKAGES BY SELECTED PROVIDER ---
+const PARTNER_PACKAGES = JSON.parse(
+  document.getElementById("partnerPackagesData")?.textContent || "{}"
+);
+
+const PARTNER_SCHEDULE = JSON.parse(
+  document.getElementById("partnerScheduleData")?.textContent || "{}"
+);
+
+const DAY_NAMES = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+
+function getDayName(dateString) {
+  const d = new Date(dateString + "T00:00:00");
+  return DAY_NAMES[d.getDay()];
+}
+
+function getSelectedPartnerId() {
+  if (currentService === "Grooming") {
+    const provider = document.querySelector("#step2_grooming .selection-card.selected");
+    return provider ? provider.getAttribute("data-partner-id") : null;
+  } else {
+    // Veterinary: dokter's partner is embedded via data-partner-id on dokter card
+    const dokter = document.querySelector("#step2_vet .selection-card.selected");
+    return dokter ? dokter.getAttribute("data-partner-id") : null;
+  }
+}
+
+function filterTimeSlotsBySchedule(partnerId) {
+  if (!partnerId) return;
+  const tglElement = document.getElementById("tanggal_booking");
+  if (!tglElement || !tglElement.value) return;
+
+  const day = getDayName(tglElement.value);
+  const schedule = PARTNER_SCHEDULE[partnerId] || {};
+  const todaySchedule = schedule[day];
+
+  document.querySelectorAll("#step4 .time-btn").forEach((btn) => {
+    const jam = btn.getAttribute("data-time");
+    if (!jam) return;
+
+    if (!todaySchedule) {
+      // Closed / libur — hide all times
+      btn.style.display = "none";
+      return;
+    }
+
+    // Check if time is within operating hours
+    const jamBuka = todaySchedule.jam_buka;
+    const jamTutup = todaySchedule.jam_tutup;
+
+    if (jam >= jamBuka && jam <= jamTutup) {
+      btn.style.display = "";
+    } else {
+      btn.style.display = "none";
+    }
+  });
+}
+
+// Override goToStep to intercept step4 entry and filter time slots
+const _originalGoToStep = goToStep;
+goToStep = function (stepId) {
+  _originalGoToStep(stepId);
+
+  if (stepId === "step4") {
+    const partnerId = getSelectedPartnerId();
+    if (partnerId) {
+      // Set min date to today
+      const tglInput = document.getElementById("tanggal_booking");
+      if (tglInput) {
+        const today = new Date().toISOString().split("T")[0];
+        tglInput.setAttribute("min", today);
+        tglInput.addEventListener("change", function () {
+          filterTimeSlotsBySchedule(partnerId);
+          validateDayNotLibur(partnerId);
+        });
+        tglInput.addEventListener("input", function () {
+          filterTimeSlotsBySchedule(partnerId);
+          validateDayNotLibur(partnerId);
+        });
+      }
+      filterTimeSlotsBySchedule(partnerId);
+    }
+  }
+};
+
+function validateDayNotLibur(partnerId) {
+  const tglInput = document.getElementById("tanggal_booking");
+  if (!tglInput || !tglInput.value) return true;
+
+  const day = getDayName(tglInput.value);
+  const schedule = PARTNER_SCHEDULE[partnerId] || {};
+  const todaySchedule = schedule[day];
+
+  if (!todaySchedule) {
+    tglInput.setCustomValidity(`Tutup di hari ${day}. Silakan pilih hari lain.`);
+  } else {
+    tglInput.setCustomValidity("");
+  }
+  return !!todaySchedule;
+}
+
+function goToStep3Grooming() {
+  const selectedProvider = document.querySelector("#step2_grooming .selection-card.selected");
+  if (!selectedProvider) {
+    alert("Mohon pilih provider terlebih dahulu!");
+    return;
+  }
+
+  const partnerId = selectedProvider.getAttribute("data-partner-id");
+  const packages = PARTNER_PACKAGES[partnerId] || [];
+  const container = document.getElementById("packageListContainer");
+
+  if (packages.length === 0) {
+    container.innerHTML =
+      '<p class="text-muted" style="padding:20px;text-align:center;">No packages available for this provider.</p>';
+  } else {
+    container.innerHTML = packages
+      .map(
+        (pkg) => `
+      <div class="selection-card" onclick="selectOption(this)" data-paket-id="${pkg.id}">
+        <div class="card-content-wrapper align-start">
+          <div class="package-icon-circle grooming-bg">
+            <i class="fas fa-scissors"></i>
+          </div>
+          <div class="card-info">
+            <span class="package-name">${pkg.nama}</span>
+            <span class="package-price">Rp ${Number(pkg.harga).toLocaleString("id-ID")}</span>
+          </div>
+        </div>
+      </div>`
+      )
+      .join("");
+  }
+
+  goToStep("step3_grooming");
+}
+
 // --- FUNGSI SELEKSI UI ---
 function selectOption(element) {
   const parent = element.parentElement;

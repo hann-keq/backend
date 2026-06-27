@@ -1,0 +1,52 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Daftar Dokter{% endblock %}
+{% block admin_title %}Daftar Dokter{% endblock %}
+{% block admin_subtitle %}Kelola data dokter partner Anda.{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <div class="admin-header-row">
+    <h3><i class="fa-solid fa-user-md"></i> Daftar Dokter</h3>
+    <a href="/dashboard-admin/dokter/create" class="btn-admin btn-admin-primary btn-admin-sm">
+      <i class="fa-solid fa-plus"></i> Tambah
+    </a>
+  </div>
+
+  {% if dokters %}
+  <div style="overflow-x: auto; margin-top: 14px;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Foto</th><th>Nama</th><th>Spesialis</th><th>Partner</th><th style="width:80px">Aksi</th></tr>
+      </thead>
+      <tbody>
+        {% for d in dokters %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>
+            {% if d.foto %}
+            <img src="{{ d.foto }}" class="admin-thumb" alt="">
+            {% else %}
+            <i class="fa-solid fa-user-doctor fa-lg" style="color:#b0a59b"></i>
+            {% endif %}
+          </td>
+          <td><strong>dr. {{ d.nama_dokter }}</strong></td>
+          <td>{{ d.spesialis }}</td>
+          <td>{{ d.partner.nama_partner if d.partner else '-' }}</td>
+          <td>
+            <form method="POST" action="/dashboard-admin/dokter/delete/{{ d.id_dokter }}"
+                  onsubmit="return confirm('Yakin hapus dr. {{ d.nama_dokter }}?')" style="display:contents">
+              <button class="btn-admin btn-admin-danger btn-admin-sm"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada dokter.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}

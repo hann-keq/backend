@@ -1,0 +1,55 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}Kelola Users & Admin{% endblock %}
+{% block admin_title %}Kelola Users & Admin{% endblock %}
+{% block admin_subtitle %}CRUD data user, admin, dan role.{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <div class="admin-header-row">
+    <h3><i class="fa-solid fa-users"></i> Daftar User</h3>
+    <a href="/dashboard-admin/users/create" class="btn-admin btn-admin-primary btn-admin-sm">
+      <i class="fa-solid fa-plus"></i> Tambah
+    </a>
+  </div>
+
+  {% if users %}
+  <div style="overflow-x: auto; margin-top: 14px;">
+    <table class="admin-table">
+      <thead>
+        <tr><th>#</th><th>Foto</th><th>Nama</th><th>Email</th><th>Role</th><th style="width:110px">Aksi</th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>
+            {% if u.foto %}
+            <img src="{{ u.foto }}" class="admin-thumb" alt="">
+            {% else %}
+            <i class="fa-solid fa-user fa-lg" style="color:#b0a59b"></i>
+            {% endif %}
+          </td>
+          <td><strong>{{ u.nama }}</strong></td>
+          <td>{{ u.email }}</td>
+          <td><span class="badge {% if u.role.value == 'Admin' %}badge-teal{% else %}badge-warm{% endif %}">{{ u.role.value }}</span></td>
+          <td>
+            <div class="action-btns">
+              <a href="/dashboard-admin/users/edit/{{ u.id_user }}" class="btn-admin btn-admin-outline btn-admin-sm"><i class="fa-solid fa-pen"></i></a>
+              <form method="POST" action="/dashboard-admin/users/delete/{{ u.id_user }}"
+                    onsubmit="return confirm('Yakin hapus user {{ u.nama }}?')" style="display:contents">
+                <button class="btn-admin btn-admin-danger btn-admin-sm"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state"><i class="fa-solid fa-inbox"></i><p>Belum ada user.</p></div>
+  {% endif %}
+</div>
+
+{% endblock %}

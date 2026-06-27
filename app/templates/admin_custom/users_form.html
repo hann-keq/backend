@@ -1,0 +1,64 @@
+{% extends 'admin_custom/_admin_base.html' %}
+{% block admin_head_title %}{% if is_edit %}Edit User{% else %}Tambah User{% endif %}{% endblock %}
+{% block admin_title %}{% if is_edit %}Edit User{% else %}Tambah User{% endif %}{% endblock %}
+{% block admin_subtitle %}{% if is_edit %}Edit data user #{{ user_data.id_user }}{% else %}Buat user baru.{% endif %}{% endblock %}
+
+{% block admin_content %}
+
+<div class="admin-card">
+  <h3><i class="fa-solid {% if is_edit %}fa-pen-to-square{% else %}fa-plus-circle{% endif %}"></i>
+    {% if is_edit %}Edit User{% else %}Tambah User{% endif %}
+  </h3>
+
+  {% if form_errors %}
+  <div class="admin-errors"><strong>Mohon perbaiki:</strong><ul>{% for e in form_errors %}<li>{{ e }}</li>{% endfor %}</ul></div>
+  {% endif %}
+
+  <form method="POST"
+        action="{% if is_edit %}/dashboard-admin/users/edit/{{ user_data.id_user }}{% else %}/dashboard-admin/users/create{% endif %}"
+        enctype="multipart/form-data">
+
+    <div class="form-group">
+      <label class="admin-label">Nama</label>
+      <input type="text" name="nama" class="admin-input" required
+             value="{{ old_nama or (user_data.nama if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Email</label>
+      <input type="email" name="email" class="admin-input" required
+             value="{{ old_email or (user_data.email if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">No Telepon</label>
+      <input type="text" name="no_telepon" class="admin-input"
+             value="{{ old_no or (user_data.no_telepon if is_edit else '') }}">
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Password {% if is_edit %}(kosongkan jika tidak diganti){% endif %}</label>
+      <input type="password" name="password" class="admin-input" {% if not is_edit %}required{% endif %}>
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Role</label>
+      <select name="role" class="admin-select">
+        {% set current_role = old_role or (user_data.role.value if user_data.role is defined and user_data.role else 'User') %}
+        <option value="User" {% if current_role == 'User' %}selected{% endif %}>User</option>
+        <option value="Admin" {% if current_role == 'Admin' %}selected{% endif %}>Admin</option>
+        <option value="Partner" {% if current_role == 'Partner' %}selected{% endif %}>Partner</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="admin-label">Foto Profil</label>
+      <input type="file" name="foto" class="admin-input" accept="image/*">
+      {% if is_edit and user_data.foto %}
+      <div style="margin-top:8px"><img src="{{ user_data.foto }}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--clr-brown-200)"></div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:22px;display:flex;gap:10px">
+      <button type="submit" class="btn-admin btn-admin-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+      <a href="/dashboard-admin/users" class="btn-admin btn-admin-outline"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

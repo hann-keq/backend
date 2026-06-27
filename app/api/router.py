@@ -6,7 +6,9 @@ from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.auth import get_current_user
 from app.core.config import UPLOAD_ROOT
+from app.core.midtrans import snap
 import os
+import time
 from app.models.models import User
 from app.schemas.cart_schema.schema import CartSyncRequest
 from app.services.pet.pet_service import add_pet
@@ -395,8 +397,8 @@ async def cart_sync(
 
     Accepts a JSON array of {id_produk, jumlah}, validates stock,
     creates order_produk + detail_order rows in one transaction,
-    and clears the server-side cart.  Returns JSON so the client
-    can redirect on success.
+    clears the server-side cart, and generates a Midtrans Snap token
+    so the client can open the Snap popup directly.
     """
     if not payload.items:
         return JSONResponse(
@@ -433,12 +435,15 @@ async def cart_sync(
         detail_rows.append((item.id_produk, item.jumlah, subtotal))
 
     # ---------- create order + detail_order in DB ----------
+    midtrans_order_id = f"PetCare-Shop-{int(time.time())}-{current_user.id_user}"
+
     new_order = await order_repository.create_order_produk(
         db,
         {
             "id_user": current_user.id_user,
             "total_harga": total_harga,
             "status_order": "Menunggu",
+            "midtrans_order_id": midtrans_order_id,
         },
     )
 
@@ -454,8 +459,38 @@ async def cart_sync(
         )
         await produk_repository.reduce_stock_product_by_id_product(db, id_produk, jumlah)
 
-    # ---------- clear both local-side mirror (server cart) ----------
+    # ---------- create pembayaran record with status Menunggu ----------
+    from app.models.models import Pembayaran
+    pembayaran = Pembayaran(
+        id_user=current_user.id_user,
+        id_order_produk=new_order.id_order_produk,
+        jumlah_bayar=total_harga,
+        metode_pembayaran="QRIS",
+        status_pembayaran="Menunggu",
+        midtrans_order_id=midtrans_order_id,
+    )
+    db.add(pembayaran)
+    await db.commit()
+
+    # ---------- clear server-side cart ----------
     await cart_repository.clear_cart(db, cart.id_cart)
+
+    # ---------- generate Midtrans Snap token ----------
+    total_real = int(total_harga)
+    transaction_params = {
+        "transaction_details": {
+            "order_id": midtrans_order_id,
+            "gross_amount": total_real,
+        },
+        "credit_card": {"secure": True},
+        "enabled_payments": ["qris", "gopay", "bank_transfer"],
+    }
+    snap_token = None
+    try:
+        transaction = snap.create_transaction(transaction_params)
+        snap_token = transaction["token"]
+    except Exception as e:
+        print(f"Midtrans token error: {e}")
 
     return JSONResponse(
         status_code=200,
@@ -463,9 +498,14 @@ async def cart_sync(
             "ok": True,
             "order_id": new_order.id_order_produk,
             "total": total_harga,
-            "redirect": "/orders.html",
+            "snap_token": snap_token,
         },
     )
+
+
+# ================================================================
+#  FAVORITES
+# ================================================================
 
 
 # ================================================================
@@ -771,7 +811,7 @@ async def checkout(
 
         await cart_repository.clear_cart(db, cart.id_cart)
 
-        return RedirectResponse(url="/orders.html", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url="/choosepayment.html", status_code=status.HTTP_303_SEE_OTHER)
 
     except Exception as e:
         system_exceptions.handle_system_error(e)

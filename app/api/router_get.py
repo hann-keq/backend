@@ -12,6 +12,7 @@ from app.exceptions import system_exceptions
 from app.models.models import User
 from app.schemas.user_schema.user_response import UserResponseOnlyId
 from app.services.user.user_service import get_user_by_id
+from app.core.config import settings
 from app.core.midtrans import snap
 from app.api.router_midtrans import router as midtrans_router
 
@@ -347,6 +348,7 @@ async def tampilin_petshop(
             "products": products,
             "cart_map": cart_map,  # {id_produk: jumlah}
             "favorite_ids": favorite_ids,
+            "midtrans_client_key": settings.MIDTRANS_CLIENT_KEY,
         },
     )
 
@@ -444,6 +446,15 @@ async def tampilin_booking(
     partner_map = {p.id_partner: p for p in partners}
     dokter_map = {d.id_dokter: d for d in dokters}
 
+    # Build partner -> packages mapping for frontend filtering
+    partner_packages = {}
+    for pkg in packages:
+        partner_packages.setdefault(pkg.id_partner, []).append({
+            "id": pkg.id_paket_grooming,
+            "nama": pkg.nama_paket_grooming,
+            "harga": pkg.harga,
+        })
+
     upcoming_with_info = []
 
     # Add grooming bookings
@@ -485,6 +496,11 @@ async def tampilin_booking(
             "formatted_time": j.jam_janji.strftime("%I:%M %p") if hasattr(j.jam_janji, "strftime") else str(j.jam_janji),
         })
 
+    # Build partner schedule map for frontend date/time filtering
+    partner_schedule = {}
+    for p in partners:
+        partner_schedule[p.id_partner] = p.jam_operasional or {}
+
     return templates.TemplateResponse(
         request,
         'booking.html',
@@ -492,10 +508,11 @@ async def tampilin_booking(
             "current_page": "booking",
             "user": current_user,
             "pets": user_pets,
-            "grooming_packages": packages,
+            "partner_packages": partner_packages,
             "partners": partners,
             "upcoming_bookings": upcoming_with_info,
             "dokters": dokters,
+            "partner_schedule": partner_schedule,
         },
     )
 
@@ -575,14 +592,8 @@ async def tampilin_new_pet(
     request: Request,
     current_user: User = Depends(get_current_user),
 ):
-    return templates.TemplateResponse(
-        request,
-        'new-pet.html',
-        context={
-            "user": current_user,
-            "current_page": "profile",
-        },
-    )
+    
+    return templates.TemplateResponse(request,'new-pet.html',context={"user":current_user, "current_page": "new-pet"})
 
 
 
@@ -751,34 +762,56 @@ async def tampilin_choosepayment(
     request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    order_id: int | None = None,
 ):
-    cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
-    cart_items = await cart_repository.get_cart_items(db, cart.id_cart)
-
     items = []
     subtotal = 0.0
-    for ci in cart_items:
-        p = await produk_repository.get_product_by_id(db, ci.id_produk)
-        if p:
-            item_subtotal = p.harga * ci.jumlah
-            subtotal += item_subtotal
-            items.append({
-                "nama_produk": p.nama_produk,
-                "gambar": p.gambar,
-                "harga": p.harga,
-                "jumlah": ci.jumlah,
-                "subtotal": item_subtotal,
-            })
+
+    # --- Baca dari order jika order_id disertakan (flow normal: redirect dari petshop) ---
+    if order_id:
+        order = await order_repository.get_order_by_id(db, order_id)
+        if not order or order.id_user != current_user.id_user:
+            raise HTTPException(status_code=404, detail="Order tidak ditemukan")
+
+        detail_orders = await order_repository.get_detail_orders_by_order(db, order_id)
+        for detail in detail_orders:
+            p = await produk_repository.get_product_by_id(db, detail.id_produk)
+            if p:
+                item_subtotal = p.harga * detail.jumlah
+                subtotal += item_subtotal
+                items.append({
+                    "nama_produk": p.nama_produk,
+                    "gambar": p.gambar,
+                    "harga": p.harga,
+                    "jumlah": detail.jumlah,
+                    "subtotal": item_subtotal,
+                })
+    else:
+        # --- Fallback: baca dari cart (kalau user langsung akses /choosepayment.html) ---
+        cart = await cart_repository.get_or_create_cart(db, current_user.id_user)
+        cart_items = await cart_repository.get_cart_items(db, cart.id_cart)
+        for ci in cart_items:
+            p = await produk_repository.get_product_by_id(db, ci.id_produk)
+            if p:
+                item_subtotal = p.harga * ci.jumlah
+                subtotal += item_subtotal
+                items.append({
+                    "nama_produk": p.nama_produk,
+                    "gambar": p.gambar,
+                    "harga": p.harga,
+                    "jumlah": ci.jumlah,
+                    "subtotal": item_subtotal,
+                })
 
     shipping = 2.00
     total = subtotal + shipping
 
-    order_id = f"PetCare-Shop-{int(time.time())}"
+    midtrans_order_id = f"PetCare-Shop-{int(time.time())}"
     total_real = int(total)
 
     transcation_params = {
         "transaction_details": {
-            "order_id": order_id,
+            "order_id": midtrans_order_id,
             "gross_amount": total_real
         },
         "credit_card": {"secure": True},
@@ -790,7 +823,7 @@ async def tampilin_choosepayment(
         print(f"Snap token generated: {snap_token}")
     except Exception as e:
         snap_token = None
-        raise HTTPException(status_code=400, detail=f"Midtrans Error: {str(e)}")    
+        raise HTTPException(status_code=400, detail=f"Midtrans Error: {str(e)}")
     return templates.TemplateResponse(
         request,
         'choosepayment.html',
