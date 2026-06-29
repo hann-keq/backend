@@ -150,7 +150,7 @@ async def add_user_new_pet(
             umur=umur,
             berat=berat,
             gender_hewan=gender,
-            foto_hewan=file_url,
+            foto=file_url,
         )
         referer = request.headers.get("Referer", "")
         origin_page = "/profile" if "profile" in referer else "/petcaredashboard"
