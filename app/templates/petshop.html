@@ -55,7 +55,7 @@
     {% for product in products %}
     <div
       class="card"
-      data-category="{{ product.tipe_produk.value }}"
+      data-category="{% if product.tipe_produk %}{{ product.tipe_produk.value if product.tipe_produk.value is defined else product.tipe_produk }}{% endif %}"
       data-stok="{{ product.stok }}"
       data-id-produk="{{ product.id_produk }}"
       data-nama="{{ product.nama_produk }}"
@@ -442,13 +442,53 @@
   // =============================================================================
   //  SEARCH & CATEGORY FILTER
   // =============================================================================
-  document.getElementById("searchInput").addEventListener("keyup", function () {
-    const kw = this.value.toLowerCase();
+  function filterProducts() {
+    const searchInput = document.getElementById("searchInput");
+    const activeBtn = document.querySelector(".categories button.active");
+
+    const keyword = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    const category = activeBtn ? (activeBtn.getAttribute("data-filter") || "all").toLowerCase() : "all";
+
+    let visibleCount = 0;
+
     document.querySelectorAll(".products .card").forEach((card) => {
-      const t = card.querySelector("h5").textContent.toLowerCase();
-      card.style.display = t.includes(kw) ? "block" : "none";
+      const cardTitle = card.querySelector("h5").textContent.toLowerCase();
+      const cardCategory = (card.dataset.category || "").toLowerCase();
+
+      const matchesSearch = cardTitle.includes(keyword);
+      const matchesCategory = (category === "all" || cardCategory === category);
+
+      if (matchesSearch && matchesCategory) {
+        card.style.display = "block";
+        visibleCount++;
+      } else {
+        card.style.display = "none";
+      }
     });
-  });
+
+    // Update product title text and items count dynamically
+    const productTitleHeader = document.querySelector(".product-title h4");
+    const countSpan = document.querySelector(".product-title span");
+
+    if (productTitleHeader) {
+      if (category === "all") {
+        productTitleHeader.textContent = "All Products";
+      } else {
+        const displayCategory = activeBtn ? activeBtn.textContent : "Products";
+        productTitleHeader.textContent = displayCategory + " Products";
+      }
+    }
+
+    if (countSpan) {
+      countSpan.textContent = visibleCount + " items";
+    }
+  }
+
+  const searchInputEl = document.getElementById("searchInput");
+  if (searchInputEl) {
+    searchInputEl.addEventListener("keyup", filterProducts);
+    searchInputEl.addEventListener("input", filterProducts);
+  }
 
   document.querySelectorAll(".categories button").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -456,11 +496,7 @@
         .querySelectorAll(".categories button")
         .forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
-      const f = btn.dataset.filter;
-      document.querySelectorAll(".products .card").forEach((card) => {
-        card.style.display =
-          f === "all" || card.dataset.category === f ? "block" : "none";
-      });
+      filterProducts();
     });
   });
 

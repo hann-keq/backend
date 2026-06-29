@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show modal
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.body.classList.add('modal-active'); // Lock transition for ghosting bug
             modal.querySelector('.detail-modal-container').scrollTop = 0;
         });
     });
@@ -98,12 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
     closeBtn.addEventListener('click', () => {
         modal.classList.remove('active');
         document.body.style.overflow = '';
+        document.body.classList.remove('modal-active'); // Restore transition
     });
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
+            document.body.classList.remove('modal-active'); // Restore transition
         }
     });
 });

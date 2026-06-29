@@ -413,3 +413,22 @@ body.fade-in {
     align-self: flex-start;
   }
 }
+
+/* Custom positioning for Edit Pet Modal */
+#editPetModal .modal-dialog {
+  margin-top: 60px;
+}
+
+@media (min-width: 576px) {
+  #editPetModal .modal-dialog {
+    margin-top: 120px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Fix input text alignment and padding in Edit Pet Modal */
+#editPetModal .form-control {
+  text-align: left !important;
+  padding-left: 16px !important;
+}

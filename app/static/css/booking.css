@@ -157,7 +157,8 @@ ul {
 /* --- MAIN CONTENT AREA (Hapus Grid 2 Kolom) --- */
 .main-content.full-width-layout {
   display: block;
-  padding: 40px 0;
+  padding: 20px 0 40px;
+  margin-top: 15px; /* Pulls the content up, overriding style.css's 100px margin */
 }
 
 /* --- LEFT COLUMN STYLE --- */
@@ -395,15 +396,14 @@ ul {
 .modal-overlay {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 120vh;
-  background: rgba(62, 47, 34, 0.4);
+  inset: 0;
+  background: rgba(62, 47, 34, 0.5); /* Slightly darker for better contrast */
   backdrop-filter: blur(8px);
   z-index: 9999;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Aligned to top to position higher and prevent layout shifts */
+  overflow-y: auto;
+  padding: 120px 20px 40px 20px; /* Adjusted to 120px to find a middle ground (not too high, not too low) */
 }
 
 .modal-content {
@@ -462,19 +462,23 @@ ul {
   background: #f0f7f7;
 }
 
-/* --- Doctor List (scrollable column, max 5 visible) --- */
+/* --- Doctor, Pet, Provider, and Package List (scrollable column, max 5 visible) --- */
 .doctor-grid,
-.provider-list {
+.provider-list,
+.selection-list,
+.package-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 320px;
+  max-height: 260px; /* Reduced from 320px for better vertical viewport fit */
   overflow-y: auto;
   padding-right: 6px;
 }
 
 .doctor-grid .doctor-card,
-.provider-list .selection-card {
+.provider-list .selection-card,
+.selection-list .selection-card,
+.package-list .selection-card {
   margin-bottom: 0;
   padding: 14px 16px;
   flex-shrink: 0;
@@ -511,18 +515,24 @@ ul {
 
 /* Scrollbar styling for scrollable lists */
 .doctor-grid::-webkit-scrollbar,
-.provider-list::-webkit-scrollbar {
+.provider-list::-webkit-scrollbar,
+.selection-list::-webkit-scrollbar,
+.package-list::-webkit-scrollbar {
   width: 5px;
 }
 
 .doctor-grid::-webkit-scrollbar-track,
-.provider-list::-webkit-scrollbar-track {
+.provider-list::-webkit-scrollbar-track,
+.selection-list::-webkit-scrollbar-track,
+.package-list::-webkit-scrollbar-track {
   background: #f7f3ef;
   border-radius: 10px;
 }
 
 .doctor-grid::-webkit-scrollbar-thumb,
-.provider-list::-webkit-scrollbar-thumb {
+.provider-list::-webkit-scrollbar-thumb,
+.selection-list::-webkit-scrollbar-thumb,
+.package-list::-webkit-scrollbar-thumb {
   background: #c4b5a8;
   border-radius: 10px;
 }
@@ -768,6 +778,21 @@ body {
   transition:
     opacity 0.25s ease,
     transform 0.25s ease;
+}
+
+body.modal-active {
+  transition: none !important;
+}
+
+body.modal-active .dashboard-container,
+body.modal-active .top-nav {
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.dashboard-container,
+.top-nav {
+  transition: filter 0.3s ease;
 }
 
 /* keluar */

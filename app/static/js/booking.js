@@ -6,6 +6,8 @@ function openModal(serviceType) {
   const modal = document.getElementById("bookingModal");
   if (modal) {
     modal.style.display = "flex";
+    document.body.style.overflow = "hidden"; // Lock background scroll
+    document.body.classList.add("modal-active"); // Disable transitions to prevent text ghosting/duplication
     console.log("Modal dibuka untuk:", serviceType);
     
     // Reset to step 1
@@ -31,6 +33,8 @@ function closeModal() {
   const modal = document.getElementById("bookingModal");
   if (modal) {
     modal.style.display = "none";
+    document.body.style.overflow = ""; // Unlock background scroll
+    document.body.classList.remove("modal-active"); // Enable transitions back
   }
 }
 
